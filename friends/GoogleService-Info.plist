@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>984290986843-dnv5t5l8aitlqkmccn0iu1qu1a7h16b3.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.984290986843-dnv5t5l8aitlqkmccn0iu1qu1a7h16b3</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDPBzcd4TPrMI-gxmxZD7-W6WuKN7B1K7U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>984290986843</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Bryan-Hoang.friends</string>
+	<key>PROJECT_ID</key>
+	<string>friends-f19a5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>friends-f19a5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:984290986843:ios:0e1e641cd1b4a9b9be687e</string>
+</dict>
+</plist>
