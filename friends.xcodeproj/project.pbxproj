@@ -12,6 +12,7 @@
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
 		D36173342C657A3B0002CDED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D36173332C657A3B0002CDED /* GoogleService-Info.plist */; };
+		D390C6152C66F1A8008BC14B /* AppleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C922C6582ED00DEBE14 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C912C6582ED00DEBE14 /* FirebaseAnalyticsSwift */; };
 		D3D88C942C6582ED00DEBE14 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C932C6582ED00DEBE14 /* FirebaseAuth */; };
@@ -20,7 +21,6 @@
 		D3D88C9B2C6582FC00DEBE14 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C9A2C6582FC00DEBE14 /* GoogleSignInSwift */; };
 		D3D88CFC2C65846400DEBE14 /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CEB2C65846400DEBE14 /* CustomViews.swift */; };
 		D3D88CFD2C65846400DEBE14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CED2C65846400DEBE14 /* SettingsView.swift */; };
-		D3D88CFE2C65846400DEBE14 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CEE2C65846400DEBE14 /* UserProfileView.swift */; };
 		D3D88CFF2C65846400DEBE14 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CEF2C65846400DEBE14 /* RootView.swift */; };
 		D3D88D002C65846400DEBE14 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF02C65846400DEBE14 /* SignInView.swift */; };
 		D3D88D012C65846400DEBE14 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF12C65846400DEBE14 /* SignUpView.swift */; };
@@ -39,9 +39,10 @@
 		D36173292C657A240002CDED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D361732C2C657A240002CDED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D36173332C657A3B0002CDED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D390C6132C66EFB7008BC14B /* friends.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = friends.entitlements; sourceTree = "<group>"; };
+		D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInHelper.swift; sourceTree = "<group>"; };
 		D3D88CEB2C65846400DEBE14 /* CustomViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D3D88CED2C65846400DEBE14 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		D3D88CEE2C65846400DEBE14 /* UserProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		D3D88CEF2C65846400DEBE14 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		D3D88CF02C65846400DEBE14 /* SignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		D3D88CF12C65846400DEBE14 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -90,6 +91,7 @@
 		D36173242C657A240002CDED /* friends */ = {
 			isa = PBXGroup;
 			children = (
+				D390C6132C66EFB7008BC14B /* friends.entitlements */,
 				D3D88D092C65863900DEBE14 /* Info.plist */,
 				D36173252C657A240002CDED /* friendsApp.swift */,
 				D36173332C657A3B0002CDED /* GoogleService-Info.plist */,
@@ -125,7 +127,6 @@
 			isa = PBXGroup;
 			children = (
 				D3D88CED2C65846400DEBE14 /* SettingsView.swift */,
-				D3D88CEE2C65846400DEBE14 /* UserProfileView.swift */,
 				D3D88CEF2C65846400DEBE14 /* RootView.swift */,
 				D3D88CF02C65846400DEBE14 /* SignInView.swift */,
 				D3D88CF12C65846400DEBE14 /* SignUpView.swift */,
@@ -155,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				D3D88CF72C65846400DEBE14 /* GoogleSignInHelper.swift */,
+				D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */,
 				D3D88CF82C65846400DEBE14 /* Utilities.swift */,
 				D3D88CF92C65846400DEBE14 /* AuthenticationManager.swift */,
 				D3D88CFB2C65846400DEBE14 /* GlobalVariables.swift */,
@@ -246,9 +248,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3D88CFE2C65846400DEBE14 /* UserProfileView.swift in Sources */,
 				D3D88D032C65846400DEBE14 /* UserProfileVM.swift in Sources */,
 				D3D88D002C65846400DEBE14 /* SignInView.swift in Sources */,
+				D390C6152C66F1A8008BC14B /* AppleSignInHelper.swift in Sources */,
 				D3D88CFC2C65846400DEBE14 /* CustomViews.swift in Sources */,
 				D3D88D082C65846400DEBE14 /* GlobalVariables.swift in Sources */,
 				D3D88CFF2C65846400DEBE14 /* RootView.swift in Sources */,
@@ -385,6 +387,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = friends/friends.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"friends/Preview Content\"";
@@ -415,6 +418,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = friends/friends.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"friends/Preview Content\"";
