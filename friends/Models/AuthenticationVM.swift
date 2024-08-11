@@ -8,12 +8,12 @@
 import Foundation
 
 @MainActor
-final class AuthenticationVM: ObservableObject {
+final class AuthenticationVM: ObservableObject {    
     @Published var email: String = ""
     @Published var pwd: String = ""
 }
 
-// Sign in email functions
+// MARK: Sign in email functions
 extension AuthenticationVM {
     func signUp() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
@@ -37,14 +37,19 @@ extension AuthenticationVM {
     }
 }
 
-// Sign in Google functions
+// MARK: Sign in other methods
 extension AuthenticationVM {
     func signInGoogle() async throws {
         try await AuthenticationManager.shared.signInGoogle()
     }
+    func signInApple() async throws {
+        let helper = SignInAppleHelper()
+        let tokens = try await helper.signInApple()
+        try await AuthenticationManager.shared.signInApple(tokens: tokens)
+    }
 }
 
-// Miscellaneous functions
+// MARK: Miscellaneous functions
 extension AuthenticationVM {
     func resetFields() {
         email = ""

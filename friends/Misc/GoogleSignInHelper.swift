@@ -8,36 +8,19 @@
 import Foundation
 import GoogleSignIn
 import GoogleSignInSwift
-	
+
 struct GoogleSignInResultModel {
     let idToken: String
     let accessToken: String
+    let name: String?
+    let email: String?
 }
 
 final class SignInGoogleHelper {
     
     @MainActor
-    func topViewController(controller: UIViewController? = nil) -> UIViewController? {
-        
-        let controller = controller ?? UIApplication.shared.keyWindow?.rootViewController
-        
-        if let navigationController = controller as? UINavigationController {
-            return topViewController(controller: navigationController.visibleViewController)
-        }
-        if let tabController = controller as? UITabBarController {
-            if let selected = tabController.selectedViewController {
-                return topViewController(controller: selected)
-            }
-        }
-        if let presented = controller?.presentedViewController {
-            return topViewController(controller: presented)
-        }
-        return controller
-    }
-    
-    @MainActor
     func signIn() async throws -> GoogleSignInResultModel {
-        guard let topVC = await SignInGoogleHelper().topViewController() else {
+        guard let topVC = Utilities.shared.topViewController() else {
             // TODO: Make an actual error here.
             throw URLError(.cannotFindHost)
         }
@@ -47,7 +30,13 @@ final class SignInGoogleHelper {
             throw URLError(.cannotFindHost)
         }
         let accessToken = gidSignInResult.user.accessToken.tokenString
-        let tokens = GoogleSignInResultModel(idToken: idToken, accessToken: accessToken)
+        // TODO: Do we want to store the name and email in the tokens? or put them somewhere else to access within the view a lot easier?
+        let name = gidSignInResult.user.profile?.name
+        let email = gidSignInResult.user.profile?.email
+        let tokens = GoogleSignInResultModel(idToken: idToken,
+                                             accessToken: accessToken,
+                                             name: name,
+                                             email: email)
         return tokens
     }
 }

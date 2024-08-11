@@ -7,10 +7,11 @@
 
 import Foundation
 import FirebaseAuth
+import AuthenticationServices
 
 // Sign-in Method: Email/Password
 // adr = AuthDataResult
-struct adr_model {
+struct AuthDataResultModel {
     let uid: String
     let email: String?
     let photo_url: String?
@@ -35,12 +36,12 @@ final class AuthenticationManager {
     static let shared = AuthenticationManager()
     private init() {}
     
-    func getAuthenticatedUserData() throws -> adr_model {
+    func getAuthenticatedUserData() throws -> AuthDataResultModel {
         guard let user = Auth.auth().currentUser else {
             // TODO: Create custom throw error
             throw URLError(.badServerResponse)
         }
-        return adr_model(user: user)
+        return AuthDataResultModel(user: user)
     }
     
     func getAuthenticatedUser() throws -> User {
@@ -55,12 +56,12 @@ final class AuthenticationManager {
         return Auth.auth().currentUser != nil
     }
     
-    func signIn(credential: AuthCredential) async throws -> adr_model {
+    func signIn(credential: AuthCredential) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(with: credential)
-        return adr_model(user: authDataResult.user)
+        return AuthDataResultModel(user: authDataResult.user)
     }
     
-    func get_providers() throws -> [authProviderOption] {
+    func getProviders() throws -> [authProviderOption] {
         guard let providerData = Auth.auth().currentUser?.providerData else {
             // TODO: Create error.
             throw URLError(.badServerResponse)
@@ -81,15 +82,15 @@ final class AuthenticationManager {
 // MARK: Email functions
 extension AuthenticationManager {
     @discardableResult
-    func createUser(email: String, pwd: String) async throws -> adr_model {
+    func createUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().createUser(withEmail: email, password: pwd)
-        return adr_model(user: authDataResult.user)
+        return AuthDataResultModel(user: authDataResult.user)
     }
     
     @discardableResult
-    func signInUser(email: String, pwd: String) async throws -> adr_model {
+    func signInUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(withEmail: email, password: pwd)
-        return adr_model(user: authDataResult.user)
+        return AuthDataResultModel(user: authDataResult.user)
     }
     
     func signOut() throws {
@@ -100,29 +101,26 @@ extension AuthenticationManager {
         try await Auth.auth().sendPasswordReset(withEmail: email)
     }
     
-    func updateEmail(new_email: String, password: String) async throws {
+    func updateEmail(newEmail: String, pwd: String) async throws {
         guard let user = Auth.auth().currentUser else {
             // TODO: Create error.
             throw URLError(.badServerResponse)
         }
-        
-        let credential = EmailAuthProvider.credential(withEmail: user.email ?? "", password: password)
-        
+        guard let email = user.email else {return}
+        let credential = EmailAuthProvider.credential(withEmail: email, password: pwd)
         try await user.reauthenticate(with: credential)
-        
-        try await user.updateEmail(to: new_email)
+        try await user.updateEmail(to: newEmail)
     }
     
-    func updatePassword(email: String, password: String, new_pass: String) async throws {
+    func updatePassword(email: String, pwd: String, pwdN: String) async throws {
         guard let user = Auth.auth().currentUser else {
             // TODO: Create actual errors.
             throw URLError(.badServerResponse)
         }
-        
-        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        guard let email = user.email else {return}
+        let credential = EmailAuthProvider.credential(withEmail: email, password: pwd)
         try await user.reauthenticate(with: credential)
-        
-        try await user.updatePassword(to: new_pass)
+        try await user.updatePassword(to: pwdN)
     }
     
     func deleteUser() async throws {
@@ -137,9 +135,16 @@ extension AuthenticationManager {
 // MARK: Other sign-in method functions
 extension AuthenticationManager {
     @discardableResult
-    func signInGoogle() async throws -> adr_model {
+    func signInGoogle() async throws -> AuthDataResultModel {
         let tokens = try await SignInGoogleHelper().signIn()
         let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
+        return try await signIn(credential: credential)
+    }
+    @discardableResult
+    func signInApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel {
+        let credential = OAuthProvider.credential(withProviderID: authProviderOption.apple.rawValue,
+                                                  idToken: tokens.token,
+                                                  rawNonce: tokens.nonce)
         return try await signIn(credential: credential)
     }
 }

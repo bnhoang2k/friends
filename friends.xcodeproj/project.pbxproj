@@ -8,50 +8,50 @@
 
 /* Begin PBXBuildFile section */
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
-		D36173282C657A240002CDED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173272C657A240002CDED /* ContentView.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
 		D36173342C657A3B0002CDED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D36173332C657A3B0002CDED /* GoogleService-Info.plist */; };
-		D390C6152C66F1A8008BC14B /* AppleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */; };
+		D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */; };
+		D39EF7C22C69819700040765 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BD2C69819700040765 /* Utilities.swift */; };
+		D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BE2C69819700040765 /* AuthenticationManager.swift */; };
+		D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BF2C69819700040765 /* AppleSignInHelper.swift */; };
+		D39EF7C52C69819700040765 /* GlobalVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7C02C69819700040765 /* GlobalVariables.swift */; };
+		D39EF7CE2C6981BD00040765 /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7C72C6981BD00040765 /* CustomViews.swift */; };
+		D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7C92C6981BD00040765 /* SettingsView.swift */; };
+		D39EF7D02C6981BD00040765 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CA2C6981BD00040765 /* UserProfileView.swift */; };
+		D39EF7D12C6981BD00040765 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CB2C6981BD00040765 /* RootView.swift */; };
+		D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CC2C6981BD00040765 /* SignInView.swift */; };
+		D39EF7D32C6981BD00040765 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CD2C6981BD00040765 /* SignUpView.swift */; };
+		D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7D52C6981C400040765 /* AuthenticationVM.swift */; };
+		D39EF7D82C6981C500040765 /* UserProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7D62C6981C400040765 /* UserProfileVM.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C922C6582ED00DEBE14 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C912C6582ED00DEBE14 /* FirebaseAnalyticsSwift */; };
 		D3D88C942C6582ED00DEBE14 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C932C6582ED00DEBE14 /* FirebaseAuth */; };
 		D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C952C6582ED00DEBE14 /* FirebaseAuthCombine-Community */; };
 		D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C982C6582FC00DEBE14 /* GoogleSignIn */; };
 		D3D88C9B2C6582FC00DEBE14 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C9A2C6582FC00DEBE14 /* GoogleSignInSwift */; };
-		D3D88CFC2C65846400DEBE14 /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CEB2C65846400DEBE14 /* CustomViews.swift */; };
-		D3D88CFD2C65846400DEBE14 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CED2C65846400DEBE14 /* SettingsView.swift */; };
-		D3D88CFF2C65846400DEBE14 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CEF2C65846400DEBE14 /* RootView.swift */; };
-		D3D88D002C65846400DEBE14 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF02C65846400DEBE14 /* SignInView.swift */; };
-		D3D88D012C65846400DEBE14 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF12C65846400DEBE14 /* SignUpView.swift */; };
-		D3D88D022C65846400DEBE14 /* AuthenticationVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF42C65846400DEBE14 /* AuthenticationVM.swift */; };
-		D3D88D032C65846400DEBE14 /* UserProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF52C65846400DEBE14 /* UserProfileVM.swift */; };
-		D3D88D042C65846400DEBE14 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF72C65846400DEBE14 /* GoogleSignInHelper.swift */; };
-		D3D88D052C65846400DEBE14 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF82C65846400DEBE14 /* Utilities.swift */; };
-		D3D88D062C65846400DEBE14 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CF92C65846400DEBE14 /* AuthenticationManager.swift */; };
-		D3D88D082C65846400DEBE14 /* GlobalVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D88CFB2C65846400DEBE14 /* GlobalVariables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D36173222C657A240002CDED /* friends.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = friends.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36173252C657A240002CDED /* friendsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = friendsApp.swift; sourceTree = "<group>"; };
-		D36173272C657A240002CDED /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D36173292C657A240002CDED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D361732C2C657A240002CDED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D36173332C657A3B0002CDED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D390C6132C66EFB7008BC14B /* friends.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = friends.entitlements; sourceTree = "<group>"; };
-		D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInHelper.swift; sourceTree = "<group>"; };
-		D3D88CEB2C65846400DEBE14 /* CustomViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
-		D3D88CED2C65846400DEBE14 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		D3D88CEF2C65846400DEBE14 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		D3D88CF02C65846400DEBE14 /* SignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
-		D3D88CF12C65846400DEBE14 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
-		D3D88CF42C65846400DEBE14 /* AuthenticationVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationVM.swift; sourceTree = "<group>"; };
-		D3D88CF52C65846400DEBE14 /* UserProfileVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileVM.swift; sourceTree = "<group>"; };
-		D3D88CF72C65846400DEBE14 /* GoogleSignInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSignInHelper.swift; sourceTree = "<group>"; };
-		D3D88CF82C65846400DEBE14 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		D3D88CF92C65846400DEBE14 /* AuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
-		D3D88CFB2C65846400DEBE14 /* GlobalVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariables.swift; sourceTree = "<group>"; };
+		D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSignInHelper.swift; sourceTree = "<group>"; };
+		D39EF7BD2C69819700040765 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		D39EF7BE2C69819700040765 /* AuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
+		D39EF7BF2C69819700040765 /* AppleSignInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleSignInHelper.swift; sourceTree = "<group>"; };
+		D39EF7C02C69819700040765 /* GlobalVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariables.swift; sourceTree = "<group>"; };
+		D39EF7C72C6981BD00040765 /* CustomViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
+		D39EF7C92C6981BD00040765 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D39EF7CA2C6981BD00040765 /* UserProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		D39EF7CB2C6981BD00040765 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		D39EF7CC2C6981BD00040765 /* SignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		D39EF7CD2C6981BD00040765 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		D39EF7D52C6981C400040765 /* AuthenticationVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationVM.swift; sourceTree = "<group>"; };
+		D39EF7D62C6981C400040765 /* UserProfileVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileVM.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,14 +91,13 @@
 		D36173242C657A240002CDED /* friends */ = {
 			isa = PBXGroup;
 			children = (
+				D39EF7D42C6981C400040765 /* Models */,
+				D39EF7C62C6981BD00040765 /* Views */,
+				D39EF7BB2C69819700040765 /* Misc */,
 				D390C6132C66EFB7008BC14B /* friends.entitlements */,
 				D3D88D092C65863900DEBE14 /* Info.plist */,
-				D36173252C657A240002CDED /* friendsApp.swift */,
 				D36173332C657A3B0002CDED /* GoogleService-Info.plist */,
-				D36173272C657A240002CDED /* ContentView.swift */,
-				D3D88CF22C65846400DEBE14 /* Models */,
-				D3D88CEA2C65846400DEBE14 /* Views */,
-				D3D88CF62C65846400DEBE14 /* Misc */,
+				D36173252C657A240002CDED /* friendsApp.swift */,
 				D36173292C657A240002CDED /* Assets.xcassets */,
 				D361732B2C657A240002CDED /* Preview Content */,
 			);
@@ -113,56 +112,46 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		D3D88CEA2C65846400DEBE14 /* Views */ = {
+		D39EF7BB2C69819700040765 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
-				D3D88CEC2C65846400DEBE14 /* Authentication */,
-				D3D88CEB2C65846400DEBE14 /* CustomViews.swift */,
+				D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */,
+				D39EF7BD2C69819700040765 /* Utilities.swift */,
+				D39EF7BE2C69819700040765 /* AuthenticationManager.swift */,
+				D39EF7BF2C69819700040765 /* AppleSignInHelper.swift */,
+				D39EF7C02C69819700040765 /* GlobalVariables.swift */,
 			);
-			name = Views;
-			path = "../../../../Downloads/friends-main/Views";
+			path = Misc;
 			sourceTree = "<group>";
 		};
-		D3D88CEC2C65846400DEBE14 /* Authentication */ = {
+		D39EF7C62C6981BD00040765 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D3D88CED2C65846400DEBE14 /* SettingsView.swift */,
-				D3D88CEF2C65846400DEBE14 /* RootView.swift */,
-				D3D88CF02C65846400DEBE14 /* SignInView.swift */,
-				D3D88CF12C65846400DEBE14 /* SignUpView.swift */,
+				D39EF7C72C6981BD00040765 /* CustomViews.swift */,
+				D39EF7C82C6981BD00040765 /* Authentication */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D39EF7C82C6981BD00040765 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				D39EF7C92C6981BD00040765 /* SettingsView.swift */,
+				D39EF7CA2C6981BD00040765 /* UserProfileView.swift */,
+				D39EF7CB2C6981BD00040765 /* RootView.swift */,
+				D39EF7CC2C6981BD00040765 /* SignInView.swift */,
+				D39EF7CD2C6981BD00040765 /* SignUpView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
 		};
-		D3D88CF22C65846400DEBE14 /* Models */ = {
+		D39EF7D42C6981C400040765 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				D3D88CF32C65846400DEBE14 /* Authentication */,
+				D39EF7D52C6981C400040765 /* AuthenticationVM.swift */,
+				D39EF7D62C6981C400040765 /* UserProfileVM.swift */,
 			);
-			name = Models;
-			path = "../../../../Downloads/friends-main/Models";
-			sourceTree = "<group>";
-		};
-		D3D88CF32C65846400DEBE14 /* Authentication */ = {
-			isa = PBXGroup;
-			children = (
-				D3D88CF42C65846400DEBE14 /* AuthenticationVM.swift */,
-				D3D88CF52C65846400DEBE14 /* UserProfileVM.swift */,
-			);
-			path = Authentication;
-			sourceTree = "<group>";
-		};
-		D3D88CF62C65846400DEBE14 /* Misc */ = {
-			isa = PBXGroup;
-			children = (
-				D3D88CF72C65846400DEBE14 /* GoogleSignInHelper.swift */,
-				D390C6142C66F1A8008BC14B /* AppleSignInHelper.swift */,
-				D3D88CF82C65846400DEBE14 /* Utilities.swift */,
-				D3D88CF92C65846400DEBE14 /* AuthenticationManager.swift */,
-				D3D88CFB2C65846400DEBE14 /* GlobalVariables.swift */,
-			);
-			name = Misc;
-			path = "../../../../Downloads/friends-main/Misc";
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,20 +237,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3D88D032C65846400DEBE14 /* UserProfileVM.swift in Sources */,
-				D3D88D002C65846400DEBE14 /* SignInView.swift in Sources */,
-				D390C6152C66F1A8008BC14B /* AppleSignInHelper.swift in Sources */,
-				D3D88CFC2C65846400DEBE14 /* CustomViews.swift in Sources */,
-				D3D88D082C65846400DEBE14 /* GlobalVariables.swift in Sources */,
-				D3D88CFF2C65846400DEBE14 /* RootView.swift in Sources */,
-				D3D88D022C65846400DEBE14 /* AuthenticationVM.swift in Sources */,
-				D3D88D052C65846400DEBE14 /* Utilities.swift in Sources */,
-				D3D88D062C65846400DEBE14 /* AuthenticationManager.swift in Sources */,
-				D3D88D042C65846400DEBE14 /* GoogleSignInHelper.swift in Sources */,
-				D3D88D012C65846400DEBE14 /* SignUpView.swift in Sources */,
-				D3D88CFD2C65846400DEBE14 /* SettingsView.swift in Sources */,
-				D36173282C657A240002CDED /* ContentView.swift in Sources */,
+				D39EF7C22C69819700040765 /* Utilities.swift in Sources */,
+				D39EF7D02C6981BD00040765 /* UserProfileView.swift in Sources */,
+				D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */,
+				D39EF7D82C6981C500040765 /* UserProfileVM.swift in Sources */,
+				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
 				D36173262C657A240002CDED /* friendsApp.swift in Sources */,
+				D39EF7D32C6981BD00040765 /* SignUpView.swift in Sources */,
+				D39EF7D12C6981BD00040765 /* RootView.swift in Sources */,
+				D39EF7CE2C6981BD00040765 /* CustomViews.swift in Sources */,
+				D39EF7C52C69819700040765 /* GlobalVariables.swift in Sources */,
+				D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */,
+				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,
+				D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */,
+				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
