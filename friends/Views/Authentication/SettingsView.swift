@@ -21,6 +21,7 @@ struct SettingsView: View {
                     changeEmail
                 }
                 Section {logoutButton}
+                Section {deleteUserButton}
             }
             .listStyle(.insetGrouped)
         }
@@ -40,8 +41,27 @@ extension SettingsView {
                 .frame(width: GlobalVariables.shared.PROFILE_PICTUREWIDTH)
         }
     }
+    private var deleteUserButton: some View {
+        Button(role: .destructive) {
+            Task {
+                do {
+                    try await upvm.deleteUser()
+                    showSignIn = true
+                } catch {
+                    // TODO: Create actualy errors.
+                    print("SettingsView: \(error)")
+                }
+            }
+        } label: {
+            HStack {
+                Spacer()
+                Text("Delete Account")
+                Spacer()
+            }
+        }
+    }
     private var logoutButton: some View {
-        Button {
+        Button(role: .destructive) {
             Task {
                 do {
                     try avm.signOut()
@@ -55,7 +75,6 @@ extension SettingsView {
             HStack {
                 Spacer()
                 Text("Log Out")
-                    .foregroundColor(.red)
                 Spacer()
             }
         }

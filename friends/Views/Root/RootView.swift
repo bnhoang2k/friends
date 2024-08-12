@@ -13,22 +13,23 @@ struct RootView: View {
     @State private var showSignInView: Bool = false
     
     var body: some View {
-        ZStack {
-            NavigationStack {
+        VStack {
+            if showSignInView {
+                SignInView(showSignInView: $showSignInView)
+                    .environmentObject(avm)
+            }
+            else {
                 SettingsView(showSignIn: $showSignInView)
                     .environmentObject(avm)
             }
         }
-        .onAppear {
-            let authUser = try? AuthenticationManager.shared.getAuthenticatedUserData()
-            self.showSignInView = authUser == nil
-        }
-        .fullScreenCover(isPresented: $showSignInView) {
-            NavigationStack {
-                SignInView(showSignInView: $showSignInView)
-                    .environmentObject(avm)
-            }
-        }
+        .animation(.easeIn, value: showSignInView)
+    }
+}
+
+extension RootView {
+    static func == (lhs: RootView, rhs: RootView) -> Bool {
+        return lhs.showSignInView == rhs.showSignInView
     }
 }
 

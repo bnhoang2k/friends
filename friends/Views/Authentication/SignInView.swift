@@ -26,10 +26,12 @@ struct SignInView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                Spacer()
                 logo
                     .frame(alignment: .centerLastTextBaseline)
                 login_email
                 login_button
+                Spacer()
                 googleButton
                 appleButton
                 su_email
