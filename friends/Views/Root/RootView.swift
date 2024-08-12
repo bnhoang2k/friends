@@ -28,9 +28,6 @@ struct RootView: View {
 }
 
 extension RootView {
-    static func == (lhs: RootView, rhs: RootView) -> Bool {
-        return lhs.showSignInView == rhs.showSignInView
-    }
 }
 
 struct RootView_Previews: PreviewProvider {
