@@ -22,14 +22,14 @@ extension AuthenticationVM {
             print("No email or password found.")
             return
         }
-        try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
+        let authDataResult = try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
+        try await UserManager.shared.createNewUser(adr: authDataResult)
     }
     func signIn() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
             print("No email or password found.")
             return
         }
-        
         try await AuthenticationManager.shared.signInUser(email: email, pwd: pwd)
     }
     func signOut() throws {
@@ -40,12 +40,14 @@ extension AuthenticationVM {
 // MARK: Sign in other methods
 extension AuthenticationVM {
     func signInGoogle() async throws {
-        try await AuthenticationManager.shared.signInGoogle()
+        let authDataResult = try await AuthenticationManager.shared.signInGoogle()
+        try await UserManager.shared.createNewUser(adr: authDataResult)
     }
     func signInApple() async throws {
         let helper = SignInAppleHelper()
         let tokens = try await helper.signInApple()
-        try await AuthenticationManager.shared.signInApple(tokens: tokens)
+        let authDataResult = try await AuthenticationManager.shared.signInApple(tokens: tokens)
+        try await UserManager.shared.createNewUser(adr: authDataResult)
     }
 }
 

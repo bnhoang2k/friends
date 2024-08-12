@@ -9,10 +9,18 @@ import Foundation
 
 @MainActor
 final class UserProfileVM: ObservableObject {
+    
     @Published var authProviders: [authProviderOption] = []
+    @Published private(set) var user: DBUser? = nil
+    
     @Published var string1: String = ""
     @Published var string2: String = ""
-    // TODO: Add a user: db_user to finish the updateEmail and updatePassword stuff
+    
+    func loadCurrentUser() async throws {
+        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUserData()
+        self.user = try await UserManager.shared.getUser(uid: authDataResult.uid)
+    }
+    
     func getAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
             authProviders = providers
