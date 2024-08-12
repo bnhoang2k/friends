@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @EnvironmentObject var avm: AuthenticationVM
+    @EnvironmentObject private var avm: AuthenticationVM
     @StateObject private var upvm: UserProfileVM = UserProfileVM()
     @Binding var showSignIn: Bool
     
@@ -19,6 +19,7 @@ struct SettingsView: View {
                 Section {userInfo}
                 if upvm.authProviders.contains(.email) {
                     changeEmail
+                    // TODO: Add changePassword.
                 }
                 Section {logoutButton}
                 Section {deleteUserButton}

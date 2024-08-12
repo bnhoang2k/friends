@@ -27,6 +27,7 @@
 		D39EF7E22C6AA56B00040765 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E12C6AA56B00040765 /* FirebaseAuth */; };
 		D39EF7E72C6AB16100040765 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E62C6AB16100040765 /* FirebaseFirestore */; };
 		D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E82C6AB16100040765 /* FirebaseFirestoreSwift */; };
+		D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7EA2C6AB73000040765 /* UserManager.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C952C6582ED00DEBE14 /* FirebaseAuthCombine-Community */; };
 		D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C982C6582FC00DEBE14 /* GoogleSignIn */; };
@@ -53,6 +54,7 @@
 		D39EF7CD2C6981BD00040765 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		D39EF7D52C6981C400040765 /* AuthenticationVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationVM.swift; sourceTree = "<group>"; };
 		D39EF7D62C6981C400040765 /* UserProfileVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileVM.swift; sourceTree = "<group>"; };
+		D39EF7EA2C6AB73000040765 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,6 +125,7 @@
 				D39EF7BE2C69819700040765 /* AuthenticationManager.swift */,
 				D39EF7BF2C69819700040765 /* AppleSignInHelper.swift */,
 				D39EF7C02C69819700040765 /* GlobalVariables.swift */,
+				D39EF7EA2C6AB73000040765 /* UserManager.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				D39EF7C22C69819700040765 /* Utilities.swift in Sources */,
 				D39EF7D02C6981BD00040765 /* UserProfileView.swift in Sources */,
 				D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */,
+				D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */,
 				D39EF7D82C6981C500040765 /* UserProfileVM.swift in Sources */,
 				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
 				D36173262C657A240002CDED /* friendsApp.swift in Sources */,

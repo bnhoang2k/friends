@@ -10,14 +10,15 @@ import SwiftUI
 struct UserProfileView: View {
     
     @StateObject var upvm: UserProfileVM = UserProfileVM()
+    @Binding var showSignInView: Bool
     
     var body: some View {
         NavigationStack {
             List {
-                change_tf(field_name: "Email", image_name: "envelope", field_value: $upvm.string1)
-                // TODO: Add password.
+                userInfo
             }
-            .onAppear {
+            .task {
+                try? await upvm.loadCurrentUser()
                 upvm.resetFields()
             }
         }
@@ -25,26 +26,25 @@ struct UserProfileView: View {
 }
 
 extension UserProfileView {
-    private func change_tf(field_name: String,
-                           image_name: String,
-                           field_value: Binding<String>,
-                           secure_field: Bool? = nil) -> some View {
-        
+    private var userInfo: some View {
         NavigationLink {
-//            ChangeFieldView(field_name: field_name, field_value: field_value, secure_field: secure_field)
+            SettingsView(showSignIn: $showSignInView)
+                .environmentObject(AuthenticationVM())
         } label: {
             HStack {
-                Label("\(field_name)", systemImage: "\(image_name)")
+                Image(systemName: "person.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: GlobalVariables.shared.PROFILE_PICTUREWIDTH)
+                Text(upvm.user?.email ?? "")
                 Spacer()
-                if secure_field != nil {Text("\(field_value.wrappedValue)")}
             }
         }
-        
     }
 }
 
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        UserProfileView()
+        UserProfileView(showSignInView: .constant(false))
     }
 }
