@@ -46,8 +46,6 @@ struct SignInView: View {
 extension SignInView {
     private var logo: some View {
         Group {
-            //            Image(systemName: "person.3.sequence.fill")
-            //                .font(.system(size: 50)) // Size of Image
             Text("friends")
                 .font(.custom(GlobalVariables.shared.APP_FONT, size: 45))
         }
@@ -64,7 +62,6 @@ extension SignInView {
                 do {
                     try await avm.signIn()
                     showSignInView = false
-                    return
                 } catch {
                     print("Login Button: \(error)")
                 }
