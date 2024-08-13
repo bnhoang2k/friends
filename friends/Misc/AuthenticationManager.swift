@@ -13,12 +13,12 @@ import AuthenticationServices
 // adr = AuthDataResult
 struct AuthDataResultModel {
     
-    let uid: String
-    let email: String?
-    let photo_url: String?
+    var uid: String
+    var email: String?
+    var photo_url: String?
     
-    let username: String?
-    let fullName: String?
+    var username: String?
+    var fullName: String?
     
     init(user: User) {
         self.uid = user.uid
