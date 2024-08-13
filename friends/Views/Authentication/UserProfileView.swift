@@ -9,42 +9,13 @@ import SwiftUI
 
 struct UserProfileView: View {
     
-    @StateObject var upvm: UserProfileVM = UserProfileVM()
-    @Binding var showSignInView: Bool
-    
     var body: some View {
-        NavigationStack {
-            List {
-                userInfo
-            }
-            .task {
-                try? await upvm.loadCurrentUser()
-                upvm.resetFields()
-            }
-        }
-    }
-}
-
-extension UserProfileView {
-    private var userInfo: some View {
-        NavigationLink {
-            SettingsView(showSignIn: $showSignInView)
-                .environmentObject(AuthenticationVM())
-        } label: {
-            HStack {
-                Image(systemName: "person.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: GlobalVariables.shared.PROFILE_PICTUREWIDTH)
-                Text(upvm.user?.email ?? "")
-                Spacer()
-            }
-        }
+        Text("hehe xd")
     }
 }
 
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        UserProfileView(showSignInView: .constant(false))
+        UserProfileView()
     }
 }
