@@ -23,7 +23,8 @@ extension AuthenticationVM {
             return
         }
         let authDataResult = try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
-        try await UserManager.shared.createNewUser(adr: authDataResult)
+        let user = DBUser(auth: authDataResult)
+        try await UserManager.shared.createNewUser(user: user)
     }
     func signIn() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
@@ -41,13 +42,15 @@ extension AuthenticationVM {
 extension AuthenticationVM {
     func signInGoogle() async throws {
         let authDataResult = try await AuthenticationManager.shared.signInGoogle()
-        try await UserManager.shared.createNewUser(adr: authDataResult)
+        let user = DBUser(auth: authDataResult)
+        try await UserManager.shared.createNewUser(user: user)
     }
     func signInApple() async throws {
         let helper = SignInAppleHelper()
         let tokens = try await helper.signInApple()
         let authDataResult = try await AuthenticationManager.shared.signInApple(tokens: tokens)
-        try await UserManager.shared.createNewUser(adr: authDataResult)
+        let user = DBUser(auth: authDataResult)
+        try await UserManager.shared.createNewUser(user: user)
     }
 }
 

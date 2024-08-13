@@ -12,18 +12,24 @@ import AuthenticationServices
 // Sign-in Method: Email/Password
 // adr = AuthDataResult
 struct AuthDataResultModel {
+    
     let uid: String
     let email: String?
     let photo_url: String?
     
-    //    let username: String?
-    //    let name: String?
+    let username: String?
+    let fullName: String?
     
     init(user: User) {
         self.uid = user.uid
         self.email = user.email
         self.photo_url = user.photoURL?.absoluteString
+        // TODO: Make a view flow that asks for username and full name
+        self.username = "Placeholder"
+        self.fullName = ""
     }
+    
+    // TODO: Make separate initializers based on sign in method?
 }
 
 enum authProviderOption: String {
