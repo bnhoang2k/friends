@@ -9,11 +9,12 @@ import SwiftUI
 
 struct CustomTF: View {
     var filler_text: String = ""
+    var size: CGFloat = 20
     @Binding var text_binding: String
     
     var body: some View {
         TextField(filler_text, text: $text_binding)
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
@@ -24,6 +25,7 @@ struct CustomTF: View {
 struct CustomPF: View {
     @State private var show_password: Bool = false
     var filler_text: String = ""
+    var size: CGFloat = 20
     var eye: Bool = true
     @Binding var text_binding: String
     @Environment(\.colorScheme) var color_scheme: ColorScheme
@@ -34,7 +36,7 @@ struct CustomPF: View {
                 if show_password {TextField(filler_text, text: $text_binding)}
                 else {SecureField(filler_text, text: $text_binding)}
             }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
