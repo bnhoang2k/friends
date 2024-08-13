@@ -17,7 +17,7 @@ struct SignInView: View {
     
     @Binding var showSignInView: Bool
     
-    private var form_valid: Bool {
+    private var isValid: Bool {
         !avm.email.isEmpty
         && !avm.pwd.isEmpty
         && Utilities.shared.is_valid_email(email: avm.email)
@@ -61,7 +61,7 @@ extension SignInView {
             Task {
                 do {
                     try await avm.signIn()
-                    showSignInView = false
+                    try await avm.handlePostSignIn()
                 } catch {
                     print("Login Button: \(error)")
                 }
@@ -70,18 +70,18 @@ extension SignInView {
             Text("Login")
                 .frame(maxWidth: .infinity)
                 .padding(5)
-                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(form_valid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(form_valid ? Color.white : Color(UIColor.systemGray))
+                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
+                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
                 .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
         }
-        .disabled(!form_valid)
+        .disabled(!isValid)
     }
     private var googleButton: some View {
         GoogleSignInButton(scheme: .dark, style: .wide, state: .normal) {
             Task {
                 do {
                     try await avm.signInGoogle()
-                    showSignInView = false
+                    try await avm.handlePostSignIn()
                 } catch {
                     print("GoogleSignInButton: \(error)")
                 }
@@ -95,7 +95,7 @@ extension SignInView {
             Task {
                 do {
                     try await avm.signInApple()
-                    showSignInView = false
+                    try await avm.handlePostSignIn()
                 } catch {
                     print("AppleSignInButton: \(error)")
                 }
