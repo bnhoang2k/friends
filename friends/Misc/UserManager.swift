@@ -84,7 +84,6 @@ final class UserManager {
 
 // MARK: User Functions
 extension UserManager {
-    
     func createNewUser(user: DBUser) async throws {
         // TODO: Convert to update data instead. 34:03 #10
         try userDocument(uid: user.uid).setData(from: user,
@@ -97,41 +96,8 @@ extension UserManager {
                                                      decoder: decoder)
     }
     
-//    func createNewUser(adr: AuthDataResultModel) async throws {
-//        let userData: [String: Any] = [
-//            "uid" : adr.uid,
-//            "email" : adr.email ?? "ERROR",
-//            "date_created" : Timestamp(),
-//            "photo_URL" : adr.photo_url ?? "ERROR",
-//            "full_name" : adr.fullName ?? "ERROR",
-//            "username" : adr.username ?? "ERROR",
-//        ]
-//        try await userDocument(uid: adr.uid).setData(userData, merge: false)
-//    }
-    
-//    func getUser(uid: String) async throws -> DBUser {
-//        let snapshot = try await userDocument(uid: uid).getDocument()
-//
-//        guard let data = snapshot.data(),
-//              let uid = data["user_id"] as? String else {
-//            // TODO: Create actual error.
-//            throw URLError(.badServerResponse)
-//        }
-//
-//        guard let dateCreated = data["data_created"] as? Date,
-//              let photoURL = data["photo_URL"] as? String,
-//              let fullName = data["full_name"] as? String ,
-//              let username = data["username"] as? String,
-//              let email = data["email"] as? String else {
-//            print("getUser Error")
-//            throw URLError(.badServerResponse)
-//        }
-//
-//        return DBUser(uid: uid,
-//                      dateCreated: dateCreated,
-//                      username: username,
-//                      email: email,
-//                      photoURL: photoURL,
-//                      fullName: fullName)
-//    }
+    func doesUserExist(uid: String) async throws -> Bool {
+        let document = try await userDocument(uid: uid).getDocument()
+        return document.exists
+    }
 }

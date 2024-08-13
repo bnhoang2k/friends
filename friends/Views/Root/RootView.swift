@@ -10,20 +10,38 @@ import SwiftUI
 struct RootView: View {
     
     @StateObject var avm: AuthenticationVM = AuthenticationVM()
-    @State private var showSignInView: Bool = false
+    @State private var isLoading: Bool = true
     
     var body: some View {
         VStack {
-            if showSignInView {
-                SignInView(showSignInView: $showSignInView)
-                    .environmentObject(avm)
+            if isLoading {
+                ProgressView()
             }
             else {
-                SettingsView(showSignIn: $showSignInView)
-                    .environmentObject(avm)
+                if avm.showSignInView {
+                    SignInView(showSignInView: $avm.showSignInView)
+                        .environmentObject(avm)
+                }
+                else if avm.showGetInformationView {
+                    GetInformationView()
+                        .environmentObject(avm)
+                }
+                else {
+                    SettingsView()
+                }
             }
         }
-        .animation(.easeIn, value: showSignInView)
+        .task {
+            do {
+                try await avm.loadCurrentUser()
+                avm.getAuthProviders()
+                avm.showSignInView = (avm.user == nil)
+            } catch {
+                print("RootView Error Loading User: \(error)")
+            }
+            isLoading = false
+        }
+        .animation(.easeIn, value: avm.showSignInView)
     }
 }
 
