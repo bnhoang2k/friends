@@ -44,16 +44,16 @@ final class AuthenticationManager {
     
     func getAuthenticatedUserData() throws -> AuthDataResultModel {
         guard let user = Auth.auth().currentUser else {
-            // TODO: Create custom throw error
-            throw URLError(.badServerResponse)
+            print("GetAuthenticatedUserData() failed.")
+            throw AuthError.noUserSignedIn
         }
         return AuthDataResultModel(user: user)
     }
     
     func getAuthenticatedUser() throws -> User {
         guard let user = Auth.auth().currentUser else {
-            // TODO: Create custom throw error
-            throw URLError(.badServerResponse)
+            print("GetAuthenticatedUser() failed.")
+            throw AuthError.noUserSignedIn
         }
         return user
     }
