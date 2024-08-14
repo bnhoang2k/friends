@@ -51,6 +51,10 @@ final class AuthenticationVM: ObservableObject {
         let user = DBUser(auth: authDataResult)
         try await UserManager.shared.createNewUser(user: user)
     }
+    
+    func deleteUser() async throws {
+        try await AuthenticationManager.shared.deleteUser()
+    }
 }
 
 // MARK: Sign in email functions
@@ -62,10 +66,9 @@ extension AuthenticationVM {
             print("No email or password found.")
             return
         }
-        let authDataResult = try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
-//        let user = DBUser(auth: authDataResult)
-//        try await UserManager.shared.createNewUser(user: user)
+        try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
     }
+    
     func signIn() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
             print("No email or password found.")
@@ -73,24 +76,65 @@ extension AuthenticationVM {
         }
         try await AuthenticationManager.shared.signInUser(email: email, pwd: pwd)
     }
+    
     func signOut() throws {
         try AuthenticationManager.shared.signOut()
+    }
+    
+    func updateEmail(newEmail: String, pwd: String) async throws {
+        try await AuthenticationManager.shared.updateEmail(newEmail: newEmail, pwd: pwd)
+        guard let newUser = user?.updateEmail(newEmail: newEmail) else {
+            // TODO: Add actual errors
+            print("Error creating new user for updating email.")
+            return
+        }
+        try await UserManager.shared.updateEmail(user: newUser)
+    }
+    
+    func updatePassword(email: String, pwd: String, pwdN: String) async throws {
+        try await AuthenticationManager.shared.updatePassword(email: email, pwd: pwd, pwdN: pwdN)
+    }
+    
+    func resetPassword() async throws {
+        let authUserData = try AuthenticationManager.shared.getAuthenticatedUserData()
+        guard let email = authUserData.email else {
+            // TODO: Create custom error for this.
+            throw URLError(.fileDoesNotExist)
+        }
+        try await AuthenticationManager.shared.resetPassword(email: email)
+    }
+}
+
+extension AuthenticationVM {
+    func updateUsername(newUsername: String) async throws {
+        guard let newUser = user?.updateUsername(newUsername: newUsername) else {
+            // TODO: Get actual errors.
+            print("AuthenticationVM: Error updating username.")
+            return
+        }
+        try await UserManager.shared.updateUsername(user: newUser)
+    }
+    
+    func updateFName(newFN: String) async throws {
+        guard let newUser = user?.updateFN(newFN: newFN) else {
+            // TODO: Get actual errors.
+            print("Authentication VM: Error updating full name.")
+            return
+        }
+        try await UserManager.shared.updateFN(user: newUser)
     }
 }
 
 // MARK: Sign in other methods
 extension AuthenticationVM {
     func signInGoogle() async throws {
-        let authDataResult = try await AuthenticationManager.shared.signInGoogle()
-//        let user = DBUser(auth: authDataResult)
-//        try await UserManager.shared.createNewUser(user: user)
+        try await AuthenticationManager.shared.signInGoogle()
     }
+    
     func signInApple() async throws {
         let helper = SignInAppleHelper()
         let tokens = try await helper.signInApple()
-        let authDataResult = try await AuthenticationManager.shared.signInApple(tokens: tokens)
-//        let user = DBUser(auth: authDataResult)
-//        try await UserManager.shared.createNewUser(user: user)
+        try await AuthenticationManager.shared.signInApple(tokens: tokens)
     }
 }
 
