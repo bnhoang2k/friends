@@ -27,7 +27,8 @@ struct RootView: View {
                         .environmentObject(avm)
                 }
                 else {
-                    SettingsView()
+                    MainView()
+                        .environmentObject(avm)
                 }
             }
         }
