@@ -23,16 +23,19 @@
 		D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CC2C6981BD00040765 /* SignInView.swift */; };
 		D39EF7D32C6981BD00040765 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7CD2C6981BD00040765 /* SignUpView.swift */; };
 		D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7D52C6981C400040765 /* AuthenticationVM.swift */; };
-		D39EF7D82C6981C500040765 /* UserProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7D62C6981C400040765 /* UserProfileVM.swift */; };
 		D39EF7E22C6AA56B00040765 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E12C6AA56B00040765 /* FirebaseAuth */; };
 		D39EF7E72C6AB16100040765 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E62C6AB16100040765 /* FirebaseFirestore */; };
 		D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E82C6AB16100040765 /* FirebaseFirestoreSwift */; };
 		D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7EA2C6AB73000040765 /* UserManager.swift */; };
 		D3A84B5E2C6C13680023500F /* GetInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B5D2C6C13680023500F /* GetInformationView.swift */; };
+		D3A84B602C6D13B60023500F /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B5F2C6D13B60023500F /* MainView.swift */; };
+		D3A84B622C6D18510023500F /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B612C6D18510023500F /* EventsView.swift */; };
+		D3A84B642C6D18E70023500F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B632C6D18E70023500F /* MapView.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C952C6582ED00DEBE14 /* FirebaseAuthCombine-Community */; };
 		D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C982C6582FC00DEBE14 /* GoogleSignIn */; };
 		D3D88C9B2C6582FC00DEBE14 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C9A2C6582FC00DEBE14 /* GoogleSignInSwift */; };
+		D3FCD1072C6D5D8F002D4CEA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FCD1062C6D5D8F002D4CEA /* Errors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,10 +57,13 @@
 		D39EF7CC2C6981BD00040765 /* SignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		D39EF7CD2C6981BD00040765 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		D39EF7D52C6981C400040765 /* AuthenticationVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationVM.swift; sourceTree = "<group>"; };
-		D39EF7D62C6981C400040765 /* UserProfileVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileVM.swift; sourceTree = "<group>"; };
 		D39EF7EA2C6AB73000040765 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		D3A84B5D2C6C13680023500F /* GetInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInformationView.swift; sourceTree = "<group>"; };
+		D3A84B5F2C6D13B60023500F /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		D3A84B612C6D18510023500F /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
+		D3A84B632C6D18E70023500F /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D3FCD1062C6D5D8F002D4CEA /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +134,7 @@
 				D39EF7BF2C69819700040765 /* AppleSignInHelper.swift */,
 				D39EF7C02C69819700040765 /* GlobalVariables.swift */,
 				D39EF7EA2C6AB73000040765 /* UserManager.swift */,
+				D3FCD1062C6D5D8F002D4CEA /* Errors.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -158,7 +165,6 @@
 			isa = PBXGroup;
 			children = (
 				D39EF7D52C6981C400040765 /* AuthenticationVM.swift */,
-				D39EF7D62C6981C400040765 /* UserProfileVM.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -174,6 +180,9 @@
 			isa = PBXGroup;
 			children = (
 				D39EF7CB2C6981BD00040765 /* RootView.swift */,
+				D3A84B5F2C6D13B60023500F /* MainView.swift */,
+				D3A84B632C6D18E70023500F /* MapView.swift */,
+				D3A84B612C6D18510023500F /* EventsView.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -267,14 +276,17 @@
 				D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */,
 				D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */,
 				D3A84B5E2C6C13680023500F /* GetInformationView.swift in Sources */,
-				D39EF7D82C6981C500040765 /* UserProfileVM.swift in Sources */,
 				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
 				D36173262C657A240002CDED /* friendsApp.swift in Sources */,
+				D3FCD1072C6D5D8F002D4CEA /* Errors.swift in Sources */,
 				D39EF7D32C6981BD00040765 /* SignUpView.swift in Sources */,
+				D3A84B622C6D18510023500F /* EventsView.swift in Sources */,
 				D39EF7D12C6981BD00040765 /* RootView.swift in Sources */,
 				D39EF7CE2C6981BD00040765 /* CustomViews.swift in Sources */,
+				D3A84B602C6D13B60023500F /* MainView.swift in Sources */,
 				D39EF7C52C69819700040765 /* GlobalVariables.swift in Sources */,
 				D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */,
+				D3A84B642C6D18E70023500F /* MapView.swift in Sources */,
 				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,
 				D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */,
 				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,

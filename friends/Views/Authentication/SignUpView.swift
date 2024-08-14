@@ -17,7 +17,7 @@ struct SignUpView: View {
     @State private var showAlert: Bool = false
     
     // TODO: If more fields are added, adjust here.
-    private var form_valid: Bool {
+    private var isValid: Bool {
         Utilities.shared.is_valid_email(email: avm.email) &&
         Utilities.shared.is_valid_password(password: avm.pwd) &&
         avm.pwd == pwd2
@@ -54,11 +54,11 @@ extension SignUpView {
             Text("Sign Up")
                 .frame(maxWidth: .infinity)
                 .padding(5)
-                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(form_valid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(form_valid ? Color.white : Color(UIColor.systemGray))
+                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
+                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
                 .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
         }
-        .disabled(!form_valid)
+        .disabled(!isValid)
         .alert(isPresented: $showAlert) {
             Alert(title: Text("A verification link has been sent to your email."), dismissButton: .default(Text("OK")){dismiss()})
         }
