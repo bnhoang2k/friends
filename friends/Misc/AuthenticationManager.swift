@@ -109,24 +109,56 @@ extension AuthenticationManager {
     
     func updateEmail(newEmail: String, pwd: String) async throws {
         guard let user = Auth.auth().currentUser else {
-            // TODO: Create error.
-            throw URLError(.badServerResponse)
+            print("AuthenticationManager: No user signed in.")
+            throw AuthError.noUserSignedIn
         }
-        guard let email = user.email else {return}
+
+        guard let email = user.email else {
+            print("AuthenticationManager: User has no email.")
+            throw AuthError.noUserSignedIn
+        }
+
         let credential = EmailAuthProvider.credential(withEmail: email, password: pwd)
-        try await user.reauthenticate(with: credential)
-        try await user.updateEmail(to: newEmail)
+
+        do {
+            try await user.reauthenticate(with: credential)
+        } catch {
+            print("AuthenticationManager: Reauthentication failed.")
+            throw AuthError.reauthenticationFailed
+        }
+
+        do {
+            try await user.sendEmailVerification(beforeUpdatingEmail: newEmail)
+        } catch {
+            print("AuthenticationManager: Failed to update email.")
+            throw AuthError.updateEmailFailed
+        }
     }
     
     func updatePassword(email: String, pwd: String, pwdN: String) async throws {
         guard let user = Auth.auth().currentUser else {
-            // TODO: Create actual errors.
-            throw URLError(.badServerResponse)
+            print("AuthenticationManager: No user signed in.")
+            throw AuthError.noUserSignedIn
         }
-        guard let email = user.email else {return}
+        guard let email = user.email else {
+            print("AuthenticationManager: User has no email.")
+            throw AuthError.noUserSignedIn
+        }
         let credential = EmailAuthProvider.credential(withEmail: email, password: pwd)
-        try await user.reauthenticate(with: credential)
-        try await user.updatePassword(to: pwdN)
+        
+        do {
+            try await user.reauthenticate(with: credential)
+        } catch {
+            print("AuthenticationManager: Reauthentication failed.")
+            throw AuthError.reauthenticationFailed
+        }
+        
+        do {
+            try await user.updatePassword(to: pwdN)
+        } catch {
+            print("AuthenticationManager: Failed to update email.")
+            throw AuthError.updatePasswordFailed
+        }
     }
     
     func deleteUser() async throws {
