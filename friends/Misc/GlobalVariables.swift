@@ -25,5 +25,8 @@ final class GlobalVariables {
     let MED_ANIM_DUR: CGFloat = 0.35
     
     let APP_FONT = "Avenir Next"
+    let textBody: CGFloat = 15
+    let textHeader: CGFloat = 25
+    let textTitle: CGFloat = 35
     
 }
