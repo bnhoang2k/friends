@@ -10,21 +10,37 @@ import SwiftUI
 struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
+    @State private var isLoading: Bool = true
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section{
-                    userInfo
+        if isLoading {
+            ProgressView()
+                .task {
+                    isLoading = true
+                    do {
+                        try await avm.loadCurrentUser()
+                        isLoading = false
+                    } catch {
+                        print("Error refreshing user information.")
+                        isLoading = true
+                    }
                 }
-                Section{
-                    logoutButton
+        }
+        else {
+            NavigationStack {
+                List {
+                    Section{
+                        userInfo
+                    }
+                    Section{
+                        logoutButton
+                    }
                 }
+                .padding(.top, 1) // Prevents scroll past camera
+                .listRowInsets(EdgeInsets())
+                //            .scrollContentBackground(.hidden)
+                .listStyle(.grouped)
             }
-            .padding(.top, 1) // Prevents scroll past camera
-            .listRowInsets(EdgeInsets())
-//            .scrollContentBackground(.hidden)
-            .listStyle(.grouped)
         }
     }
 }
@@ -55,6 +71,7 @@ extension UserProfileView {
             Task {
                 do {
                     try avm.signOut()
+                    avm.resetFields()
                     avm.showSignInView = true
                 } catch {
                     print("Log Out Fail")

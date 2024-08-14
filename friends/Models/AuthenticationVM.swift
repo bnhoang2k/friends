@@ -105,6 +105,7 @@ extension AuthenticationVM {
     }
 }
 
+// MARK: Updating user information
 extension AuthenticationVM {
     func updateUsername(newUsername: String) async throws {
         guard let newUser = user?.updateUsername(newUsername: newUsername) else {
@@ -143,5 +144,7 @@ extension AuthenticationVM {
     func resetFields() {
         email = ""
         pwd = ""
+        user = nil
+        authProviders = []
     }
 }
