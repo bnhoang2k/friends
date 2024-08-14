@@ -47,7 +47,24 @@ struct DBUser: Codable {
         self.fullName = auth.fullName
     }
     
-    // TODO: Get update email working and add this.
+    func updateUsername(newUsername: String) -> DBUser {
+        return DBUser(uid: uid,
+                      dateCreated: dateCreated,
+                      username: newUsername,
+                      email: email,
+                      photoURL: photoURL,
+                      fullName: fullName)
+    }
+    
+    func updateFN(newFN: String) -> DBUser {
+        return DBUser(uid: uid,
+                      dateCreated: dateCreated,
+                      username: username,
+                      email: email,
+                      photoURL: photoURL,
+                      fullName: newFN)
+    }
+    
     func updateEmail(newEmail: String) -> DBUser {
         return DBUser(uid: uid,
                       dateCreated: dateCreated,
@@ -56,7 +73,6 @@ struct DBUser: Codable {
                       photoURL: photoURL,
                       fullName: fullName)
     }
-
 }
 
 final class UserManager {
@@ -99,5 +115,26 @@ extension UserManager {
     func doesUserExist(uid: String) async throws -> Bool {
         let document = try await userDocument(uid: uid).getDocument()
         return document.exists
+    }
+    
+    func updateUsername(user: DBUser) async throws {
+        let data: [String:Any] = [
+            "username" : user.username ?? "USERNAME ERROR"
+        ]
+        try await userDocument(uid: user.uid).updateData(data)
+    }
+    
+    func updateFN(user: DBUser) async throws {
+        let data: [String:Any] = [
+            "full_name" : user.fullName ?? "FULLNAME ERROR"
+        ]
+        try await userDocument(uid: user.uid).updateData(data)
+    }
+    
+    func updateEmail(user: DBUser) async throws {
+        let data: [String:Any] = [
+            "email" : user.email ?? "EMAIL ERROR"
+        ]
+        try await userDocument(uid: user.uid).updateData(data)
     }
 }
