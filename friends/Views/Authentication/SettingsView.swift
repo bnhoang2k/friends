@@ -19,12 +19,12 @@ struct SettingsView: View {
                     updateUsername
                     updateFName
                 }
-//                if avm.authProviders.contains(.email) {
+                if avm.authProviders.contains(.email) {
                     Section("Security") {
                         updateEmail
                         updatePassword
                     }
-//                }
+                }
                 Section("Misc.") {
                     deleteAccountButton
                 }
