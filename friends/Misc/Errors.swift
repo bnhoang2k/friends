@@ -12,4 +12,6 @@ enum AuthError: Error {
     case reauthenticationFailed
     case updateEmailFailed
     case updatePasswordFailed
+    case noDisplayNameFound
+    case getProvidersFailed
 }

@@ -62,6 +62,7 @@ final class AuthenticationManager {
         return Auth.auth().currentUser != nil
     }
     
+    // Special sign-in function for Google and Apple
     func signIn(credential: AuthCredential) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(with: credential)
         return AuthDataResultModel(user: authDataResult.user)
@@ -69,8 +70,7 @@ final class AuthenticationManager {
     
     func getProviders() throws -> [authProviderOption] {
         guard let providerData = Auth.auth().currentUser?.providerData else {
-            // TODO: Create error.
-            throw URLError(.badServerResponse)
+            throw AuthError.getProvidersFailed
         }
         
         var providers: [authProviderOption] = []
@@ -112,21 +112,21 @@ extension AuthenticationManager {
             print("AuthenticationManager: No user signed in.")
             throw AuthError.noUserSignedIn
         }
-
+        
         guard let email = user.email else {
             print("AuthenticationManager: User has no email.")
             throw AuthError.noUserSignedIn
         }
-
+        
         let credential = EmailAuthProvider.credential(withEmail: email, password: pwd)
-
+        
         do {
             try await user.reauthenticate(with: credential)
         } catch {
             print("AuthenticationManager: Reauthentication failed.")
             throw AuthError.reauthenticationFailed
         }
-
+        
         do {
             try await user.sendEmailVerification(beforeUpdatingEmail: newEmail)
         } catch {
@@ -174,15 +174,16 @@ extension AuthenticationManager {
 extension AuthenticationManager {
     @discardableResult
     func signInGoogle() async throws -> AuthDataResultModel {
-        let tokens = try await SignInGoogleHelper().signIn()
-        let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
+        let googleSignInResult = try await SignInGoogleHelper().signIn()
+        let credential = GoogleAuthProvider.credential(withIDToken: googleSignInResult.idToken,
+                                                       accessToken: googleSignInResult.accessToken)
         return try await signIn(credential: credential)
     }
     @discardableResult
-    func signInApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel {
+    func signInApple(signInAppleResult: SignInWithAppleResult) async throws -> AuthDataResultModel {
         let credential = OAuthProvider.credential(withProviderID: authProviderOption.apple.rawValue,
-                                                  idToken: tokens.token,
-                                                  rawNonce: tokens.nonce)
+                                                  idToken: signInAppleResult.token,
+                                                  rawNonce: signInAppleResult.nonce)
         return try await signIn(credential: credential)
     }
 }
