@@ -33,10 +33,10 @@ final class SignInGoogleHelper {
         // TODO: Do we want to store the name and email in the tokens? or put them somewhere else to access within the view a lot easier?
         let name = gidSignInResult.user.profile?.name
         let email = gidSignInResult.user.profile?.email
-        let tokens = GoogleSignInResultModel(idToken: idToken,
+        let googleSignInResult = GoogleSignInResultModel(idToken: idToken,
                                              accessToken: accessToken,
                                              name: name,
                                              email: email)
-        return tokens
+        return googleSignInResult
     }
 }

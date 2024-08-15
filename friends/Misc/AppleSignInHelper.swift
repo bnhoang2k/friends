@@ -132,12 +132,12 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
         
         let email = appleIDCredential.email
         
-        let tokens = SignInWithAppleResult(token: idToken,
+        let appleSignInResult = SignInWithAppleResult(token: idToken,
                                            nonce: nonce,
                                            name: name,
                                            email: email)
         
-        completionHandler?(.success(tokens))
+        completionHandler?(.success(appleSignInResult))
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
