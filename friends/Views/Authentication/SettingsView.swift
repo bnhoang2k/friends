@@ -29,11 +29,11 @@ struct SettingsView: View {
                     deleteAccountButton
                 }
             }
-            .font(.custom(GlobalVariables.shared.APP_FONT,
-                          size: GlobalVariables.shared.textBody))
             .listRowInsets(EdgeInsets())
             .listStyle(.grouped )
         }
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
         .task {
             do {

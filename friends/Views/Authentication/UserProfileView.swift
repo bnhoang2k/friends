@@ -10,7 +10,8 @@ import SwiftUI
 struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
-    @State private var isLoading: Bool = true
+    @Environment(\.colorScheme) private var colorScheme
+    @State var isLoading: Bool = true
     
     var body: some View {
         if isLoading {
@@ -28,19 +29,14 @@ struct UserProfileView: View {
         }
         else {
             NavigationStack {
-                List {
-                    Section{
-                        userInfo
-                    }
-                    Section{
-                        logoutButton
-                    }
+                VStack {
+                    userInfo
+                    logoutButton
+                    Spacer()
                 }
-                .padding(.top, 1) // Prevents scroll past camera
-                .listRowInsets(EdgeInsets())
-                //            .scrollContentBackground(.hidden)
-                .listStyle(.grouped)
+                .padding()
             }
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
         }
     }
 }
@@ -63,7 +59,9 @@ extension UserProfileView {
                 }
                 .padding([.leading])
                 Spacer()
+                Image(systemName: "chevron.right")
             }
+            .foregroundStyle(.black)
         }
     }
     private var logoutButton: some View {
@@ -83,7 +81,12 @@ extension UserProfileView {
                 Text("Log Out")
                 Spacer()
             }
-            .padding([.top, .bottom], 5)
+            .padding(10)
+            .background(
+                        RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
+                            .fill(Color(UIColor.secondarySystemBackground))
+                    )
+//            .padding([.top, .bottom], 5)
         }
         .buttonStyle(.borderless)
     }
@@ -92,7 +95,7 @@ extension UserProfileView {
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            UserProfileView()
+            UserProfileView(isLoading: false)
                 .environmentObject(AuthenticationVM())
         }
     }

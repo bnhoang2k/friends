@@ -134,8 +134,8 @@ extension AuthenticationVM {
     
     func signInApple() async throws {
         let helper = SignInAppleHelper()
-        let tokens = try await helper.signInApple()
-        try await AuthenticationManager.shared.signInApple(tokens: tokens)
+        let appleSignInResult = try await helper.signInApple()
+        try await AuthenticationManager.shared.signInApple(signInAppleResult: appleSignInResult)
     }
 }
 
