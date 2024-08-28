@@ -31,18 +31,18 @@ struct MainView: View {
                     Image(systemName: "calendar")
                 }
                 .tag(0)
-            MapView()
-                .tabItem {
-                    Image(systemName: "map")
-                }
-                .tag(1)
-            UserProfileView()
-                .tabItem {
-                    Image(systemName: "person")
-                }
-                .tag(2)
         }
-        .foregroundColor(.primary)
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    Text("bruh")
+                } label: {
+                    // TODO: Display User Picture Instead
+                    Image(systemName: "person.fill")
+                        .padding([.trailing])
+                }
+            }
+        })
     }
 }
 

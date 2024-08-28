@@ -27,8 +27,10 @@ struct RootView: View {
                         .environmentObject(avm)
                 }
                 else {
-                    MainView()
-                        .environmentObject(avm)
+                    NavigationStack {
+                        MainView()
+                            .environmentObject(avm)
+                    }
                 }
             }
         }
