@@ -21,3 +21,13 @@ Authentication is a critical component of any application, ensuring secure and s
 <p align = "center">
 <img src="GitHub%20Resources/App%20Screenshots/Loading%20Screen.png" alt="Sign in page" width="300" style="display: block; margin: auto;" />
 </p>
+
+<p align="center">
+  <div style="display: flex; justify-content: center; gap: 10px;">
+    <img src="https://github.com/bnhoang2k/friends/blob/main/GitHub%20Resources/App%20Screenshots/Sign%20In%20Page.png" alt="Sign in page" width="300" />
+    <img src="https://github.com/bnhoang2k/friends/blob/main/GitHub%20Resources/Firebase%20Screenshots/Authentication%20Dashboard.png" alt="Firebase Authentication Dashboard" width="300" />
+  </div>
+</p>
+
+
+The Firebase Authentication dashboard provides valuable information, such as user emails, the sign-up providers they used, and account creation dates. This makes it easy for me to manage and manipulate user data effectively.
