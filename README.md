@@ -26,3 +26,19 @@ Authentication is a critical component of any application, ensuring secure and s
 </table>
 
 The Firebase Authentication dashboard provides valuable information, such as user emails, the sign-up providers they used, and account creation dates. This makes it easy for me to manage and manipulate user data effectively.
+
+### Database Management
+
+Outside of authentication, Firebase streamlines data management with Cloud Firestore. Firestore is a scalable, NoSQL cloud database that supports real-time syncing and offline capabilities, making it ideal for a social app where data must be fast and reliable. Its flexible document-based model allows for efficient data structuring, and its powerful querying capabilities enable complex data retrieval without sacrificing performance. Additionally, Firestore’s integration with Firebase Authentication simplifies securing user-specific data, ensuring that each user's information is private and accessible only to them.
+
+### Serverless LLM Hosting
+
+To integrate an LLM into the application, I explored several different routes. My priority was to keep the app fast and responsive, as I didn't want users waiting for queries to and from the LLM. With this in mind, I needed to decide where to 'host' the LLM. The options I considered included:
+
+- Swift's Core ML Framework
+- Using my server, creating an API, and reading to and from it.
+- Going serverless.
+
+| Option | Description | Pros | Cons |
+|-------------------|-------------------|-------------------|-------------------|
+|Swift's Core ML Framework | Core ML can be used to integrate machine learning models directly into the application. Core ML itself provides a unified representation for all models. The app will use Core ML APIs and user data to make predictions, train and fine-tune models, all on the device itself. | - Embeds the model directly into the app and device. <br> - Provides low latency and offline capabilities. | - Increases app size significantly. <br> Device limitations can impact model size, speed, and accuracy. <br> - Limited computational resources compared to server-based solutions. |
