@@ -21,13 +21,11 @@ final class SignInGoogleHelper {
     @MainActor
     func signIn() async throws -> GoogleSignInResultModel {
         guard let topVC = Utilities.shared.topViewController() else {
-            // TODO: Make an actual error here.
-            throw URLError(.cannotFindHost)
+            throw AuthError.findVCFailed
         }
         let gidSignInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: topVC)
         guard let idToken = gidSignInResult.user.idToken?.tokenString else {
-            // TODO: Make an actual error here.
-            throw URLError(.cannotFindHost)
+            throw AuthError.findTokenFailed
         }
         let accessToken = gidSignInResult.user.accessToken.tokenString
         // TODO: Do we want to store the name and email in the tokens? or put them somewhere else to access within the view a lot easier?

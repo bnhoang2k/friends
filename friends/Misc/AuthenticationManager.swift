@@ -163,8 +163,7 @@ extension AuthenticationManager {
     
     func deleteUser() async throws {
         guard let user = Auth.auth().currentUser else {
-            // TODO: Create actual errors.
-            throw URLError(.badServerResponse)
+            throw AuthError.deleteUserFailed
         }
         try await user.delete()
     }

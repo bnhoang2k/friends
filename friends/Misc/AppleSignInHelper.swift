@@ -74,8 +74,7 @@ final class SignInAppleHelper: NSObject {
     func startSignInWithAppleFlow(completion: @escaping(Result<SignInWithAppleResult, Error>) -> Void) {
         
         guard let topVC = Utilities.shared.topViewController() else {
-            // TODO: Create error.
-            completion(.failure(URLError(.badURL)))
+            completion(.failure(AuthError.findVCFailed))
             return
         }
         
@@ -117,8 +116,7 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
               let appleIDToken = appleIDCredential.identityToken,
               let idToken = String(data: appleIDToken, encoding: .utf8),
               let nonce = currentNonce else {
-            // TODO: make an actual error for completionHandler.
-            completionHandler?(.failure(URLError(.badServerResponse)))
+            completionHandler?(.failure(AuthError.findTokenFailed))
             print("AuthorizationController Error: Tokens")
             return
         }
@@ -141,9 +139,7 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        // Handle error.
-        // TODO: make an actual error for completionHandler.
-        completionHandler?(.failure(URLError(.badServerResponse)))
+        completionHandler?(.failure(AuthError.authorizationFailed))
         print("Sign in with Apple errored: \(error)")
     }
     
