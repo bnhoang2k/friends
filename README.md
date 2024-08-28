@@ -18,4 +18,4 @@ Firebase is Google's mobile development platform that enables quick deployment a
 
 Authentication is a critical component of any application, ensuring secure and seamless access for users. I chose Firebase Authentication because it supports various sign-in methods, including email/password, Google, and Apple, which makes onboarding flexible and user-friendly. With Firebase, I can easily manage user sessions, handle password resets, and integrate secure authentication flows with minimal setup. This not only speeds up development but also provides robust security features like OAuth tokens and multi-factor authentication, giving users peace of mind while keeping their accounts safe. Below is an image demonstrating how Firebase Authentication integrates with my Swift app:
 
-![Sign in page](GitHub Resources/App Screenshots/Loading Screen.png)
+![Sign in page](./'GitHub Resources'/'App Screenshots'/'Loading Screen.png')
