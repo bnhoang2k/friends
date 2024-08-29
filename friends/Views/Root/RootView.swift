@@ -13,7 +13,7 @@ struct RootView: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        VStack {
+        NavigationStack {
             if isLoading {
                 ProgressView()
             }
@@ -27,10 +27,8 @@ struct RootView: View {
                         .environmentObject(avm)
                 }
                 else {
-                    NavigationStack {
-                        MainView()
-                            .environmentObject(avm)
-                    }
+                    MainView()
+                        .environmentObject(avm)
                 }
             }
         }

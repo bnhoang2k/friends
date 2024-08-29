@@ -13,25 +13,23 @@ struct SettingsView: View {
     @State private var newValue: String = "" // Placeholder for changing values of fields
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section("User Information") {
-                    updateUsername
-                    updateFName
-                }
-                if avm.authProviders.contains(.email) {
-                    Section("Security") {
-                        updateEmail
-                        updatePassword
-                    }
-                }
-                Section("Misc.") {
-                    deleteAccountButton
+        List {
+            Section("User Information") {
+                updateUsername
+                updateFName
+            }
+            if avm.authProviders.contains(.email) {
+                Section("Security") {
+                    updateEmail
+                    updatePassword
                 }
             }
-            .listRowInsets(EdgeInsets())
-            .listStyle(.grouped )
+            Section("Misc.") {
+                deleteAccountButton
+            }
         }
+        .listRowInsets(EdgeInsets())
+        .listStyle(.grouped )
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
@@ -143,37 +141,35 @@ extension SettingsView {
         @State private var showAlert: Bool = false
         
         var body: some View {
-            NavigationStack {
-                VStack {
-                    CustomTF(filler_text: oldValue, text_binding: $newValue)
-                        .onAppear {
-                            $newValue.wrappedValue = oldValue
-                        }
-                        .padding([.top, .bottom, .leading], 7.5)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
-                        .padding([.bottom])
-                    Button {
-                        Task {
-                            try await onButtonTap()
-                            showAlert.toggle()
-                        }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("OK")
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
+            VStack {
+                CustomTF(filler_text: oldValue, text_binding: $newValue)
+                    .onAppear {
+                        $newValue.wrappedValue = oldValue
                     }
-                    .buttonStyle(.borderedProminent)
-                    Spacer()
+                    .padding([.top, .bottom, .leading], 7.5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1)
+                    )
+                    .padding([.bottom])
+                Button {
+                    Task {
+                        try await onButtonTap()
+                        showAlert.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("OK")
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
                 }
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-                .padding()
+                .buttonStyle(.borderedProminent)
+                Spacer()
             }
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+            .padding()
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("\(fieldName) updated successfully."), dismissButton: .default(Text("OK")){dismiss()})
             }
@@ -191,38 +187,36 @@ extension SettingsView {
         @State private var showAlert: Bool = false
         
         var body: some View {
-            NavigationStack {
-                VStack {
-                    CustomTF(filler_text: oldValue, text_binding: $newValue)
-                        .onAppear {
-                            $newValue.wrappedValue = oldValue
-                        }
-                        .padding([.top, .bottom, .leading], 7.5)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
-                        .padding([.bottom])
-                    CustomPF(filler_text: "New Password", text_binding: $pwd)
-                    Button {
-                        Task {
-                            try await onButtonTap(pwd)
-                            showAlert.toggle()
-                        }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("OK")
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
+            VStack {
+                CustomTF(filler_text: oldValue, text_binding: $newValue)
+                    .onAppear {
+                        $newValue.wrappedValue = oldValue
                     }
-                    .buttonStyle(.borderedProminent)
-                    Spacer()
+                    .padding([.top, .bottom, .leading], 7.5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1)
+                    )
+                    .padding([.bottom])
+                CustomPF(filler_text: "New Password", text_binding: $pwd)
+                Button {
+                    Task {
+                        try await onButtonTap(pwd)
+                        showAlert.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("OK")
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
                 }
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-                .padding()
+                .buttonStyle(.borderedProminent)
+                Spacer()
             }
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+            .padding()
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("An email was sent to verify the email change."), dismissButton: .default(Text("OK")){dismiss()})
             }
@@ -248,7 +242,6 @@ extension SettingsView {
         }
         
         var body: some View {
-            NavigationStack {
                 VStack {
                     CustomTF(filler_text: "Enter your email", text_binding: $email)
                     CustomPF(filler_text: "Enter your old password.", text_binding: $pwd)
@@ -273,7 +266,6 @@ extension SettingsView {
                 }
                 .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
                 .padding()
-            }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Password changed successfully."), dismissButton: .default(Text("OK")){dismiss()})
             }

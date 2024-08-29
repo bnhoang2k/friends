@@ -28,14 +28,12 @@ struct UserProfileView: View {
                 }
         }
         else {
-            NavigationStack {
-                VStack {
-                    userInfo
-                    logoutButton
-                    Spacer()
-                }
-                .padding()
+            VStack {
+                userInfo
+                logoutButton
+                Spacer()
             }
+            .padding()
             .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
         }
     }
@@ -83,10 +81,10 @@ extension UserProfileView {
             }
             .padding(10)
             .background(
-                        RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
-                            .fill(Color(UIColor.secondarySystemBackground))
-                    )
-//            .padding([.top, .bottom], 5)
+                RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
+                    .fill(Color(UIColor.secondarySystemBackground))
+            )
+            //            .padding([.top, .bottom], 5)
         }
         .buttonStyle(.borderless)
     }
