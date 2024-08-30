@@ -22,6 +22,7 @@ enum AuthError: Error, LocalizedError {
     // Google and Apple
     case findVCFailed
     case findTokenFailed
+    case credentialNotFound
     
     // Apple
     case authorizationFailed
@@ -66,6 +67,9 @@ enum AuthError: Error, LocalizedError {
                                      comment: "Auth Error - Failed to find ID tokens for sign in.")
         case .authorizationFailed:
             return NSLocalizedString("Authorization controller failed.",
+                                     comment: "Auth Error - Refer to AppleSignInHelper.")
+        case .credentialNotFound:
+            return NSLocalizedString("Credential not found. failed.",
                                      comment: "Auth Error - Refer to AppleSignInHelper.")
         }
     }
