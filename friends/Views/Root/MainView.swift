@@ -41,6 +41,14 @@ struct MainView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
+                    Text("bruh")
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
                     UserProfileView().environmentObject(avm)
                 } label: {
                     // TODO: Display User Picture Instead
