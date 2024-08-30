@@ -19,16 +19,20 @@ struct RootView: View {
             }
             else {
                 if avm.showSignInView {
-                    SignInView(showSignInView: $avm.showSignInView)
-                        .environmentObject(avm)
+                    NavigationStack {
+                        SignInView(showSignInView: $avm.showSignInView)
+                            .environmentObject(avm)
+                    }
                 }
                 else if avm.showGetInformationView {
                     GetInformationView()
                         .environmentObject(avm)
                 }
                 else {
-                    MainView()
-                        .environmentObject(avm)
+                    NavigationStack {
+                        MainView()
+                            .environmentObject(avm)
+                    }
                 }
             }
         }

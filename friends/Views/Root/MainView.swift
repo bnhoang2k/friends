@@ -12,37 +12,53 @@ struct MainView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @State private var selectedTab: Int = 0
     
+    // Customize toolbar and tab bar.
     init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
+        // Customize Tab Bar Appearance
+        let tabAppearance = UITabBarAppearance()
+        tabAppearance.configureWithOpaqueBackground()
+        tabAppearance.backgroundColor = UIColor.white
+        UITabBar.appearance().standardAppearance = tabAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabAppearance
         
-        appearance.shadowImage = UIImage()
-        appearance.backgroundColor = UIColor.white
-        
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
+        // Customize Navigation Bar Appearance
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = UIColor.white
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().compactAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
     }
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            EventsView()
-                .tabItem {
-                    Image(systemName: "calendar")
-                }
-                .tag(0)
-            MapView()
-                .tabItem {
-                    Image(systemName: "map")
-                }
-                .tag(1)
-            UserProfileView()
-                .tabItem {
-                    Image(systemName: "person")
-                }
-                .tag(2)
+            List {
+                Text("bruh")
+            }
+            .tabItem {Image(systemName: "calendar")}
+            .tag(0)
+            List {
+                Text("bruh2")
+            }
+            .tabItem {Image(systemName: "calendar")}
+            .tag(1)
+            List {
+                Text("bruh3")
+            }
+            .tabItem {Image(systemName: "calendar")}
+            .tag(2)
         }
-        .foregroundColor(.primary)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    UserProfileView().environmentObject(avm)
+                } label: {
+                    // TODO: Display User Picture Instead
+                    Image(systemName: "person.fill")
+                        .padding([.trailing])
+                }
+            }
+        }
     }
 }
 

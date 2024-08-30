@@ -61,18 +61,14 @@ final class AuthenticationVM: ObservableObject {
 extension AuthenticationVM {
     func signUp() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
-            // TODO: Create error logs.
-            // TODO: Can add checks for valid email address here.
-            print("No email or password found.")
-            return
+            throw AuthError.parametersNULL
         }
         try await AuthenticationManager.shared.createUser(email: email, pwd: pwd)
     }
     
     func signIn() async throws {
         guard !email.isEmpty, !pwd.isEmpty else {
-            print("No email or password found.")
-            return
+            throw AuthError.parametersNULL
         }
         try await AuthenticationManager.shared.signInUser(email: email, pwd: pwd)
     }
@@ -84,9 +80,7 @@ extension AuthenticationVM {
     func updateEmail(newEmail: String, pwd: String) async throws {
         try await AuthenticationManager.shared.updateEmail(newEmail: newEmail, pwd: pwd)
         guard let newUser = user?.updateEmail(newEmail: newEmail) else {
-            // TODO: Add actual errors
-            print("Error creating new user for updating email.")
-            return
+            throw AuthError.updateEmailFailed
         }
         try await UserManager.shared.updateEmail(user: newUser)
     }
@@ -98,8 +92,7 @@ extension AuthenticationVM {
     func resetPassword() async throws {
         let authUserData = try AuthenticationManager.shared.getAuthenticatedUserData()
         guard let email = authUserData.email else {
-            // TODO: Create custom error for this.
-            throw URLError(.fileDoesNotExist)
+            throw AuthError.parametersNULL
         }
         try await AuthenticationManager.shared.resetPassword(email: email)
     }
@@ -109,18 +102,14 @@ extension AuthenticationVM {
 extension AuthenticationVM {
     func updateUsername(newUsername: String) async throws {
         guard let newUser = user?.updateUsername(newUsername: newUsername) else {
-            // TODO: Get actual errors.
-            print("AuthenticationVM: Error updating username.")
-            return
+            throw AuthError.updateUsernameFailed
         }
         try await UserManager.shared.updateUsername(user: newUser)
     }
     
     func updateFName(newFN: String) async throws {
         guard let newUser = user?.updateFN(newFN: newFN) else {
-            // TODO: Get actual errors.
-            print("Authentication VM: Error updating full name.")
-            return
+            throw AuthError.updateFNFailed
         }
         try await UserManager.shared.updateFN(user: newUser)
     }

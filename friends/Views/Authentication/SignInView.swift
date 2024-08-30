@@ -24,23 +24,22 @@ struct SignInView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                Spacer()
-                logo
-                    .frame(alignment: .centerLastTextBaseline)
-                login_email
-                login_button
-                Spacer()
-                googleButton
-                appleButton
-                su_email
-                // TODO: Add a "Forgot Password?" View to send a password reset.
-            }
-            .frame(width: 300)
-            .id(color_scheme)
-            .onAppear {avm.resetFields()}
+        VStack {
+            Spacer()
+            logo
+                .frame(alignment: .centerLastTextBaseline)
+            login_email
+            login_button
+            Spacer()
+            googleButton
+            appleButton
+            su_email
+            // TODO: Add a "Forgot Password?" View to send a password reset.
         }
+        .frame(width: 300)
+        .id(color_scheme)
+        .onAppear {avm.resetFields()}
+        
     }
 }
 extension SignInView {

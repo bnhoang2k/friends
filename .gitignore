@@ -1,2 +1,11 @@
 
 .DS_Store
+README.md
+*.xcuserstate
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+*.xcworkspacedata
+DerivedData/
+.idea/
+*.xcodeproj/project.xcworkspace/
