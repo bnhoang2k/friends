@@ -133,7 +133,7 @@ extension SettingsView {
                     )
                 Spacer()
             }
-            .padding([.leading, .trailing])
+            .padding(.all)
         }
         .buttonStyle(.borderless)
     }
