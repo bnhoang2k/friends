@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseAuth
-import AuthenticationServices
 
 // Sign-in Method: Email/Password
 // adr = AuthDataResult
@@ -63,7 +62,7 @@ final class AuthenticationManager {
     }
     
     // Special sign-in function for Google and Apple
-    func signIn(credential: AuthCredential) async throws -> AuthDataResultModel {
+    func signInWithCredential(credential: AuthCredential) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(with: credential)
         return AuthDataResultModel(user: authDataResult.user)
     }
@@ -160,13 +159,6 @@ extension AuthenticationManager {
             throw AuthError.updatePasswordFailed
         }
     }
-    
-    func deleteUser() async throws {
-        guard let user = Auth.auth().currentUser else {
-            throw AuthError.deleteUserFailed
-        }
-        try await user.delete()
-    }
 }
 
 // MARK: Other sign-in method functions
@@ -176,13 +168,32 @@ extension AuthenticationManager {
         let googleSignInResult = try await SignInGoogleHelper().signIn()
         let credential = GoogleAuthProvider.credential(withIDToken: googleSignInResult.idToken,
                                                        accessToken: googleSignInResult.accessToken)
-        return try await signIn(credential: credential)
+        return try await signInWithCredential(credential: credential)
     }
     @discardableResult
     func signInApple(signInAppleResult: SignInWithAppleResult) async throws -> AuthDataResultModel {
         let credential = OAuthProvider.credential(withProviderID: authProviderOption.apple.rawValue,
                                                   idToken: signInAppleResult.token,
                                                   rawNonce: signInAppleResult.nonce)
-        return try await signIn(credential: credential)
+        return try await signInWithCredential(credential: credential)
+    }
+}
+
+// MARK: Reauthenticate functions; needed for deleting users
+extension AuthenticationManager {
+    func deleteUser(authProviders: [authProviderOption]) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.noUserSignedIn
+        }
+        if authProviders.contains(.apple) {
+            let credential = try await SignInAppleHelper().getAppleCredential()
+            try await user.reauthenticate(with: credential.0)
+            try await Auth.auth().revokeToken(withAuthorizationCode: credential.1)
+        }
+        else if authProviders.contains(.gmail) {
+            let credential = try await SignInGoogleHelper().getGoogleCredential()
+            try await user.reauthenticate(with: credential)
+        }
+        try await user.delete()
     }
 }

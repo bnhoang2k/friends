@@ -11,6 +11,7 @@
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
 		D36173342C657A3B0002CDED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D36173332C657A3B0002CDED /* GoogleService-Info.plist */; };
+		D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39960DA2C82667800A641E6 /* TestFunctions.swift */; };
 		D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */; };
 		D39EF7C22C69819700040765 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BD2C69819700040765 /* Utilities.swift */; };
 		D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BE2C69819700040765 /* AuthenticationManager.swift */; };
@@ -44,6 +45,7 @@
 		D361732C2C657A240002CDED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D36173332C657A3B0002CDED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D390C6132C66EFB7008BC14B /* friends.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = friends.entitlements; sourceTree = "<group>"; };
+		D39960DA2C82667800A641E6 /* TestFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFunctions.swift; sourceTree = "<group>"; };
 		D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSignInHelper.swift; sourceTree = "<group>"; };
 		D39EF7BD2C69819700040765 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		D39EF7BE2C69819700040765 /* AuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 			children = (
 				D39EF7CB2C6981BD00040765 /* RootView.swift */,
 				D3A84B5F2C6D13B60023500F /* MainView.swift */,
+				D39960DA2C82667800A641E6 /* TestFunctions.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 				D3FCD1092C6E9B27002D4CEA /* MapVM.swift in Sources */,
 				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,
 				D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */,
+				D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */,
 				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

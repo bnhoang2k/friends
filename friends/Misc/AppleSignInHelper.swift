@@ -9,12 +9,14 @@ import Foundation
 import SwiftUI
 import CryptoKit
 import AuthenticationServices
+import FirebaseAuth
 
 struct SignInWithAppleResult {
     let token: String
     let nonce: String
     let name: String?
     let email: String?
+    let authorizationCodeString: String?
 }
 
 struct SignInWithAppleButtonViewRepresentable: UIViewRepresentable {
@@ -37,6 +39,8 @@ final class SignInAppleHelper: NSObject {
     private var currentNonce: String?
     
     private var completionHandler: ((Result<SignInWithAppleResult, Error>) -> Void)? = nil
+    
+    private var continuation: CheckedContinuation<ASAuthorizationAppleIDCredential, Error>?
     
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
@@ -127,13 +131,14 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
             let familyName = fullName.familyName ?? ""
             name = "\(givenName) \(familyName)"
         }
-        
         let email = appleIDCredential.email
-        
+        guard let authorizationCode = appleIDCredential.authorizationCode else {return}
+        guard let authCodeString = String(data: authorizationCode, encoding: .utf8) else {return}
         let appleSignInResult = SignInWithAppleResult(token: idToken,
-                                           nonce: nonce,
-                                           name: name,
-                                           email: email)
+                                                      nonce: nonce,
+                                                      name: name,
+                                                      email: email,
+                                                      authorizationCodeString: authCodeString)
         
         completionHandler?(.success(appleSignInResult))
     }
@@ -142,7 +147,20 @@ extension SignInAppleHelper: ASAuthorizationControllerDelegate {
         completionHandler?(.failure(AuthError.authorizationFailed))
         print("Sign in with Apple errored: \(error)")
     }
-    
+}
+
+extension SignInAppleHelper {
+    func getAppleCredential() async throws -> (AuthCredential, String) {
+        let signInAppleResult = try await signInApple()
+        
+        let credential = OAuthProvider.credential(withProviderID: authProviderOption.apple.rawValue,
+                                                  idToken: signInAppleResult.token,
+                                                  rawNonce: signInAppleResult.nonce)
+        guard let authorizationCodeString: String = signInAppleResult.authorizationCodeString else {
+            throw AuthError.authorizationFailed
+        }
+        return (credential, authorizationCodeString)
+    }
 }
 
 extension UIViewController: ASAuthorizationControllerPresentationContextProviding {

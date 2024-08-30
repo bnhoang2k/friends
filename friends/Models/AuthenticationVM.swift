@@ -53,7 +53,7 @@ final class AuthenticationVM: ObservableObject {
     }
     
     func deleteUser() async throws {
-        try await AuthenticationManager.shared.deleteUser()
+        try await AuthenticationManager.shared.deleteUser(authProviders: authProviders)
     }
 }
 

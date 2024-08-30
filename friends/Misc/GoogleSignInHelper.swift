@@ -8,6 +8,7 @@
 import Foundation
 import GoogleSignIn
 import GoogleSignInSwift
+import FirebaseAuth
 
 struct GoogleSignInResultModel {
     let idToken: String
@@ -36,5 +37,13 @@ final class SignInGoogleHelper {
                                              name: name,
                                              email: email)
         return googleSignInResult
+    }
+    @MainActor
+    func getGoogleCredential() async throws -> AuthCredential {
+        guard let idToken = GIDSignIn.sharedInstance.currentUser?.idToken,
+              let accessToken = GIDSignIn.sharedInstance.currentUser?.accessToken else {
+            throw AuthError.findTokenFailed
+        }
+        return GoogleAuthProvider.credential(withIDToken: idToken.tokenString, accessToken: accessToken.tokenString)
     }
 }
