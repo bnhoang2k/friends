@@ -111,7 +111,7 @@ struct DummyListSections: View {
                 HStack {
                     Text("Fruit \(index + 1)")
                 }
-                .padding()
+                .padding([.leading])
             }
         }
         
@@ -120,7 +120,7 @@ struct DummyListSections: View {
                 HStack {
                     Text("Vegetable \(index + 1)")
                 }
-                .padding()
+                .padding([.leading])
             }
         }
         
@@ -129,7 +129,7 @@ struct DummyListSections: View {
                 HStack {
                     Text("Dairy Product \(index + 1)")
                 }
-                .padding()
+                .padding([.leading])
             }
         }
     }

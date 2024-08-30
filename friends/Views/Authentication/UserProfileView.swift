@@ -30,15 +30,8 @@ struct UserProfileView: View {
         else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
-                    Section {
+                    Section(header: HeaderView(headerText: "User Information")) {
                         userInfo
-                    } header: {
-                        Text("User Information")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                            .background(Color.white) // Ensure the header has a solid background
-                            .zIndex(1) // Ensure the header stays above the scrolling content
                     }
                     DummyListSections()
                     logoutButton
@@ -100,6 +93,7 @@ extension UserProfileView {
                     )
                 Spacer()
             }
+            .padding()
         }
         .buttonStyle(.borderless)
     }
