@@ -85,7 +85,6 @@ extension UserProfileView {
                 Text("Log Out")
                 Spacer()
             }
-            .padding(10)
         }
         .buttonStyle(.borderless)
     }
