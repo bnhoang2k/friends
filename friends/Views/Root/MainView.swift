@@ -32,21 +32,9 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            List {
-                Text("bruh")
-            }
-            .tabItem {Image(systemName: "calendar")}
-            .tag(0)
-            List {
-                Text("bruh2")
-            }
-            .tabItem {Image(systemName: "calendar")}
-            .tag(1)
-            List {
-                Text("bruh3")
-            }
-            .tabItem {Image(systemName: "calendar")}
-            .tag(2)
+            DummyListWrapped()
+                .tabItem {Image(systemName: "calendar")}
+                .tag(0)
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

@@ -28,19 +28,23 @@ struct UserProfileView: View {
                 }
         }
         else {
-            List {
-                Section {
-                    userInfo
-                }
-                Section {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
+                    Section {
+                        userInfo
+                    } header: {
+                        Text("User Information")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(Color.white) // Ensure the header has a solid background
+                            .zIndex(1) // Ensure the header stays above the scrolling content
+                    }
+                    DummyListSections()
                     logoutButton
                 }
-                DummyList()
             }
-            .scrollContentBackground(.visible)
             .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-            .listRowInsets(EdgeInsets())
-            .listStyle(.insetGrouped)
             .navigationTitle("User Profile")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -65,7 +69,10 @@ extension UserProfileView {
                 }
                 .padding([.leading])
                 Spacer()
+                Image(systemName: "chevron.right")
+                    .padding([.trailing])
             }
+            .padding([.leading])
             .foregroundStyle(.black)
         }
     }
@@ -85,6 +92,12 @@ extension UserProfileView {
             HStack {
                 Spacer()
                 Text("Log Out")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
+                            .fill(Color(UIColor.secondarySystemBackground))
+                    )
                 Spacer()
             }
         }

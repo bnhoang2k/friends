@@ -13,27 +13,26 @@ struct SettingsView: View {
     @State private var newValue: String = "" // Placeholder for changing values of fields
     
     var body: some View {
-        List {
-            Section("User Information") {
-                updateUsername
-                updateFName
-            }
-            if avm.authProviders.contains(.email) {
-                Section("Security") {
-                    updateEmail
-                    updatePassword
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
+                Section(header: HeaderView(headerText: "User Information")) {
+                    updateUsername
+                    updateFName
                 }
-            }
-            DummyList()
-            Section("Misc.") {
+                if avm.authProviders.contains(.email) {
+                    Section("Security") {
+                        updateEmail
+                        updatePassword
+                    }
+                }
+                DummyListSections()
                 deleteAccountButton
             }
         }
-        .listRowInsets(EdgeInsets())
-        .listStyle(.insetGrouped)
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
                 try await avm.loadCurrentUser()
@@ -61,6 +60,7 @@ extension SettingsView {
                 LabeledContent("Username", value: avm.user?.username ?? "Username Error")
                 Spacer()
             }
+            .padding([.leading])
         }
     }
     private var updateFName: some View {
@@ -75,6 +75,7 @@ extension SettingsView {
                 LabeledContent("Full Name", value: avm.user?.fullName ?? "Full Name Error")
                 Spacer()
             }
+            .padding([.leading])
         }
     }
 }
@@ -122,9 +123,14 @@ extension SettingsView {
             HStack {
                 Spacer()
                 Text("Delete Account")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
+                            .fill(Color(UIColor.secondarySystemBackground))
+                    )
                 Spacer()
             }
-            .padding([.top, .bottom], 5)
         }
         .buttonStyle(.borderless)
     }
@@ -243,30 +249,30 @@ extension SettingsView {
         }
         
         var body: some View {
-                VStack {
-                    CustomTF(filler_text: "Enter your email", text_binding: $email)
-                    CustomPF(filler_text: "Enter your old password.", text_binding: $pwd)
-                    CustomPF(filler_text: "Enter your new password.", text_binding: $newValue)
-                    CustomPF(filler_text: "Enter your new password again.", text_binding: $newValue2)
-                    Button {
-                        Task {
-                            try await onButtonTap(email, pwd)
-                            showAlert.toggle()
-                        }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("OK")
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
+            VStack {
+                CustomTF(filler_text: "Enter your email", text_binding: $email)
+                CustomPF(filler_text: "Enter your old password.", text_binding: $pwd)
+                CustomPF(filler_text: "Enter your new password.", text_binding: $newValue)
+                CustomPF(filler_text: "Enter your new password again.", text_binding: $newValue2)
+                Button {
+                    Task {
+                        try await onButtonTap(email, pwd)
+                        showAlert.toggle()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!isValid)
-                    Spacer()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("OK")
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
                 }
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-                .padding()
+                .buttonStyle(.borderedProminent)
+                .disabled(!isValid)
+                Spacer()
+            }
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+            .padding()
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Password changed successfully."), dismissButton: .default(Text("OK")){dismiss()})
             }
