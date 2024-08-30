@@ -35,6 +35,8 @@ struct MainView: View {
             DummyListWrapped()
                 .tabItem {Image(systemName: "calendar")}
                 .tag(0)
+            TestFunctions()
+                .tabItem {Image(systemName: "wrench.and.screwdriver")}
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
