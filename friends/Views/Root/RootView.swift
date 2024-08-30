@@ -13,22 +13,26 @@ struct RootView: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        NavigationStack {
+        VStack {
             if isLoading {
                 ProgressView()
             }
             else {
                 if avm.showSignInView {
-                    SignInView(showSignInView: $avm.showSignInView)
-                        .environmentObject(avm)
+                    NavigationStack {
+                        SignInView(showSignInView: $avm.showSignInView)
+                            .environmentObject(avm)
+                    }
                 }
                 else if avm.showGetInformationView {
                     GetInformationView()
                         .environmentObject(avm)
                 }
                 else {
-                    MainView()
-                        .environmentObject(avm)
+                    NavigationStack {
+                        MainView()
+                            .environmentObject(avm)
+                    }
                 }
             }
         }
