@@ -65,7 +65,7 @@ extension UserProfileView {
                 Image(systemName: "chevron.right")
                     .padding([.trailing])
             }
-            .padding([.leading])
+            .padding(.horizontal)
             .foregroundStyle(.black)
         }
     }
@@ -86,7 +86,7 @@ extension UserProfileView {
                 Spacer()
                 Text("Log Out")
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical)
                     .background(
                         RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
                             .fill(Color(UIColor.secondarySystemBackground))

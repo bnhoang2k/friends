@@ -60,7 +60,7 @@ extension SettingsView {
                 LabeledContent("Username", value: avm.user?.username ?? "Username Error")
                 Spacer()
             }
-            .padding([.leading])
+            .padding([.leading, .trailing])
         }
     }
     private var updateFName: some View {
@@ -75,7 +75,7 @@ extension SettingsView {
                 LabeledContent("Full Name", value: avm.user?.fullName ?? "Full Name Error")
                 Spacer()
             }
-            .padding([.leading])
+            .padding([.leading, .trailing])
         }
     }
 }
@@ -94,7 +94,7 @@ extension SettingsView {
                     .foregroundColor(.black)
                 Spacer()
             }
-            .padding([.leading])
+            .padding([.leading, .trailing])
         }
     }
     private var updatePassword: some View {
@@ -126,14 +126,14 @@ extension SettingsView {
                 Spacer()
                 Text("Delete Account")
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical)
                     .background(
                         RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
                             .fill(Color(UIColor.secondarySystemBackground))
                     )
                 Spacer()
             }
-            .padding()
+            .padding([.leading, .trailing])
         }
         .buttonStyle(.borderless)
     }
