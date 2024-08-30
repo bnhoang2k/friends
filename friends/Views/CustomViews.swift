@@ -89,25 +89,60 @@ struct changeEmailView: View {
     }
 }
 
-struct DummyList: View {
+struct HeaderView: View {
+    
+    @State var headerText: String = ""
+    
     var body: some View {
-        Section(header: Text("Fruits")) {
-            Text("Apple")
-            Text("Banana")
-            Text("Orange")
+        Text(headerText)
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.white) // Ensure the header has a solid background
+            .zIndex(1) // Ensure the header stays above the scrolling content
+    }
+}
+
+struct DummyListSections: View {
+    
+    var body: some View {
+        Section(header: HeaderView(headerText: "Fruits")) {
+            ForEach(0..<10) { index in
+                HStack {
+                    Text("Fruit \(index + 1)")
+                }
+                .padding()
+            }
         }
         
-        Section(header: Text("Vegetables")) {
-            Text("Carrot")
-            Text("Broccoli")
-            Text("Lettuce")
+        Section(header: HeaderView(headerText: "Vegetables")) {
+            ForEach(0..<5) { index in
+                HStack {
+                    Text("Vegetable \(index + 1)")
+                }
+                .padding()
+            }
         }
         
-        Section(header: Text("Dairy")) {
-            Text("Milk")
-            Text("Cheese")
-            Text("Yogurt")
+        Section(header: HeaderView(headerText: "Dairy Products")) {
+            ForEach(0..<5) { index in
+                HStack {
+                    Text("Dairy Product \(index + 1)")
+                }
+                .padding()
+            }
         }
+    }
+}
+
+struct DummyListWrapped: View {
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
+                DummyListSections()
+            }
+        }
+        .navigationTitle("Dummy List")
     }
 }
 
@@ -117,6 +152,7 @@ struct CustomViews_Previews: PreviewProvider {
         @State var d2: String = ""
         //        CustomTF(filler_text: "Test", text_binding: $preview_text)
         //        CustomPF(filler_text: "test", text_binding: $preview_text)
-        changeEmailView(newEmail: $d1, pwd: $d2)
+        //        changeEmailView(newEmail: $d1, pwd: $d2)
+        DummyListWrapped()
     }
 }
