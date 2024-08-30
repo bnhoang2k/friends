@@ -75,18 +75,40 @@ struct changeEmailView: View {
     }
     
     private var okButton: some View {
-            Button {
-                
-            } label: {
-                Text("Submit")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                    .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
-                    .fontWeight(.bold)
-            }
-            .disabled(!isValid)
+        Button {
+            
+        } label: {
+            Text("Submit")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
+                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
+                .fontWeight(.bold)
         }
+        .disabled(!isValid)
+    }
+}
+
+struct DummyList: View {
+    var body: some View {
+        Section(header: Text("Fruits")) {
+            Text("Apple")
+            Text("Banana")
+            Text("Orange")
+        }
+        
+        Section(header: Text("Vegetables")) {
+            Text("Carrot")
+            Text("Broccoli")
+            Text("Lettuce")
+        }
+        
+        Section(header: Text("Dairy")) {
+            Text("Milk")
+            Text("Cheese")
+            Text("Yogurt")
+        }
+    }
 }
 
 struct CustomViews_Previews: PreviewProvider {
@@ -94,7 +116,7 @@ struct CustomViews_Previews: PreviewProvider {
         @State var d1: String = ""
         @State var d2: String = ""
         //        CustomTF(filler_text: "Test", text_binding: $preview_text)
-//        CustomPF(filler_text: "test", text_binding: $preview_text)
+        //        CustomPF(filler_text: "test", text_binding: $preview_text)
         changeEmailView(newEmail: $d1, pwd: $d2)
     }
 }

@@ -24,12 +24,13 @@ struct SettingsView: View {
                     updatePassword
                 }
             }
+            DummyList()
             Section("Misc.") {
                 deleteAccountButton
             }
         }
         .listRowInsets(EdgeInsets())
-        .listStyle(.grouped )
+        .listStyle(.insetGrouped)
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")

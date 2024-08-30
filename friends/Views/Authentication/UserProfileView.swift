@@ -35,10 +35,12 @@ struct UserProfileView: View {
                 Section {
                     logoutButton
                 }
+                DummyList()
             }
+            .scrollContentBackground(.visible)
             .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
             .listRowInsets(EdgeInsets())
-            .listStyle(.grouped )
+            .listStyle(.insetGrouped)
             .navigationTitle("User Profile")
             .navigationBarTitleDisplayMode(.inline)
         }
