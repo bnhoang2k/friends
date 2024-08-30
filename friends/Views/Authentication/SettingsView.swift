@@ -20,7 +20,7 @@ struct SettingsView: View {
                     updateFName
                 }
                 if avm.authProviders.contains(.email) {
-                    Section("Security") {
+                    Section(header: HeaderView(headerText: "Security")) {
                         updateEmail
                         updatePassword
                     }
@@ -94,6 +94,7 @@ extension SettingsView {
                     .foregroundColor(.black)
                 Spacer()
             }
+            .padding([.leading])
         }
     }
     private var updatePassword: some View {
@@ -107,6 +108,7 @@ extension SettingsView {
                     .foregroundColor(.black)
                 Spacer()
             }
+            .padding([.leading])
         }
     }
     private var deleteAccountButton: some View {
@@ -131,6 +133,7 @@ extension SettingsView {
                     )
                 Spacer()
             }
+            .padding()
         }
         .buttonStyle(.borderless)
     }
