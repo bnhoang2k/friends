@@ -64,7 +64,7 @@ extension SettingsView {
     }
     private var updateFName: some View {
         NavigationLink {
-            oneField(fieldName: "Username",
+            oneField(fieldName: "Name",
                      oldValue: avm.user?.fullName ?? "Full Name Error",
                      newValue: $newValue) {
                 try await avm.updateFName(newFN: newValue)
