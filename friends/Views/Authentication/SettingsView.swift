@@ -118,7 +118,7 @@ extension SettingsView {
                     try await avm.deleteUser()
                     avm.showSignInView = true
                 } catch {
-                    print("Delete Account Failed.")
+                    print("Error deleting user: \(error)")
                 }
             }
         } label: {
