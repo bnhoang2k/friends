@@ -28,13 +28,19 @@ struct UserProfileView: View {
                 }
         }
         else {
-            VStack {
-                userInfo
-                logoutButton
-                Spacer()
+            List {
+                Section {
+                    userInfo
+                }
+                Section {
+                    logoutButton
+                }
             }
-            .padding()
             .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+            .listRowInsets(EdgeInsets())
+            .listStyle(.grouped )
+            .navigationTitle("User Profile")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -57,7 +63,6 @@ extension UserProfileView {
                 }
                 .padding([.leading])
                 Spacer()
-                Image(systemName: "chevron.right")
             }
             .foregroundStyle(.black)
         }
@@ -69,6 +74,7 @@ extension UserProfileView {
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true
+                    print(avm.showSignInView)
                 } catch {
                     print("Log Out Fail")
                 }
@@ -80,11 +86,6 @@ extension UserProfileView {
                 Spacer()
             }
             .padding(10)
-            .background(
-                RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
-                    .fill(Color(UIColor.secondarySystemBackground))
-            )
-            //            .padding([.top, .bottom], 5)
         }
         .buttonStyle(.borderless)
     }
