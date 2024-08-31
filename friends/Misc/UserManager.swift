@@ -73,6 +73,35 @@ struct DBUser: Codable {
                       photoURL: photoURL,
                       fullName: fullName)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case uid = "uid"
+        case dateCreated = "date_created"
+        case username = "username"
+        case email = "email"
+        case photoURL = "photo_url"
+        case fullName = "full_name"
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.uid = try container.decode(String.self, forKey: .uid)
+        self.dateCreated = try container.decodeIfPresent(Date.self, forKey: .dateCreated)
+        self.username = try container.decodeIfPresent(String.self, forKey: .username)
+        self.email = try container.decodeIfPresent(String.self, forKey: .email)
+        self.photoURL = try container.decodeIfPresent(String.self, forKey: .photoURL)
+        self.fullName = try container.decodeIfPresent(String.self, forKey: .fullName)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.uid, forKey: .uid)
+        try container.encodeIfPresent(self.dateCreated, forKey: .dateCreated)
+        try container.encodeIfPresent(self.username, forKey: .username)
+        try container.encodeIfPresent(self.email, forKey: .email)
+        try container.encodeIfPresent(self.photoURL, forKey: .photoURL)
+        try container.encodeIfPresent(self.fullName, forKey: .fullName)
+    }
 }
 
 final class UserManager {
@@ -87,13 +116,13 @@ final class UserManager {
     
     private let encoder: Firestore.Encoder = {
         let encoder = Firestore.Encoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
+//        encoder.keyEncodingStrategy = .convertToSnakeCase
         return encoder
     }()
     
     private let decoder: Firestore.Decoder = {
         let decoder = Firestore.Decoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+//        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
 }

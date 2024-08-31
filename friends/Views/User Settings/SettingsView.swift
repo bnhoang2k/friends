@@ -6,15 +6,42 @@
 //
 
 import SwiftUI
+import _PhotosUI_SwiftUI
 
 struct SettingsView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @State private var newValue: String = "" // Placeholder for changing values of fields
+    @State private var presentSheet: Bool = false
+    @State private var currentPhoto: PhotosPickerItem? = nil
     
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
+                ZStack {
+                    HStack {
+                        Spacer()
+                        ImageView(urlString: avm.user?.photoURL, pictureWidth: 150)
+                        Spacer()
+                    }
+                    Circle()
+                        .fill(Color.gray.opacity(0.50))
+                        .frame(width: 150)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Spacer()
+                            Image(systemName: "pencil")
+                                .font(.largeTitle)
+                            Spacer()
+                        }
+                    }
+                }
+                .onTapGesture {
+                    presentSheet.toggle()
+                }
+                .padding(.top)
                 Section(header: HeaderView(headerText: "User Information")) {
                     updateUsername
                     updateFName
@@ -43,6 +70,27 @@ struct SettingsView: View {
         .onAppear {
             newValue = ""
         }
+        .sheet(isPresented: $presentSheet, content: {
+            VStack {
+                Spacer()
+                HStack {
+                    Label("Take photo", systemImage: "camera")
+                    Spacer()
+                }
+                .padding(.vertical)
+                PhotosPicker(selection: $currentPhoto) {
+                    HStack {
+                        Label("Choose from library", systemImage: "photo.tv")
+                        Spacer()
+                    }
+                    .padding(.vertical)
+                }
+                .foregroundColor(.primary)
+            }
+            .padding(.horizontal)
+            .presentationDetents([.fraction(0.15)])
+            .presentationDragIndicator(.visible)
+        })
     }
 }
 

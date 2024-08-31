@@ -127,6 +127,23 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		D37CC4932C82BA8F003015A9 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				D39EF7C72C6981BD00040765 /* CustomViews.swift */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
+		D37CC4942C82BAF0003015A9 /* User Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D39EF7CA2C6981BD00040765 /* UserProfileView.swift */,
+				D39EF7C92C6981BD00040765 /* SettingsView.swift */,
+			);
+			path = "User Settings";
+			sourceTree = "<group>";
+		};
 		D39EF7BB2C69819700040765 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,7 +163,8 @@
 			children = (
 				D39EF7E32C6AA7D300040765 /* Root */,
 				D39EF7C82C6981BD00040765 /* Authentication */,
-				D39EF7C72C6981BD00040765 /* CustomViews.swift */,
+				D37CC4942C82BAF0003015A9 /* User Settings */,
+				D37CC4932C82BA8F003015A9 /* Misc */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -154,8 +172,6 @@
 		D39EF7C82C6981BD00040765 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				D39EF7C92C6981BD00040765 /* SettingsView.swift */,
-				D39EF7CA2C6981BD00040765 /* UserProfileView.swift */,
 				D39EF7CC2C6981BD00040765 /* SignInView.swift */,
 				D39EF7CD2C6981BD00040765 /* SignUpView.swift */,
 				D3A84B5D2C6C13680023500F /* GetInformationView.swift */,

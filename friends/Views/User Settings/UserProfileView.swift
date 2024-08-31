@@ -51,11 +51,7 @@ extension UserProfileView {
                 .environmentObject(avm)
         } label: {
             HStack {
-                // TODO: Change to actual profile
-                Image(systemName: "person.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: GlobalVariables.shared.PROFILE_PICTUREWIDTH)
+                ImageView(urlString: avm.user?.photoURL)
                 VStack (alignment: .leading) {
                     Text(avm.user?.username ?? "Username Error")
                     Text(avm.user?.fullName ?? "Full Name Error")

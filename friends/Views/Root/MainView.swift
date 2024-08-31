@@ -45,14 +45,13 @@ struct MainView: View {
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
-
+                
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     UserProfileView().environmentObject(avm)
                 } label: {
-                    // TODO: Display User Picture Instead
-                    Image(systemName: "person.fill")
+                    ImageView(urlString: avm.user?.photoURL, pictureWidth: 25)
                         .padding([.trailing])
                 }
             }
