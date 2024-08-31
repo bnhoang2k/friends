@@ -146,13 +146,82 @@ struct DummyListWrapped: View {
     }
 }
 
+class ImageViewModel: ObservableObject {
+    @Published var image: UIImage?
+    
+    private var imageCache: NSCache<NSString, UIImage>?
+    
+    init(urlString: String?) {
+        loadImage(urlString: urlString)
+    }
+    
+    private func loadImage(urlString: String?) {
+        let urlString = urlString ?? "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg"
+        if let imageFromCache = getImageFromCache(from: urlString) {
+            self.image = imageFromCache
+            return
+        }
+        
+        loadImageFromURL(urlString: urlString)
+    }
+    
+    private func loadImageFromURL(urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard error == nil else {
+                print(error ?? "unknown error")
+                return
+            }
+            
+            guard let data = data else {
+                print("No data found")
+                return
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let loadedImage = UIImage(data: data) else { return }
+                self?.image = loadedImage
+                self?.setImageCache(image: loadedImage, key: urlString)
+            }
+        }.resume()
+    }
+    
+    private func setImageCache(image: UIImage, key: String) {
+        imageCache?.setObject(image, forKey: key as NSString)
+    }
+    
+    private func getImageFromCache(from key: String) -> UIImage? {
+        return imageCache?.object(forKey: key as NSString) as? UIImage
+    }
+}
+
+struct ImageView: View {
+    @ObservedObject private var imageViewModel: ImageViewModel
+    var pictureWidth: CGFloat = 50
+    
+    init(urlString: String?, pictureWidth: CGFloat = 50) {
+        self.pictureWidth = pictureWidth
+        imageViewModel = ImageViewModel(urlString: urlString)
+    }
+    
+    var body: some View {
+        Image(uiImage: imageViewModel.image ?? UIImage())
+            .resizable()
+            .scaledToFit()
+            .frame(width: pictureWidth)
+            .clipShape(.circle)
+    }
+}
+
 struct CustomViews_Previews: PreviewProvider {
     static var previews: some View {
         @State var d1: String = ""
         @State var d2: String = ""
-        //        CustomTF(filler_text: "Test", text_binding: $preview_text)
+                CustomTF(filler_text: "Test", text_binding: $d1)
         //        CustomPF(filler_text: "test", text_binding: $preview_text)
         //        changeEmailView(newEmail: $d1, pwd: $d2)
-        DummyListWrapped()
+        //        DummyListWrapped()
+//        ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
     }
 }
