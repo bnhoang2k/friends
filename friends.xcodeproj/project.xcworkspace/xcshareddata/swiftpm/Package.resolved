@@ -1,5 +1,5 @@
 {
-  "originHash" : "edcd0dc7f3df204cf1763b15c9f47c1fa2c6805ce6ca4ac4e680c53ed996da06",
+  "originHash" : "349ada4587ea9dbb9c91be0c5dce9993c96b3e32db9656e7ff43d34acb9f679d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -152,6 +152,15 @@
       "state" : {
         "revision" : "e17d61f26df0f0e06f58f6977ba05a097a720106",
         "version" : "1.27.1"
+      }
+    },
+    {
+      "identity" : "swiftycrop",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/benedom/SwiftyCrop",
+      "state" : {
+        "branch" : "master",
+        "revision" : "f3189b74d49db138c9a4a9982314172fff8f9251"
       }
     }
   ],

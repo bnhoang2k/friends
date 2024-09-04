@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftyCrop
 
 struct CustomTF: View {
     var filler_text: String = ""
@@ -214,14 +215,40 @@ struct ImageView: View {
     }
 }
 
+struct testSwiftyCropView: View {
+    @State private var showSheet: Bool = false
+    var body: some View {
+        ScrollView {
+            LazyVStack {
+                ZStack {
+                    Button("Open sheet") {
+                        showSheet.toggle()
+                    }
+                }
+                .padding(.top)
+            }
+        }
+        .fullScreenCover(isPresented: $showSheet, content: {
+            SwiftyCropView(imageToCrop: Utilities.shared.generateTestUIImage(), maskShape: .circle) { person in
+                print("xd")
+            }
+        })
+        .navigationTitle("Profile Settings")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 struct CustomViews_Previews: PreviewProvider {
     static var previews: some View {
         @State var d1: String = ""
         @State var d2: String = ""
-                CustomTF(filler_text: "Test", text_binding: $d1)
+        //                CustomTF(filler_text: "Test", text_binding: $d1)
         //        CustomPF(filler_text: "test", text_binding: $preview_text)
         //        changeEmailView(newEmail: $d1, pwd: $d2)
         //        DummyListWrapped()
-//        ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
+        //        ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
+        NavigationStack {
+            testSwiftyCropView()
+        }
     }
 }

@@ -50,4 +50,39 @@ final class Utilities {
         return controller
     }
     
+    func generateTestUIImage() -> UIImage {
+        let size = CGSize(width: 400, height: 400)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        let image = renderer.image { context in
+            let rect = CGRect(origin: .zero, size: size)
+            
+            // Gradient background
+            let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                      colors: [UIColor.red.cgColor, UIColor.blue.cgColor] as CFArray,
+                                      locations: [0, 1])!
+            context.cgContext.drawLinearGradient(gradient,
+                                                 start: CGPoint(x: 0, y: 0),
+                                                 end: CGPoint(x: size.width, y: size.height),
+                                                 options: [])
+            
+            // Add some text overlay
+            let text = "Test Image"
+            let textAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.boldSystemFont(ofSize: 40),
+                .foregroundColor: UIColor.white
+            ]
+            
+            let textSize = text.size(withAttributes: textAttributes)
+            let textRect = CGRect(x: (size.width - textSize.width) / 2,
+                                  y: (size.height - textSize.height) / 2,
+                                  width: textSize.width,
+                                  height: textSize.height)
+            
+            text.draw(in: textRect, withAttributes: textAttributes)
+        }
+        
+        return image
+    }
+
 }

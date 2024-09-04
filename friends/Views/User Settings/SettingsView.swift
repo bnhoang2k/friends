@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
-import _PhotosUI_SwiftUI
+import PhotosUI
+import SwiftyCrop
 
 struct SettingsView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
-    @State private var newValue: String = "" // Placeholder for changing values of fields
-    @State private var presentSheet: Bool = false
-    @State private var currentPhoto: PhotosPickerItem? = nil
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var showImageOptions: Bool = false
+    @State private var selectedPhoto: PhotosPickerItem? = nil
+    @State private var selectedUIImage: UIImage? = nil
+    
+    @State private var showImageCropper: Bool = false
     
     var body: some View {
         ScrollView {
@@ -24,9 +29,6 @@ struct SettingsView: View {
                         ImageView(urlString: avm.user?.photoURL, pictureWidth: 150)
                         Spacer()
                     }
-                    Circle()
-                        .fill(Color.gray.opacity(0.50))
-                        .frame(width: 150)
                     VStack {
                         Spacer()
                         HStack {
@@ -38,127 +40,83 @@ struct SettingsView: View {
                         }
                     }
                 }
-                .onTapGesture {
-                    presentSheet.toggle()
-                }
+                .onTapGesture {showImageOptions.toggle()}
                 .padding(.top)
-                Section(header: HeaderView(headerText: "User Information")) {
-                    updateUsername
-                    updateFName
-                }
-                if avm.authProviders.contains(.email) {
-                    Section(header: HeaderView(headerText: "Security")) {
-                        updateEmail
-                        updatePassword
-                    }
-                }
-                DummyListSections()
                 deleteAccountButton
             }
         }
-        .font(.custom(GlobalVariables.shared.APP_FONT,
-                      size: GlobalVariables.shared.textBody))
+        .task {
+            do {try await avm.loadCurrentUser()}
+            catch {print("Error refreshing user information.")}
+        }
+        .sheet(isPresented: $showImageOptions, onDismiss: {
+            if selectedUIImage != nil {
+                showImageCropper.toggle()
+            }
+        }, content: {
+            ImageOptionsView(selectedPhoto: $selectedPhoto,
+                             selectedUIImage: $selectedUIImage,
+                             showImageCropper: $showImageCropper)
+        })
+        .fullScreenCover(isPresented: $showImageCropper, content: {
+            SwiftyCropView(imageToCrop: selectedUIImage ?? Utilities.shared.generateTestUIImage(), maskShape: .circle) { newImage in
+                
+            }
+        })
+        .onChange(of: selectedPhoto) { newPhoto in
+            if let newPhoto {
+                Task {
+                    if let image = await loadImage(from: newPhoto) {
+                        selectedUIImage = image
+                        selectedPhoto = nil
+                    }
+                }
+            }
+        }
+        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            do {
-                try await avm.loadCurrentUser()
-            } catch {
-                print("Error refreshing user information.")
-            }
-        }
-        .onAppear {
-            newValue = ""
-        }
-        .sheet(isPresented: $presentSheet, content: {
-            VStack {
-                Spacer()
-                HStack {
-                    Label("Take photo", systemImage: "camera")
-                    Spacer()
-                }
-                .padding(.vertical)
-                PhotosPicker(selection: $currentPhoto) {
-                    HStack {
-                        Label("Choose from library", systemImage: "photo.tv")
-                        Spacer()
-                    }
-                    .padding(.vertical)
-                }
-                .foregroundColor(.primary)
-            }
-            .padding(.horizontal)
-            .presentationDetents([.fraction(0.15)])
-            .presentationDragIndicator(.visible)
-        })
     }
 }
 
-// MARK: Non. Auth provider dependent.
-extension SettingsView {
-    private var updateUsername: some View {
-        NavigationLink {
-            oneField(fieldName: "Username",
-                     oldValue: avm.user?.username ?? "Username Error",
-                     newValue: $newValue) {
-                try await avm.updateUsername(newUsername: newValue)
-            }
-        } label: {
+private struct ImageOptionsView: View {
+    
+    @Environment(\.dismiss) private var dismiss
+    @Binding var selectedPhoto: PhotosPickerItem?
+    @Binding var selectedUIImage: UIImage?
+    @Binding var showImageCropper: Bool
+    
+    var body: some View {
+        VStack {
             HStack {
-                LabeledContent("Username", value: avm.user?.username ?? "Username Error")
+                Label("Take a photo", systemImage: "camera")
                 Spacer()
             }
-            .padding([.leading, .trailing])
-        }
-    }
-    private var updateFName: some View {
-        NavigationLink {
-            oneField(fieldName: "Name",
-                     oldValue: avm.user?.fullName ?? "Full Name Error",
-                     newValue: $newValue) {
-                try await avm.updateFName(newFN: newValue)
-            }
-        } label: {
-            HStack {
-                LabeledContent("Full Name", value: avm.user?.fullName ?? "Full Name Error")
+            PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                Label("Pick from library", systemImage: "photo")
                 Spacer()
             }
-            .padding([.leading, .trailing])
+            .onChange(of: selectedPhoto) { newPhoto in
+                dismiss()
+            }
+            .padding(.top)
         }
+        .padding(.horizontal)
+        .presentationDetents([.fraction(0.15)])
     }
 }
 
-// MARK: Email only.
+// MARK: Misc.
 extension SettingsView {
-    private var updateEmail: some View {
-        NavigationLink {
-            updateEmailView(oldValue: avm.user?.email ?? "Email Error",
-                            newValue: $newValue) { pwd in
-                try await avm.updateEmail(newEmail: newValue, pwd: pwd)
-            }
-        } label: {
-            HStack {
-                Label("Update Email", systemImage: "envelope")
-                    .foregroundColor(.black)
-                Spacer()
-            }
-            .padding([.leading, .trailing])
+    
+    func loadImage(from photo: PhotosPickerItem) async -> UIImage? {
+        if let data = try? await photo.loadTransferable(type: Data.self),
+           let image = UIImage(data: data) {
+            return image
         }
+        return nil
     }
-    private var updatePassword: some View {
-        NavigationLink {
-            updatePasswordView(newValue: $newValue) { email, pwd in
-                try await avm.updatePassword(email: email, pwd: pwd, pwdN: newValue)
-            }
-        } label: {
-            HStack {
-                Label("Update Password", systemImage: "lock")
-                    .foregroundColor(.black)
-                Spacer()
-            }
-            .padding([.leading])
-        }
-    }
+    
     private var deleteAccountButton: some View {
         Button(role: .destructive) {
             Task {
@@ -184,151 +142,6 @@ extension SettingsView {
             .padding(.all)
         }
         .buttonStyle(.borderless)
-    }
-}
-
-extension SettingsView {
-    struct oneField: View {
-        
-        var fieldName: String = ""
-        var oldValue: String = ""
-        @Binding var newValue: String
-        var onButtonTap: (() async throws -> Void)
-        
-        @Environment(\.dismiss) private var dismiss
-        @State private var showAlert: Bool = false
-        
-        var body: some View {
-            VStack {
-                CustomTF(filler_text: oldValue, text_binding: $newValue)
-                    .onAppear {
-                        $newValue.wrappedValue = oldValue
-                    }
-                    .padding([.top, .bottom, .leading], 7.5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                    )
-                    .padding([.bottom])
-                Button {
-                    Task {
-                        try await onButtonTap()
-                        showAlert.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("OK")
-                            .foregroundColor(.white)
-                        Spacer()
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                Spacer()
-            }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-            .padding()
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("\(fieldName) updated successfully."), dismissButton: .default(Text("OK")){dismiss()})
-            }
-            .navigationTitle("Change \(fieldName)")
-        }
-    }
-    struct updateEmailView: View {
-        
-        var oldValue: String = ""
-        @Binding var newValue: String
-        @State var pwd: String = ""
-        var onButtonTap: ((_ pwd: String) async throws -> Void)
-        
-        @Environment(\.dismiss) private var dismiss
-        @State private var showAlert: Bool = false
-        
-        var body: some View {
-            VStack {
-                CustomTF(filler_text: oldValue, text_binding: $newValue)
-                    .onAppear {
-                        $newValue.wrappedValue = oldValue
-                    }
-                    .padding([.top, .bottom, .leading], 7.5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                    )
-                    .padding([.bottom])
-                CustomPF(filler_text: "New Password", text_binding: $pwd)
-                Button {
-                    Task {
-                        try await onButtonTap(pwd)
-                        showAlert.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("OK")
-                            .foregroundColor(.white)
-                        Spacer()
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                Spacer()
-            }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-            .padding()
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("An email was sent to verify the email change."), dismissButton: .default(Text("OK")){dismiss()})
-            }
-            .navigationTitle("Change Email")
-        }
-    }
-    struct updatePasswordView: View {
-        
-        @State var email: String = ""
-        @State var pwd: String = ""
-        @Binding var newValue: String
-        @State var newValue2: String = ""
-        var onButtonTap: ((_ email: String, _ pwd: String) async throws -> Void)
-        
-        @Environment(\.dismiss) private var dismiss
-        @State private var showAlert: Bool = false
-        
-        private var isValid: Bool {
-            !email.isEmpty &&
-            !newValue.isEmpty &&
-            !newValue2.isEmpty &&
-            newValue == newValue2
-        }
-        
-        var body: some View {
-            VStack {
-                CustomTF(filler_text: "Enter your email", text_binding: $email)
-                CustomPF(filler_text: "Enter your old password.", text_binding: $pwd)
-                CustomPF(filler_text: "Enter your new password.", text_binding: $newValue)
-                CustomPF(filler_text: "Enter your new password again.", text_binding: $newValue2)
-                Button {
-                    Task {
-                        try await onButtonTap(email, pwd)
-                        showAlert.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("OK")
-                            .foregroundColor(.white)
-                        Spacer()
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!isValid)
-                Spacer()
-            }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-            .padding()
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Password changed successfully."), dismissButton: .default(Text("OK")){dismiss()})
-            }
-            .navigationTitle("Change Password")
-        }
     }
 }
 

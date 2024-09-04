@@ -52,7 +52,6 @@ struct MainView: View {
                     UserProfileView().environmentObject(avm)
                 } label: {
                     ImageView(urlString: avm.user?.photoURL, pictureWidth: 25)
-                        .padding([.trailing])
                 }
             }
         }

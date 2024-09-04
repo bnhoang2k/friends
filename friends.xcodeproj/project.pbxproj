@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
@@ -77,6 +78,7 @@
 				D37CC4922C828C57003015A9 /* JWTDecode in Frameworks */,
 				D3D88C9B2C6582FC00DEBE14 /* GoogleSignInSwift in Frameworks */,
 				D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */,
+				D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */,
 				D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */,
 				D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */,
 				D39EF7E72C6AB16100040765 /* FirebaseFirestore in Frameworks */,
@@ -230,6 +232,7 @@
 				D39EF7E62C6AB16100040765 /* FirebaseFirestore */,
 				D39EF7E82C6AB16100040765 /* FirebaseFirestoreSwift */,
 				D37CC4912C828C57003015A9 /* JWTDecode */,
+				D315E5CB2C88F78F00E59A87 /* SwiftyCrop */,
 			);
 			productName = friends;
 			productReference = D36173222C657A240002CDED /* friends.app */;
@@ -263,6 +266,7 @@
 				D3D88C8E2C6582ED00DEBE14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				D3D88C972C6582FC00DEBE14 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */,
+				D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
 			);
 			productRefGroup = D36173232C657A240002CDED /* Products */;
 			projectDirPath = "";
@@ -524,6 +528,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/benedom/SwiftyCrop";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
@@ -551,6 +563,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D315E5CB2C88F78F00E59A87 /* SwiftyCrop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */;
+			productName = SwiftyCrop;
+		};
 		D37CC4912C828C57003015A9 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */;
