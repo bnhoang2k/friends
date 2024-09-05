@@ -32,57 +32,13 @@ struct SettingsView: View {
                 LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
                     EditPhotoView(dummyUser: $dummyUser, selectedUIImage: $selectedUIImage, showImageOptions: $showImageOptions)
                         .environmentObject(avm)
-                    Section {
-                        EditFieldView(
-                            value: Binding(
-                                get: { dummyUser?.username ?? "" },
-                                set: { dummyUser?.username = $0 }
-                            ),
-                            fieldName: "Username",
-                            imageName: "at"
-                        )
-                        EditFieldView(
-                            value: Binding(
-                                get: { dummyUser?.fullName ?? "" },
-                                set: { dummyUser?.fullName = $0 }
-                            ),
-                            fieldName: "Full Name",
-                            imageName: "person"
-                        )
-                    } header: {HeaderView(headerText: "User Information")}
+                    EditUserFieldsView(dummyUser: $dummyUser)
+                        .environmentObject(avm)
                     if avm.authProviders.contains(.email) {
-                        Section {
-                            EditFieldView(
-                                value: Binding(
-                                    get: { dummyUser?.email ?? "" },
-                                    set: { dummyUser?.email = $0 }
-                                ),
-                                fieldName: "Email",
-                                imageName: "envelope"
-                            )
-                            HStack {
-                                NavigationLink {
-                                    EditPasswordView()
-                                        .environmentObject(avm)
-                                } label: {
-                                    HStack {
-                                        Label("Password", systemImage: "lock.rectangle")
-                                        Spacer()
-                                        Image(systemName: "chevron.right")
-                                    }
-                                    .padding(.horizontal)
-                                    .foregroundColor(.primary)
-                                }
-                            }
-                        } header: {
-                            HeaderView(headerText: "Security")
-                        }
+                        EditEmailFieldsView(dummyUser: $dummyUser)
+                            .environmentObject(avm)
                     }
-                    Section {
-                        deleteAccountButton
-                    } header: {
-                        HeaderView(headerText: "")
-                    }
+                    Section {deleteAccountButton} header: {HeaderView(headerText: "")}
                 }
             }
         }
@@ -110,7 +66,7 @@ struct SettingsView: View {
             }
         })
         .fullScreenCover(isPresented: $showCamera, content: {
-            AccessCameraView(selectedImage: $selectedUIImage)
+            AccessCameraView(selectedImage: $selectedUIImage, sourceType: .camera)
         })
         .onChange(of: selectedPhoto) { newPhoto in
             if let newPhoto {
@@ -218,5 +174,67 @@ struct SettingsView_Previews: PreviewProvider {
             SettingsView()
                 .environmentObject(AuthenticationVM())
         }
+    }
+}
+
+struct EditEmailFieldsView: View {
+    
+    @EnvironmentObject var avm: AuthenticationVM
+    @Binding var dummyUser: DBUser?
+    
+    var body: some View {
+        Section {
+            EditFieldView(
+                value: Binding(
+                    get: { dummyUser?.email ?? "" },
+                    set: { dummyUser?.email = $0 }
+                ),
+                fieldName: "Email",
+                imageName: "envelope"
+            )
+            HStack {
+                NavigationLink {
+                    EditPasswordView()
+                        .environmentObject(avm)
+                } label: {
+                    HStack {
+                        Label("Password", systemImage: "lock.rectangle")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding(.horizontal)
+                    .foregroundColor(.primary)
+                }
+            }
+        } header: {
+            HeaderView(headerText: "Security")
+        }
+    }
+}
+
+struct EditUserFieldsView: View {
+    
+    @EnvironmentObject var avm: AuthenticationVM
+    @Binding var dummyUser: DBUser?
+    
+    var body: some View {
+        Section {
+            EditFieldView(
+                value: Binding(
+                    get: { dummyUser?.username ?? "" },
+                    set: { dummyUser?.username = $0 }
+                ),
+                fieldName: "Username",
+                imageName: "at"
+            )
+            EditFieldView(
+                value: Binding(
+                    get: { dummyUser?.fullName ?? "" },
+                    set: { dummyUser?.fullName = $0 }
+                ),
+                fieldName: "Full Name",
+                imageName: "person"
+            )
+        } header: {HeaderView(headerText: "User Information")}
     }
 }

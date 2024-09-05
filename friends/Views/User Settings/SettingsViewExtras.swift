@@ -11,8 +11,8 @@ import PhotosUI
 extension SettingsView {
     
     enum DismissAction {
-            case camera
-            case photoLibrary
+        case camera
+        case photoLibrary
     }
     
     struct ImageOptionsView: View {
@@ -48,91 +48,6 @@ extension SettingsView {
         }
     }
     
-    // MARK: Non - email fields
-    struct EditFieldView<T>: View {
-        @Binding var value: T?
-        var fieldName: String
-        var imageName: String
-        
-        var body: some View {
-            HStack {
-                Label(fieldName, systemImage: imageName)
-                Spacer()
-                if T.self == String.self {
-                    TextField("Enter \(fieldName)", text: Binding(
-                        get: { value as? String ?? "" },
-                        set: { newValue in
-                            value = newValue as? T
-                        })
-                    )
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.trailing)
-                }
-                // extend this to support other types like Int, Double, etc.
-            }
-            .padding(.horizontal)
-        }
-    }
-    
-    struct EditPasswordView: View {
-        
-        @EnvironmentObject private var avm: AuthenticationVM
-        
-        @State private var email: String = ""
-        @State private var pwd: String = ""
-        @State private var nPwd: String = ""
-        @State private var nPwd2: String = ""
-        
-        @Environment(\.dismiss) private var dismiss
-        @State private var showAlert: Bool = false
-        
-        // TODO: If more fields are added, adjust here.
-        private var isValid: Bool {
-            Utilities.shared.is_valid_email(email: email) &&
-            email == avm.user?.email! &&
-            Utilities.shared.is_valid_password(password: nPwd) &&
-            nPwd == nPwd2
-        }
-        
-        var body: some View {
-            VStack {
-                CustomTF(filler_text: "Enter your email", text_binding: $email)
-                CustomPF(filler_text: "Enter your old password", eye: true,text_binding: $pwd)
-                CustomPF(filler_text: "Enter your new password", eye: true,text_binding: $nPwd)
-                CustomPF(filler_text: "Enter your new password again", eye: true,text_binding: $nPwd2)
-                okButton
-                Spacer()
-            }
-            .padding()
-            .navigationTitle("Edit Password")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        
-        private var okButton: some View {
-            Button {
-                Task {
-                    do {
-                        try await avm.updatePassword(email: email, pwd: pwd, pwdN: nPwd)
-                    } catch {
-                        print("SignUpView: Error signing up. \(error)")
-                    }
-                    showAlert.toggle()
-                }
-            } label: {
-                Text("OK")
-                    .frame(maxWidth: .infinity)
-                    .padding(5)
-                    .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                    .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
-            }
-            .disabled(!isValid)
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("A verification link has been sent to your email."), dismissButton: .default(Text("OK")){dismiss()})
-            }
-        }
-    }
-    
     var deleteAccountButton: some View {
         Button(role: .destructive) {
             Task {
@@ -157,5 +72,90 @@ extension SettingsView {
             }
         }
         .buttonStyle(.borderless)
+    }
+}
+
+// MARK: Non - email fields
+struct EditFieldView<T>: View {
+    @Binding var value: T?
+    var fieldName: String
+    var imageName: String
+    
+    var body: some View {
+        HStack {
+            Label(fieldName, systemImage: imageName)
+            Spacer()
+            if T.self == String.self {
+                TextField("Enter \(fieldName)", text: Binding(
+                    get: { value as? String ?? "" },
+                    set: { newValue in
+                        value = newValue as? T
+                    })
+                )
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.trailing)
+            }
+            // extend this to support other types like Int, Double, etc.
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct EditPasswordView: View {
+    
+    @EnvironmentObject private var avm: AuthenticationVM
+    
+    @State private var email: String = ""
+    @State private var pwd: String = ""
+    @State private var nPwd: String = ""
+    @State private var nPwd2: String = ""
+    
+    @Environment(\.dismiss) private var dismiss
+    @State private var showAlert: Bool = false
+    
+    // TODO: If more fields are added, adjust here.
+    private var isValid: Bool {
+        Utilities.shared.is_valid_email(email: email) &&
+        email == avm.user?.email! &&
+        Utilities.shared.is_valid_password(password: nPwd) &&
+        nPwd == nPwd2
+    }
+    
+    var body: some View {
+        VStack {
+            CustomTF(filler_text: "Enter your email", text_binding: $email)
+            CustomPF(filler_text: "Enter your old password", eye: true,text_binding: $pwd)
+            CustomPF(filler_text: "Enter your new password", eye: true,text_binding: $nPwd)
+            CustomPF(filler_text: "Enter your new password again", eye: true,text_binding: $nPwd2)
+            okButton
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Edit Password")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private var okButton: some View {
+        Button {
+            Task {
+                do {
+                    try await avm.updatePassword(email: email, pwd: pwd, pwdN: nPwd)
+                } catch {
+                    print("SignUpView: Error signing up. \(error)")
+                }
+                showAlert.toggle()
+            }
+        } label: {
+            Text("OK")
+                .frame(maxWidth: .infinity)
+                .padding(5)
+                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
+                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
+                .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
+        }
+        .disabled(!isValid)
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("A verification link has been sent to your email."), dismissButton: .default(Text("OK")){dismiss()})
+        }
     }
 }
