@@ -46,7 +46,7 @@ extension UserProfileView {
                     .padding([.trailing])
             }
             .padding(.horizontal)
-            .foregroundStyle(.black)
+            .tint(colorScheme == .dark ? Color.white : Color.black)
         }
     }
     private var logoutButton: some View {
