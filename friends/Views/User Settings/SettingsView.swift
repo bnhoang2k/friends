@@ -259,7 +259,7 @@ extension SettingsView {
             ZStack {
                 HStack {
                     Spacer()
-                    ImageView(urlString: dummyUser?.photoURL, pictureWidth: 150)
+                    ImageView(selectedPhoto: selectedUIImage, urlString: dummyUser?.photoURL, pictureWidth: 150)
                     Spacer()
                 }
                 VStack {
@@ -346,12 +346,8 @@ extension SettingsView {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            //            @State var v1: String = "asdf"
             SettingsView()
                 .environmentObject(AuthenticationVM())
-            //            EditFieldView(value: $v1, fieldName: "bruh", imageName: "at")
-            //            EditPasswordView()
-            //                .environmentObject(AuthenticationVM())
         }
     }
 }

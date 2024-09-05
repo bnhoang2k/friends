@@ -118,12 +118,13 @@ struct DummyListWrapped: View {
 
 struct ImageView: View {
     
+    var selectedPhoto: UIImage? = nil
     var urlString: String?
     var pictureWidth: CGFloat = 50
-    @ObservedObject var isLoading = userLoaded.shared
     private var processor: ResizingImageProcessor? = nil
     
-    init(urlString: String?, pictureWidth: CGFloat = 50) {
+    init(selectedPhoto: UIImage? = nil, urlString: String?, pictureWidth: CGFloat = 50) {
+        self.selectedPhoto = selectedPhoto
         self.urlString = urlString
         self.pictureWidth = pictureWidth
         self.processor = ResizingImageProcessor(referenceSize: CGSize(width: pictureWidth,
@@ -132,7 +133,14 @@ struct ImageView: View {
     }
     
     var body: some View {
-        if let urlString = urlString, let url = URL(string: urlString) {
+        if let photo = selectedPhoto {
+            Image(uiImage: photo)
+                .resizable()
+                .scaledToFit()
+                .frame(width: pictureWidth)
+                .clipShape(.circle)
+        }
+        else if let urlString = urlString, let url = URL(string: urlString) {
             KFImage
                 .url(url)
                 .placeholder { progress in
@@ -144,14 +152,18 @@ struct ImageView: View {
                 .lowDataModeSource(.network(url))
                 .onProgress { receivedSize, totalSize in}
                 .onSuccess { RetrieveImageResult in
-                    isLoading.picturesLoaded = true
                 }
                 .onFailure { KingfisherError in
-                    isLoading.picturesLoaded = false
                 }
                 .resizable()
                 .scaledToFit()
                 .frame(width: pictureWidth)
+                .clipShape(.circle)
+        }
+        else {
+            ProgressView()
+                .frame(width: pictureWidth,
+                       height: pictureWidth)
                 .clipShape(.circle)
         }
     }
