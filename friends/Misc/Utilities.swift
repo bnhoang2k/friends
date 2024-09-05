@@ -34,7 +34,7 @@ final class Utilities {
     @MainActor
     func topViewController(controller: UIViewController? = nil) -> UIViewController? {
         
-        let controller = controller ?? UIApplication.shared.keyWindow?.rootViewController
+        let controller = controller ?? UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow }.last?.rootViewController
         
         if let navigationController = controller as? UINavigationController {
             return topViewController(controller: navigationController.visibleViewController)
@@ -55,8 +55,6 @@ final class Utilities {
         let renderer = UIGraphicsImageRenderer(size: size)
         
         let image = renderer.image { context in
-            let rect = CGRect(origin: .zero, size: size)
-            
             // Gradient background
             let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
                                       colors: [UIColor.red.cgColor, UIColor.blue.cgColor] as CFArray,
