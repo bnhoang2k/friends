@@ -92,14 +92,15 @@ struct changeEmailView: View {
 
 struct HeaderView: View {
     
+    @Environment(\.colorScheme) private var colorScheme
     @State var headerText: String = ""
     
     var body: some View {
         Text(headerText)
-            .font(.headline)
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: 20, relativeTo: .headline))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
-            .background(Color.white) // Ensure the header has a solid background
+            .background(colorScheme == .dark ? Color.black : Color.white)
             .zIndex(1) // Ensure the header stays above the scrolling content
     }
 }
@@ -108,7 +109,7 @@ struct DummyListSections: View {
     
     var body: some View {
         Section(header: HeaderView(headerText: "Fruits")) {
-            ForEach(0..<10) { index in
+            ForEach(0..<25) { index in
                 HStack {
                     Text("Fruit \(index + 1)")
                 }
@@ -117,7 +118,7 @@ struct DummyListSections: View {
         }
         
         Section(header: HeaderView(headerText: "Vegetables")) {
-            ForEach(0..<5) { index in
+            ForEach(0..<25) { index in
                 HStack {
                     Text("Vegetable \(index + 1)")
                 }
@@ -126,7 +127,7 @@ struct DummyListSections: View {
         }
         
         Section(header: HeaderView(headerText: "Dairy Products")) {
-            ForEach(0..<5) { index in
+            ForEach(0..<25) { index in
                 HStack {
                     Text("Dairy Product \(index + 1)")
                 }
@@ -254,8 +255,9 @@ struct CustomViews_Previews: PreviewProvider {
         //                CustomTF(filler_text: "Test", text_binding: $d1)
         //        CustomPF(filler_text: "test", text_binding: $preview_text)
         //        changeEmailView(newEmail: $d1, pwd: $d2)
+        HeaderView(headerText: "xd")
         //        DummyListWrapped()
-                ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
+//                ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
 //        NavigationStack {
 //            testSwiftyCropView()
 //        }
