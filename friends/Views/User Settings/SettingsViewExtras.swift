@@ -9,24 +9,36 @@ import SwiftUI
 import PhotosUI
 
 extension SettingsView {
+    
+    enum DismissAction {
+            case camera
+            case photoLibrary
+    }
+    
     struct ImageOptionsView: View {
         
         @Environment(\.dismiss) private var dismiss
         @Binding var selectedPhoto: PhotosPickerItem?
-        @Binding var tempUIImage: UIImage?  // Temporary UIImage for cropping
-        @Binding var showImageCropper: Bool
+        
+        var onDismissAction: ((DismissAction) -> Void)?
         
         var body: some View {
             VStack {
-                HStack {
-                    Label("Take a photo", systemImage: "camera")
-                    Spacer()
+                Button {
+                    onDismissAction?(.camera)
+                    dismiss()
+                } label: {
+                    HStack {
+                        Label("Take a photo", systemImage: "camera")
+                        Spacer()
+                    }
                 }
                 PhotosPicker(selection: $selectedPhoto, matching: .images) {
                     Label("Pick from library", systemImage: "photo")
                     Spacer()
                 }
                 .onChange(of: selectedPhoto) { newPhoto in
+                    onDismissAction?(.photoLibrary)
                     dismiss()  // Dismiss after picking a photo
                 }
                 .padding(.top)

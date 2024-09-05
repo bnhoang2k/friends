@@ -14,12 +14,15 @@ struct SettingsView: View {
     @EnvironmentObject var avm: AuthenticationVM
     @Environment(\.dismiss) private var dismiss
     
+    @State private var lastDismissAction: DismissAction = .camera
     @State private var showImageOptions: Bool = false
+    @State private var showCamera: Bool = false
+    
     @State private var selectedPhoto: PhotosPickerItem? = nil
+    @State private var tempUIImage: UIImage? = nil
     @State private var selectedUIImage: UIImage? = nil
     
     @State private var showImageCropper: Bool = false
-    @State private var tempUIImage: UIImage? = nil  // Temporary UIImage for cropping
     
     @State private var dummyUser: DBUser? = nil
     
@@ -86,22 +89,28 @@ struct SettingsView: View {
         .onAppear {dummyUser = avm.user}
         .sheet(isPresented: $showImageOptions,
                onDismiss: {
-            if tempUIImage != nil { // Only show the cropper if an image was selected
+            if tempUIImage != nil && lastDismissAction == .photoLibrary { // Only show the cropper if an image was selected
                 showImageCropper.toggle()
+            }
+            else if lastDismissAction == .camera {
+                showCamera.toggle()
             }
         },
                content: {
-            ImageOptionsView(selectedPhoto: $selectedPhoto,
-                             tempUIImage: $tempUIImage,  // Use tempUIImage for cropping
-                             showImageCropper: $showImageCropper)
+            ImageOptionsView(selectedPhoto: $selectedPhoto) { action in
+                lastDismissAction = action
+            }
         })
         .fullScreenCover(isPresented: $showImageCropper, content: {
             if let imageToCrop = tempUIImage {
                 SwiftyCropView(imageToCrop: imageToCrop, maskShape: .circle) { newImage in
                     selectedUIImage = newImage
-                    tempUIImage = nil  // Reset tempUIImage after cropping
+                    tempUIImage = nil
                 }
             }
+        })
+        .fullScreenCover(isPresented: $showCamera, content: {
+            AccessCameraView(selectedImage: $selectedUIImage)
         })
         .onChange(of: selectedPhoto) { newPhoto in
             if let newPhoto {
@@ -128,6 +137,7 @@ struct SettingsView: View {
                 })
             }
         }
+        .tint(.primary)
     }
 }
 
