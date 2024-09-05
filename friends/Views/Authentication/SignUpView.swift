@@ -24,16 +24,19 @@ struct SignUpView: View {
     }
     
     var body: some View {
-        VStack {
-            // TODO: Add more fields possibly like: username, name, etc.
-            CustomTF(filler_text: "Email", text_binding: $avm.email)
-            CustomPF(filler_text: "Password", text_binding: $avm.pwd)
-            CustomPF(filler_text: "Re-enter password", text_binding: $pwd2)
-            signup_button
-            Spacer()
+        NavigationStack {
+            VStack {
+                // TODO: Add more fields possibly like: username, name, etc.
+                CustomTF(filler_text: "Email", text_binding: $avm.email)
+                CustomPF(filler_text: "Password", text_binding: $avm.pwd)
+                CustomPF(filler_text: "Re-enter password", text_binding: $pwd2)
+                signup_button
+                Spacer()
+            }
+            .padding([.top, .horizontal])
         }
-        .padding([.top])
-        .frame(width: 250)
+        .navigationTitle("Sign up through email")
+        .navigationBarTitleDisplayMode(.inline)
         .id(color_scheme)
         .onAppear { avm.resetFields() }
     }
@@ -67,7 +70,9 @@ extension SignUpView {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
-            .environmentObject(AuthenticationVM())
+        NavigationStack {
+            SignUpView()
+                .environmentObject(AuthenticationVM())
+        }
     }
 }

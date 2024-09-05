@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import FirebaseStorage
 
 struct DBUser: Codable {
     // Some field information is acquired differently based on sign-in method.
@@ -116,13 +117,13 @@ final class UserManager {
     
     private let encoder: Firestore.Encoder = {
         let encoder = Firestore.Encoder()
-//        encoder.keyEncodingStrategy = .convertToSnakeCase
+        //        encoder.keyEncodingStrategy = .convertToSnakeCase
         return encoder
     }()
     
     private let decoder: Firestore.Decoder = {
         let decoder = Firestore.Decoder()
-//        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        //        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
 }
@@ -165,5 +166,50 @@ extension UserManager {
             "email" : user.email ?? "EMAIL ERROR"
         ]
         try await userDocument(uid: user.uid).updateData(data)
+    }
+    
+    func updateUser(_ originalUser: DBUser, with modifiedUser: DBUser) async throws {
+        var data: [String: Any] = [:]
+
+        if originalUser.username != modifiedUser.username {
+            data["username"] = modifiedUser.username
+        }
+
+        if originalUser.fullName != modifiedUser.fullName {
+            data["full_name"] = modifiedUser.fullName
+        }
+
+        if originalUser.email != modifiedUser.email {
+            data["email"] = modifiedUser.email
+        }
+
+        if originalUser.photoURL != modifiedUser.photoURL {
+            data["photo_url"] = modifiedUser.photoURL
+        }
+
+        // If there are changes, update the Firestore document
+        if !data.isEmpty {
+            try await userDocument(uid: modifiedUser.uid).updateData(data)
+        }
+    }
+    
+    func uploadProfileImage(uid: String, imageData: Data) async throws -> String {
+        let storageRef = Storage.storage().reference()
+        let profileImageRef = storageRef.child("users/\(uid)/profile_picture.jpg")
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        // Upload the image data
+        let _ = try await profileImageRef.putDataAsync(imageData, metadata: metadata)
+        
+        // Retrieve the download URL
+        let downloadURL = try await profileImageRef.downloadURL()
+        return downloadURL.absoluteString
+    }
+    
+    func updateUserProfileImageURL(uid: String, downloadURL: String) async throws {
+        let data: [String: Any] = ["photo_url": downloadURL]
+        try await userCollection.document(uid).updateData(data)
     }
 }

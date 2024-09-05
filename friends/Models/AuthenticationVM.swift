@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-final class AuthenticationVM: ObservableObject {    
+final class AuthenticationVM: ObservableObject {
     
     @Published var showSignInView: Bool = true
     @Published var showGetInformationView: Bool = false
@@ -22,6 +22,10 @@ final class AuthenticationVM: ObservableObject {
     func loadCurrentUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUserData()
         self.user = try await UserManager.shared.getUser(uid: authDataResult.uid)
+    }
+    
+    func loadCurrentUser(newUser: DBUser) async throws {
+        self.user = newUser
     }
     
     func getAuthProviders() {
@@ -54,6 +58,23 @@ final class AuthenticationVM: ObservableObject {
     
     func deleteUser() async throws {
         try await AuthenticationManager.shared.deleteUser(authProviders: authProviders)
+    }
+    
+    func updateUserProfileURLInFirestore(downloadURL: String) async throws {
+        let user = try AuthenticationManager.shared.getAuthenticatedUserData()
+        try await UserManager.shared.updateUserProfileImageURL(uid: user.uid, downloadURL: downloadURL)
+    }
+    
+    func saveUserProfileChanges(dummyUser: DBUser, imageData: Data) async throws {
+        let uid = try AuthenticationManager.shared.getAuthenticatedUserData().uid
+        do {
+            let downloadURL = try await UserManager.shared.uploadProfileImage(uid: uid, imageData: imageData)
+            try await updateUserProfileURLInFirestore(downloadURL: downloadURL)
+            try await UserManager.shared.updateUser(user!, with: dummyUser)
+            try await loadCurrentUser(newUser: dummyUser)
+        } catch {
+            print("Error saving user profile changes.")
+        }
     }
 }
 

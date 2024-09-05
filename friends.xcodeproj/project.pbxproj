@@ -12,7 +12,8 @@
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
 		D36173342C657A3B0002CDED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D36173332C657A3B0002CDED /* GoogleService-Info.plist */; };
-		D37CC4922C828C57003015A9 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = D37CC4912C828C57003015A9 /* JWTDecode */; };
+		D3847E372C89437200694EF8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E362C89437200694EF8 /* FirebaseStorage */; };
+		D3847E392C89437200694EF8 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */; };
 		D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39960DA2C82667800A641E6 /* TestFunctions.swift */; };
 		D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */; };
 		D39EF7C22C69819700040765 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BD2C69819700040765 /* Utilities.swift */; };
@@ -73,9 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3847E392C89437200694EF8 /* FirebaseStorageCombine-Community in Frameworks */,
 				D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */,
 				D39EF7E22C6AA56B00040765 /* FirebaseAuth in Frameworks */,
-				D37CC4922C828C57003015A9 /* JWTDecode in Frameworks */,
+				D3847E372C89437200694EF8 /* FirebaseStorage in Frameworks */,
 				D3D88C9B2C6582FC00DEBE14 /* GoogleSignInSwift in Frameworks */,
 				D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */,
 				D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */,
@@ -231,8 +233,9 @@
 				D39EF7E12C6AA56B00040765 /* FirebaseAuth */,
 				D39EF7E62C6AB16100040765 /* FirebaseFirestore */,
 				D39EF7E82C6AB16100040765 /* FirebaseFirestoreSwift */,
-				D37CC4912C828C57003015A9 /* JWTDecode */,
 				D315E5CB2C88F78F00E59A87 /* SwiftyCrop */,
+				D3847E362C89437200694EF8 /* FirebaseStorage */,
+				D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */,
 			);
 			productName = friends;
 			productReference = D36173222C657A240002CDED /* friends.app */;
@@ -568,10 +571,15 @@
 			package = D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */;
 			productName = SwiftyCrop;
 		};
-		D37CC4912C828C57003015A9 /* JWTDecode */ = {
+		D3847E362C89437200694EF8 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */;
-			productName = JWTDecode;
+			package = D3D88C8E2C6582ED00DEBE14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3D88C8E2C6582ED00DEBE14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseStorageCombine-Community";
 		};
 		D39EF7E12C6AA56B00040765 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

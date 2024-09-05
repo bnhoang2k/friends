@@ -152,12 +152,18 @@ class ImageViewModel: ObservableObject {
     
     private var imageCache: NSCache<NSString, UIImage>?
     
-    init(urlString: String?) {
-        loadImage(urlString: urlString)
+    init(uiImage: UIImage?, urlString: String?) {
+        imageCache = NSCache<NSString, UIImage>()
+        if let uiImage = uiImage {
+            self.image = uiImage
+        } else {
+            loadImage(urlString: urlString)
+        }
     }
     
     private func loadImage(urlString: String?) {
-        let urlString = urlString ?? "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg"
+        guard let urlString = urlString else { return }
+        
         if let imageFromCache = getImageFromCache(from: urlString) {
             self.image = imageFromCache
             return
@@ -193,25 +199,28 @@ class ImageViewModel: ObservableObject {
     }
     
     private func getImageFromCache(from key: String) -> UIImage? {
-        return imageCache?.object(forKey: key as NSString) as? UIImage
+        return imageCache?.object(forKey: key as NSString)
     }
 }
+
 
 struct ImageView: View {
     @ObservedObject private var imageViewModel: ImageViewModel
     var pictureWidth: CGFloat = 50
-    
-    init(urlString: String?, pictureWidth: CGFloat = 50) {
+    var uiImage: UIImage?
+
+    init(uiImage: UIImage? = nil, urlString: String? = nil, pictureWidth: CGFloat = 50) {
+        self.uiImage = uiImage
         self.pictureWidth = pictureWidth
-        imageViewModel = ImageViewModel(urlString: urlString)
+        imageViewModel = ImageViewModel(uiImage: uiImage, urlString: urlString)
     }
     
     var body: some View {
-        Image(uiImage: imageViewModel.image ?? UIImage())
+        Image(uiImage: uiImage ?? imageViewModel.image ?? Utilities.shared.generateTestUIImage())
             .resizable()
             .scaledToFit()
             .frame(width: pictureWidth)
-            .clipShape(.circle)
+            .clipShape(Circle())
     }
 }
 
@@ -246,9 +255,9 @@ struct CustomViews_Previews: PreviewProvider {
         //        CustomPF(filler_text: "test", text_binding: $preview_text)
         //        changeEmailView(newEmail: $d1, pwd: $d2)
         //        DummyListWrapped()
-        //        ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
-        NavigationStack {
-            testSwiftyCropView()
-        }
+                ImageView(urlString: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg")
+//        NavigationStack {
+//            testSwiftyCropView()
+//        }
     }
 }

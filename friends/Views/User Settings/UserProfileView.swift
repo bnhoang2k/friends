@@ -11,36 +11,20 @@ struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @Environment(\.colorScheme) private var colorScheme
-    @State var isLoading: Bool = true
     
     var body: some View {
-        if isLoading {
-            ProgressView()
-                .task {
-                    isLoading = true
-                    do {
-                        try await avm.loadCurrentUser()
-                        isLoading = false
-                    } catch {
-                        print("Error refreshing user information.")
-                        isLoading = true
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
+                Section(header: HeaderView(headerText: "User Information")) {
+                    userInfo
                 }
-        }
-        else {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
-                    Section(header: HeaderView(headerText: "User Information")) {
-                        userInfo
-                    }
-                    DummyListSections()
-                    logoutButton
-                }
+                DummyListSections()
+                logoutButton
             }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-            .navigationTitle("User Profile")
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+        .navigationTitle("User Profile")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -51,7 +35,7 @@ extension UserProfileView {
                 .environmentObject(avm)
         } label: {
             HStack {
-                ImageView(urlString: avm.user?.photoURL)
+                ImageView(urlString: avm.user?.photoURL, pictureWidth: 50)
                 VStack (alignment: .leading) {
                     Text(avm.user?.username ?? "Username Error")
                     Text(avm.user?.fullName ?? "Full Name Error")
@@ -98,7 +82,7 @@ extension UserProfileView {
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            UserProfileView(isLoading: false)
+            UserProfileView()
                 .environmentObject(AuthenticationVM())
         }
     }

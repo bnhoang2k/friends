@@ -82,6 +82,15 @@ final class AuthenticationManager {
         }
         return providers
     }
+    
+    func updateProfilePictureURL(downloadURL: String) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.noUserSignedIn
+        }
+        let changeRequest = user.createProfileChangeRequest()
+        changeRequest.photoURL = URL(string: downloadURL)
+        try await changeRequest.commitChanges()
+    }
 }
 
 // MARK: Email functions
@@ -89,12 +98,18 @@ extension AuthenticationManager {
     @discardableResult
     func createUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().createUser(withEmail: email, password: pwd)
+        try await authDataResult.user.sendEmailVerification()
+        try Auth.auth().signOut()
         return AuthDataResultModel(user: authDataResult.user)
     }
     
     @discardableResult
     func signInUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(withEmail: email, password: pwd)
+        guard authDataResult.user.isEmailVerified else {
+            try Auth.auth().signOut()
+            throw AuthError.authorizationFailed
+        }
         return AuthDataResultModel(user: authDataResult.user)
     }
     

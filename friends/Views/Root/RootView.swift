@@ -16,6 +16,16 @@ struct RootView: View {
         VStack {
             if isLoading {
                 ProgressView()
+                    .task {
+                        do {
+                            try await avm.loadCurrentUser()
+                            avm.getAuthProviders()
+                            avm.showSignInView = (avm.user == nil)
+                        } catch {
+                            print("RootView Error Loading User: \(error)")
+                        }
+                        isLoading = false
+                    }
             }
             else {
                 if avm.showSignInView {
@@ -36,21 +46,8 @@ struct RootView: View {
                 }
             }
         }
-        .task {
-            do {
-                try await avm.loadCurrentUser()
-                avm.getAuthProviders()
-                avm.showSignInView = (avm.user == nil)
-            } catch {
-                print("RootView Error Loading User: \(error)")
-            }
-            isLoading = false
-        }
         .animation(.easeIn, value: avm.showSignInView)
     }
-}
-
-extension RootView {
 }
 
 struct RootView_Previews: PreviewProvider {
