@@ -259,7 +259,7 @@ extension SettingsView {
             ZStack {
                 HStack {
                     Spacer()
-                    ImageView(uiImage: selectedUIImage, urlString: dummyUser?.photoURL, pictureWidth: 150)
+                    ImageView(urlString: dummyUser?.photoURL, pictureWidth: 150)
                     Spacer()
                 }
                 VStack {

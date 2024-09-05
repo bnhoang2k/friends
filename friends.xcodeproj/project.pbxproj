@@ -12,6 +12,7 @@
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
 		D36173342C657A3B0002CDED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D36173332C657A3B0002CDED /* GoogleService-Info.plist */; };
+		D36B6C822C8A187300FF25CC /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D36B6C812C8A187300FF25CC /* Kingfisher */; };
 		D3847E372C89437200694EF8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E362C89437200694EF8 /* FirebaseStorage */; };
 		D3847E392C89437200694EF8 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */; };
 		D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39960DA2C82667800A641E6 /* TestFunctions.swift */; };
@@ -82,6 +83,7 @@
 				D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */,
 				D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */,
 				D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */,
+				D36B6C822C8A187300FF25CC /* Kingfisher in Frameworks */,
 				D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */,
 				D39EF7E72C6AB16100040765 /* FirebaseFirestore in Frameworks */,
 			);
@@ -236,6 +238,7 @@
 				D315E5CB2C88F78F00E59A87 /* SwiftyCrop */,
 				D3847E362C89437200694EF8 /* FirebaseStorage */,
 				D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */,
+				D36B6C812C8A187300FF25CC /* Kingfisher */,
 			);
 			productName = friends;
 			productReference = D36173222C657A240002CDED /* friends.app */;
@@ -270,6 +273,7 @@
 				D3D88C972C6582FC00DEBE14 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */,
 				D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
+				D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = D36173232C657A240002CDED /* Products */;
 			projectDirPath = "";
@@ -539,6 +543,14 @@
 				kind = branch;
 			};
 		};
+		D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.12.0;
+			};
+		};
 		D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
@@ -570,6 +582,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */;
 			productName = SwiftyCrop;
+		};
+		D36B6C812C8A187300FF25CC /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		D3847E362C89437200694EF8 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
