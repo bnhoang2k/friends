@@ -13,6 +13,7 @@ extension SettingsView {
     enum DismissAction {
         case camera
         case photoLibrary
+        case placeholder
     }
     
     struct ImageOptionsView: View {

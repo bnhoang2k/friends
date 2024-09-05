@@ -120,51 +120,38 @@ struct ImageView: View {
     
     var selectedPhoto: UIImage? = nil
     var urlString: String?
-    var pictureWidth: CGFloat = 50
-    private var processor: ResizingImageProcessor? = nil
+    var pictureWidth: CGFloat
     
-    init(selectedPhoto: UIImage? = nil, urlString: String?, pictureWidth: CGFloat = 50) {
+    init(selectedPhoto: UIImage? = nil, urlString: String? = nil, pictureWidth: CGFloat = 50) {
         self.selectedPhoto = selectedPhoto
         self.urlString = urlString
         self.pictureWidth = pictureWidth
-        self.processor = ResizingImageProcessor(referenceSize: CGSize(width: pictureWidth,
-                                                                      height: pictureWidth),
-                                                mode: .aspectFit)
     }
     
     var body: some View {
-        if let photo = selectedPhoto {
-            Image(uiImage: photo)
-                .resizable()
-                .scaledToFit()
-                .frame(width: pictureWidth)
-                .clipShape(.circle)
-        }
-        else if let urlString = urlString, let url = URL(string: urlString) {
-            KFImage
-                .url(url)
-                .placeholder { progress in
-                    ProgressView()
-                }
-                .setProcessor(processor!)
-                .loadDiskFileSynchronously()
-                .cacheMemoryOnly()
-                .lowDataModeSource(.network(url))
-                .onProgress { receivedSize, totalSize in}
-                .onSuccess { RetrieveImageResult in
-                }
-                .onFailure { KingfisherError in
-                }
-                .resizable()
-                .scaledToFit()
-                .frame(width: pictureWidth)
-                .clipShape(.circle)
-        }
-        else {
-            ProgressView()
-                .frame(width: pictureWidth,
-                       height: pictureWidth)
-                .clipShape(.circle)
+        Group {
+            if let photo = selectedPhoto {
+                Image(uiImage: photo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: pictureWidth)
+                    .clipShape(Circle())
+            }
+            else if let urlString = urlString, let url = URL(string: urlString) {
+                KFImage(url)
+                    .placeholder {
+                        ProgressView()
+                    }
+                    .cacheOriginalImage()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: pictureWidth)
+                    .clipShape(Circle())
+            } else {
+                ProgressView()
+                    .frame(width: pictureWidth, height: pictureWidth)
+                    .clipShape(Circle())
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ struct SettingsView: View {
     @EnvironmentObject var avm: AuthenticationVM
     @Environment(\.dismiss) private var dismiss
     
-    @State private var lastDismissAction: DismissAction = .camera
+    @State private var lastDismissAction: DismissAction = .placeholder
     @State private var showImageOptions: Bool = false
     @State private var showCamera: Bool = false
     
@@ -51,6 +51,7 @@ struct SettingsView: View {
             else if lastDismissAction == .camera {
                 showCamera.toggle()
             }
+            lastDismissAction = .placeholder
         },
                content: {
             ImageOptionsView(selectedPhoto: $selectedPhoto) { action in
@@ -141,7 +142,7 @@ extension SettingsView {
         guard var dummyUser else { return }
 
         // Check if there is a new profile image to upload
-        if let imageData = selectedUIImage?.jpegData(compressionQuality: 0.5) {
+        if let imageData = selectedUIImage?.jpegData(compressionQuality: 0.8) {
             do {
                 // 1. Upload the image to Firebase Storage
                 let downloadURL = try await UserManager.shared.uploadProfileImage(uid: dummyUser.uid, imageData: imageData)
