@@ -68,6 +68,7 @@ struct SettingsView: View {
         })
         .fullScreenCover(isPresented: $showCamera, content: {
             AccessCameraView(selectedImage: $selectedUIImage, sourceType: .camera)
+                .ignoresSafeArea()
         })
         .onChange(of: selectedPhoto) { newPhoto in
             if let newPhoto {
