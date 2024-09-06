@@ -98,7 +98,8 @@ extension AuthenticationManager {
     @discardableResult
     func createUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().createUser(withEmail: email, password: pwd)
-        try await authDataResult.user.sendEmailVerification()
+        // TODO: Re-add this later.
+//        try await authDataResult.user.sendEmailVerification()
         try Auth.auth().signOut()
         return AuthDataResultModel(user: authDataResult.user)
     }
@@ -106,10 +107,11 @@ extension AuthenticationManager {
     @discardableResult
     func signInUser(email: String, pwd: String) async throws -> AuthDataResultModel {
         let authDataResult = try await Auth.auth().signIn(withEmail: email, password: pwd)
-        guard authDataResult.user.isEmailVerified else {
-            try Auth.auth().signOut()
-            throw AuthError.authorizationFailed
-        }
+        // TODO: Re-add this later.
+//        guard authDataResult.user.isEmailVerified else {
+//            try Auth.auth().signOut()
+//            throw AuthError.authorizationFailed
+//        }
         return AuthDataResultModel(user: authDataResult.user)
     }
     
