@@ -16,11 +16,12 @@ struct AccessCameraView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = self.sourceType
+        imagePicker.delegate = context.coordinator  // Set the delegate
         return imagePicker
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        
+        // No need to implement anything here for now
     }
     
     func makeCoordinator() -> Coordinator {
@@ -41,4 +42,7 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
         self.picker.isPresented.wrappedValue.dismiss()
     }
     
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.picker.isPresented.wrappedValue.dismiss()
+    }
 }
