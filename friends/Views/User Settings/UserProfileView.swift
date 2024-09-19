@@ -11,6 +11,7 @@ struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @Environment(\.colorScheme) private var colorScheme
+    @Binding var firstAppear: Bool
     
     var body: some View {
         ScrollView {
@@ -56,7 +57,7 @@ extension UserProfileView {
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true
-                    print(avm.showSignInView)
+                    firstAppear = false
                 } catch {
                     print("Log Out Fail")
                 }
@@ -82,7 +83,7 @@ extension UserProfileView {
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            UserProfileView()
+            UserProfileView(firstAppear: .constant(false))
                 .environmentObject(AuthenticationVM())
         }
     }

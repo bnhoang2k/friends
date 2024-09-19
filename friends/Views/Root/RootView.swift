@@ -48,6 +48,7 @@ struct RootView: View {
             }
         }
         .animation(.easeIn, value: avm.showSignInView)
+        .animation(.easeIn, value: avm.showGetInformationView)
     }
 }
 

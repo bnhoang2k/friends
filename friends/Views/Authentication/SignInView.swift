@@ -12,7 +12,7 @@ import AuthenticationServices // Apple Sign In
 
 struct SignInView: View {
     
-    @Environment(\.colorScheme) private var color_scheme: ColorScheme
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @EnvironmentObject private var avm: AuthenticationVM
     
     @Binding var showSignInView: Bool
@@ -37,7 +37,7 @@ struct SignInView: View {
             // TODO: Add a "Forgot Password?" View to send a password reset.
         }
         .frame(width: 300)
-        .id(color_scheme)
+        .id(colorScheme)
         .onAppear {avm.resetFields()}
         
     }
@@ -101,7 +101,7 @@ extension SignInView {
             }
         } label: {
             SignInWithAppleButtonViewRepresentable(type: .default,
-                                                   style: .black)
+                                                   style: colorScheme == .dark ? .white : .black)
             .frame(height: 44)
         }
     }

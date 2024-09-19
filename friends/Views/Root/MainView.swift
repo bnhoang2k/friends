@@ -12,14 +12,17 @@ struct MainView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: Int = 0
+    @State private var firstAppear: Bool = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
+            // Friends List
             DummyListWrapped()
                 .tabItem {Image(systemName: "calendar")}
                 .tag(0)
             TestFunctions()
                 .tabItem {Image(systemName: "wrench.and.screwdriver")}
+                .tag(1)
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -32,7 +35,7 @@ struct MainView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    UserProfileView().environmentObject(avm)
+                    UserProfileView(firstAppear: $firstAppear).environmentObject(avm)
                 } label: {
                     ImageView(urlString: avm.user?.photoURL, pictureWidth: 25)
                 }
@@ -44,6 +47,16 @@ struct MainView: View {
         }
         .onAppear {
             customizeAppearance()
+        }
+        .task {
+            do {
+                if !firstAppear {
+                    try await avm.loadCurrentUser()
+                    avm.getAuthProviders()
+                }
+            } catch {
+                
+            }
         }
     }
     private func customizeAppearance() {

@@ -148,8 +148,14 @@ struct ImageView: View {
                     .frame(width: pictureWidth)
                     .clipShape(Circle())
             } else {
-                ProgressView()
-                    .frame(width: pictureWidth, height: pictureWidth)
+                KFImage(URL(string: "https://pbs.twimg.com/profile_images/1752515582665068544/3UsnVSp5_400x400.jpg"))
+                    .placeholder {
+                        ProgressView()
+                    }
+                    .cacheOriginalImage()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: pictureWidth)
                     .clipShape(Circle())
             }
         }
