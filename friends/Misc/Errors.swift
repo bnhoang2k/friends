@@ -79,3 +79,14 @@ enum AuthError: Error, LocalizedError {
 //    var recoverySuggestion: String? {}
 //    var helpAnchor: String? {}
 }
+
+enum DatabaseError: Error, LocalizedError {
+    case configNotSet
+    var errorDescription: String? {
+        switch self {
+        case .configNotSet:
+            return NSLocalizedString("config was not set properly.",
+                                     comment: "Database Error - Refer to TypesenseManager")
+        }
+    }
+}

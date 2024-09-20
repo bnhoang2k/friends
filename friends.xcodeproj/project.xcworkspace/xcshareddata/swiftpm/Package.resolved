@@ -1,5 +1,5 @@
 {
-  "originHash" : "dc90efe7a49c25c60eb3f7a8fdf350c6352fe56d1d31183afc425b09cc263c40",
+  "originHash" : "3b155e9abf48ae73a26cd3236b5e87963033af5ace15213e5a3d1c0deda15e64",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
         "version" : "1.2024011602.0"
+      }
+    },
+    {
+      "identity" : "anycodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Flight-School/AnyCodable",
+      "state" : {
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
       }
     },
     {
@@ -170,6 +179,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "f3189b74d49db138c9a4a9982314172fff8f9251"
+      }
+    },
+    {
+      "identity" : "typesense-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/typesense/typesense-swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "67cc20aaf283a3d2894db973aa93e7d47042a27e"
       }
     }
   ],
