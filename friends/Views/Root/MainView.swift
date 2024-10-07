@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var tvm: TypesenseVM
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
@@ -23,11 +24,17 @@ struct MainView: View {
             TestFunctions()
                 .tabItem {Image(systemName: "wrench.and.screwdriver")}
                 .tag(1)
+            UserProfileView(firstAppear: $firstAppear)
+                .environmentObject(avm)
+                .tabItem { Image(systemName: "person.crop.circle") }
+                .tag(2)
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    Text("bruh")
+                    SearchBarView()
+                        .environmentObject(tvm)
+                        .environmentObject(avm)
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
@@ -35,9 +42,10 @@ struct MainView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    UserProfileView(firstAppear: $firstAppear).environmentObject(avm)
+                    Text("Notifications")
                 } label: {
-                    ImageView(urlString: avm.user?.photoURL, pictureWidth: 25)
+                    Image(systemName: "tray")
+//                        .padding(.trailing)
                 }
             }
             ToolbarItem(placement: .topBarLeading) {
@@ -49,13 +57,14 @@ struct MainView: View {
             customizeAppearance()
         }
         .task {
-            do {
-                if !firstAppear {
+            if !firstAppear {
+                do {
                     try await avm.loadCurrentUser()
                     avm.getAuthProviders()
+                    try await tvm.createClient()
                 }
-            } catch {
-                
+                catch {}
+                firstAppear = true
             }
         }
     }
@@ -78,6 +87,7 @@ struct MainView_Previews: PreviewProvider {
         NavigationStack {
             MainView()
                 .environmentObject(AuthenticationVM())
+                .environmentObject(TypesenseVM())
         }
     }
 }
