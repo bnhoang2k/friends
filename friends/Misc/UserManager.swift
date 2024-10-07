@@ -82,11 +82,24 @@ struct DBUser: Codable {
         case email = "email"
         case photoURL = "photo_url"
         case fullName = "full_name"
+        case id  // Add id for decoding, but we won't use it directly
     }
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.uid = try container.decode(String.self, forKey: .uid)
+        
+        // Try to decode `uid`, if not present, try `id`
+        if let uidValue = try container.decodeIfPresent(String.self, forKey: .uid) {
+            self.uid = uidValue
+        }
+        else if let idValue = try container.decodeIfPresent(String.self, forKey: .id) {
+            self.uid = idValue
+        }
+        else {
+            // If neither uid nor id are present, provide a default value
+            self.uid = ""
+        }
+        
         self.dateCreated = try container.decodeIfPresent(Date.self, forKey: .dateCreated)
         self.username = try container.decodeIfPresent(String.self, forKey: .username)
         self.email = try container.decodeIfPresent(String.self, forKey: .email)
@@ -96,6 +109,7 @@ struct DBUser: Codable {
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        // Encode `uid` into the `uid` key, or `id` if `uid` is being used differently in other cases.
         try container.encode(self.uid, forKey: .uid)
         try container.encodeIfPresent(self.dateCreated, forKey: .dateCreated)
         try container.encodeIfPresent(self.username, forKey: .username)
@@ -170,23 +184,23 @@ extension UserManager {
     
     func updateUser(_ originalUser: DBUser, with modifiedUser: DBUser) async throws {
         var data: [String: Any] = [:]
-
+        
         if originalUser.username != modifiedUser.username {
             data["username"] = modifiedUser.username
         }
-
+        
         if originalUser.fullName != modifiedUser.fullName {
             data["full_name"] = modifiedUser.fullName
         }
-
+        
         if originalUser.email != modifiedUser.email {
             data["email"] = modifiedUser.email
         }
-
+        
         if originalUser.photoURL != modifiedUser.photoURL {
             data["photo_url"] = modifiedUser.photoURL
         }
-
+        
         // If there are changes, update the Firestore document
         if !data.isEmpty {
             try await userDocument(uid: modifiedUser.uid).updateData(data)
