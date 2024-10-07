@@ -52,6 +52,8 @@ final class AuthenticationVM: ObservableObject {
         var authDataResult = try AuthenticationManager.shared.getAuthenticatedUserData()
         authDataResult.fullName = fullName
         authDataResult.username = username
+        // Default picture
+        authDataResult.photo_url = "https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png"
         let user = DBUser(auth: authDataResult)
         try await UserManager.shared.createNewUser(user: user)
     }
