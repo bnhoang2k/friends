@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct RootView: View {
     
     @StateObject var avm: AuthenticationVM = AuthenticationVM()
+    @StateObject private var tvm: TypesenseVM = TypesenseVM()
     @State var isLoading: Bool = true
     
     var body: some View {
@@ -18,9 +18,18 @@ struct RootView: View {
             if isLoading {
                 ProgressView()
                     .task {
+                        // TODO: Need to implement cache and make this better.
                         do {
+                            // Load user data.
                             try await avm.loadCurrentUser()
                             avm.getAuthProviders()
+                            
+                            // Load client if user was already signed in.
+                            if (avm.user != nil) {
+                                try await tvm.createClient()
+                            }
+                            
+                            // Load screen after everything is done and complete
                             avm.showSignInView = (avm.user == nil)
                         } catch {
                             print("RootView Error Loading User: \(error)")
@@ -43,6 +52,7 @@ struct RootView: View {
                     NavigationStack {
                         MainView()
                             .environmentObject(avm)
+                            .environmentObject(tvm)
                     }
                 }
             }
