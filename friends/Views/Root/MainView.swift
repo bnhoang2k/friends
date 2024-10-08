@@ -42,7 +42,8 @@ struct MainView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    Text("Notifications")
+                    NotificationsView()
+                        .environmentObject(avm)
                 } label: {
                     Image(systemName: "tray")
 //                        .padding(.trailing)
