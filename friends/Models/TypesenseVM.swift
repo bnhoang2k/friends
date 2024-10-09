@@ -51,19 +51,22 @@ extension TypesenseVM {
 
 extension TypesenseVM {
     // Search users based on the current query
-    func searchUsers(query: String, excludedName: String? = nil) async {
-        // Ensure the client is configured
+    func searchUsers(query: String, excludedName: String? = nil, page: Int = 1, perPage: Int = 50) async {
         guard let client = self.client, !query.isEmpty else {
             searchResults = [] // Clear the results when query is empty
             return
         }
-        // Perform the search
-        let searchParameters = SearchParameters(q: query, 
-                                                queryBy: "full_name, username",
-                                                filterBy: "username:!=\(excludedName ?? "")")
+        
+        let searchParameters = SearchParameters(
+            q: query,
+            queryBy: "full_name,username",
+            filterBy: "username:!=\(excludedName ?? "")",
+            page: page,
+            perPage: perPage
+        )
+        
         do {
-            let (data, response) = try await client.collection(name: "users").documents().search(searchParameters, for: DBUser.self)
-            // Update the searchResults property
+            let (data, _) = try await client.collection(name: "users").documents().search(searchParameters, for: DBUser.self)
             if let res = data {
                 self.searchResults = res.hits?.map { $0.document } as! [DBUser]
             } else {
@@ -75,4 +78,3 @@ extension TypesenseVM {
         }
     }
 }
-
