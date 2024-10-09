@@ -19,7 +19,6 @@ struct UserProfileView: View {
                 Section(header: HeaderView(headerText: "User Information")) {
                     userInfo
                 }
-                DummyListSections()
                 logoutButton
             }
         }
