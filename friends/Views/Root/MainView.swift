@@ -45,6 +45,8 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     NotificationsView()
+                        .environmentObject(avm)
+                        .environmentObject(nvm)
                 } label: {
                     Image(systemName: "tray")
                 }
@@ -69,7 +71,6 @@ struct MainView: View {
                     try await nvm.fetchNotifications(uid: uid)
                     try await nvm.fetchPendingFriendRequests(fromUserId: uid)
                     nvm.listenForNotificationChanges(uid: uid)
-                    nvm.listenForPendingFriendRequests(uid: uid)
                 }
                 catch {}
                 firstAppear = true

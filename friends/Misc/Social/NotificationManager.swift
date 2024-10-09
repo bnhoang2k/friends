@@ -131,12 +131,13 @@ class NotificationViewModel: ObservableObject {
                 friendRequestStatuses[notification.toUserId] = notification.notificationId
             }
         }
-        print("Updated friendRequestStatuses: \(friendRequestStatuses)")
     }
     
     // Function to listen for real-time updates to notifications
     func listenForNotificationChanges(uid: String) {
-        let notifications = Firestore.firestore().collection("notifications").whereField("to_uid", isEqualTo: uid)
+        let notifications = Firestore.firestore()
+            .collection("notifications")
+            .whereField("to_uid", isEqualTo: uid)
         
         let listener = notifications.addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
@@ -144,12 +145,15 @@ class NotificationViewModel: ObservableObject {
                 print("Error fetching notifications: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-            
+
             snapshot.documentChanges.forEach { diff in
                 switch diff.type {
                 case .added:
                     if let newNotification = try? diff.document.data(as: Notification.self) {
-                        self.cachedNotifications.append(newNotification)
+                        // Append only if not already present (to prevent duplicates)
+                        if !self.cachedNotifications.contains(where: { $0.notificationId == newNotification.notificationId }) {
+                            self.cachedNotifications.append(newNotification)
+                        }
                     }
                 case .modified:
                     if let updatedNotification = try? diff.document.data(as: Notification.self),
@@ -162,48 +166,26 @@ class NotificationViewModel: ObservableObject {
                     }
                 }
             }
+
+            handlePendingFriendRequests()
         }
+
         // Append the listener to the listeners array
         self.listeners.append(listener)
     }
-    
-    func listenForPendingFriendRequests(uid: String) {
-        let query = Firestore.firestore().collection("notifications")
-            .whereField("to_uid", isEqualTo: uid)
-            .whereField("type", isEqualTo: notificationType.friendRequest.rawValue)
-            .whereField("status", isEqualTo: "pending")
-        
-        query.addSnapshotListener { [weak self] snapshot, error in
-            guard let self = self else { return }
-            guard let snapshot = snapshot else {
-                print("Error fetching pending friend requests: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            snapshot.documentChanges.forEach { diff in
-                switch diff.type {
-                case .added:
-                    // Handle new friend request
-                    if let newRequest = try? diff.document.data(as: Notification.self) {
-                        if !self.cachedNotifications.contains(where: { $0.notificationId == newRequest.notificationId }) {
-                            self.cachedNotifications.append(newRequest)
-                        }
-                    }
-                case .modified:
-                    // Handle modified friend request
-                    if let updatedRequest = try? diff.document.data(as: Notification.self),
-                       let index = self.cachedNotifications.firstIndex(where: { $0.notificationId == updatedRequest.notificationId }) {
-                        self.cachedNotifications[index] = updatedRequest
-                    }
-                case .removed:
-                    // Handle removed friend request
-                    if let removedRequest = try? diff.document.data(as: Notification.self) {
-                        self.cachedNotifications.removeAll { $0.notificationId == removedRequest.notificationId }
-                    }
-                }
-            }
+
+    func handlePendingFriendRequests() {
+        let pendingRequests = cachedNotifications.filter {
+            $0.type == .friendRequest && $0.status == "pending"
         }
+
+        for request in pendingRequests {
+            friendRequestStatuses[request.toUserId] = request.notificationId
+        }
+
+        print("Updated friendRequestStatuses: \(friendRequestStatuses)")
     }
+
     
     // Stop all listeners when not needed
     func stopAllListeners() {

@@ -7,73 +7,64 @@
 
 import SwiftUI
 
-class NotificationsViewModel: ObservableObject {
-    @Published var notifications: [Notification] = []
-    @Published var isLoading = false
-
-    func loadNotifications(uid: String) {
-        Task {
-            do {
-                isLoading = true
-                let fetchedNotifications = try await UserManager.shared.fetchNotifications(uid: uid)
-                DispatchQueue.main.async {
-                    self.notifications = fetchedNotifications
-                    self.isLoading = false
-                }
-            } catch {
-                print("Failed to fetch notifications: \(error.localizedDescription)")
-                isLoading = false
-            }
-        }
-    }
-}
-
 struct NotificationsView: View {
-    @EnvironmentObject private var avm: AuthenticationVM // Assuming you have authentication setup
-    @StateObject private var viewModel = NotificationsViewModel()
-    
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var nvm: NotificationViewModel
     var body: some View {
         NavigationStack {
-            VStack {
-                if viewModel.isLoading {
-                    ProgressView("Loading Notifications...")
-                } else if viewModel.notifications.isEmpty {
-                    Text("No notifications yet.")
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    List(viewModel.notifications, id: \.notificationId) { notification in
-                        NotificationRowView(notification: notification)
-                    }
-                    .listStyle(PlainListStyle())
-                }
+            List(nvm.cachedNotifications, id: \.notificationId) {notification in
+                NotificationRow(notification: notification)
             }
-            .navigationTitle("Notifications")
-            .onAppear {
-                if let userId = avm.user?.uid {
-                    viewModel.loadNotifications(uid: userId)
-                }
-            }
+            .listStyle(.plain)
         }
     }
 }
 
-struct NotificationRowView: View {
+struct NotificationRow: View {
     let notification: Notification
-    
+
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(notification.message ?? "Error")
-                .font(.headline)
-            Text(notification.timestamp, style: .relative)
-                .font(.subheadline)
-                .foregroundColor(.gray)
+        HStack {
+            ImageView(urlString: notification.fromUserPP?.first)
+                .frame(width: 50, height: 50)
+                .clipShape(Circle())
+            
+            VStack(alignment: .leading) {
+                Text(notification.message ?? "No message")
+                    .font(.headline)
+                Text(notification.timestamp, style: .time)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            // Show different icons or actions depending on the type of notification
+            if notification.type == .friendRequest {
+                if notification.status == "pending" {
+                    Button("Accept") {
+                        // Action to accept the request
+                    }
+                } else {
+                    Text("Accepted")
+                }
+            } else if notification.type == .hangoutRequest {
+                // Handle hangout requests
+                Text("Hangout request")
+            } else if notification.type == .reminder {
+                // Handle reminders
+                Text("Reminder")
+            }
         }
         .padding(.vertical, 8)
     }
 }
 
 #Preview {
-    NotificationsView()
-        .environmentObject(AuthenticationVM()) // Provide AuthenticationVM for preview
+    NavigationStack {
+        NotificationsView()
+            .environmentObject(AuthenticationVM())
+            .environmentObject(NotificationViewModel())
+    }
 }
+    
