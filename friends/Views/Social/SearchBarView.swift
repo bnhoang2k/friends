@@ -8,57 +8,15 @@
 import SwiftUI
 import Firebase
 
-class FriendRequestViewModel: ObservableObject {
-    @Published var requestStatuses: [String: String] = [:] // Store statuses for each user
-    
-    private var listeners: [String: ListenerRegistration] = [:] // Track listeners for each user
-
-    func startListeningForRequestStatus(fromUserId: String, toUserId: String) {
-        // Remove any existing listener to prevent duplicates
-        listeners[toUserId]?.remove()
-
-        // Query for the friend request status
-        let query = UserManager.shared.userNotificationsList(uid: toUserId)
-            .whereField("from_uid", isEqualTo: fromUserId)
-            .whereField("type", isEqualTo: notificationType.friendRequest.rawValue)
-            .whereField("status", isEqualTo: "pending")
-
-        // Add the snapshot listener
-        listeners[toUserId] = query.addSnapshotListener { [weak self] snapshot, error in
-            guard let documents = snapshot?.documents, !documents.isEmpty else {
-                // No pending request found
-                DispatchQueue.main.async {
-                    self?.requestStatuses[toUserId] = "none"
-                }
-                return
-            }
-
-            // Update the request status based on the notification
-            if let notification = try? documents.first?.data(as: Notification.self) {
-                DispatchQueue.main.async {
-                    self?.requestStatuses[toUserId] = notification.status
-                }
-            }
-        }
-    }
-
-    func stopListeningForRequestStatus(toUserId: String) {
-        // Remove the listener
-        listeners[toUserId]?.remove()
-        listeners[toUserId] = nil
-    }
-}
-
 struct SearchBarView: View {
-    
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @StateObject private var friendRequestVM = FriendRequestViewModel() // ViewModel for friend requests
+    @EnvironmentObject private var nvm: NotificationViewModel
+    
+    @Environment(\.presentationMode) private var presentationMode
     
     var body: some View {
         NavigationStack {
-            // Main content here
             List(tvm.searchResults, id: \.uid) { user in
                 HStack {
                     ImageView(urlString: user.photoURL, pictureWidth: 50)
@@ -70,28 +28,37 @@ struct SearchBarView: View {
                     }
                     Spacer()
                     FriendRequestButton(
-                        requestStatus: friendRequestVM.requestStatuses[user.uid] ?? "none",
-                        fromUserId: avm.user?.uid ?? "",
-                        toUserId: user.uid,
-                        sendFriendRequest: {
+                        notificationId: nvm.friendRequestStatuses[user.uid],
+                        onSendRequest: {
                             Task {
-                                try? await UserManager.shared.sendFriendRequest(fromUserId: avm.user?.uid ?? "", toUserId: user.uid)
-                                friendRequestVM.requestStatuses[user.uid] = "pending"
+                                guard let fromUserId = avm.user?.uid,
+                                      let fromUsername = avm.user?.username,
+                                      let fromUserPP = avm.user?.photoURL else {
+                                    print("Error: Missing user details")
+                                    return
+                                }
+                                // Send friend request
+                                await nvm.sendFriendRequest(fromUserId: fromUserId,
+                                                            fromUsername: fromUsername,
+                                                            fromUserPP: [fromUserPP],
+                                                            toUserId: user.uid)
                             }
                         },
-                        cancelFriendRequest: {
+                        onUnsendRequest: {
                             Task {
-                                try? await UserManager.shared.cancelFriendRequest(fromUserId: avm.user?.uid ?? "", toUserId: user.uid)
-                                friendRequestVM.requestStatuses[user.uid] = "none"
+                                // Unsend friend request
+                                guard let notificationID = nvm.friendRequestStatuses[user.uid] else {
+                                    print("Error: No pending request to unsend")
+                                    return
+                                }
+                                guard let FromUserId = avm.user?.uid else {
+                                    print("Error can't get from user id.")
+                                    return
+                                }
+                                await nvm.unsendFriendRequest(toUserId: user.uid, fromUserId: FromUserId)
                             }
                         }
                     )
-                    .onAppear {
-                        friendRequestVM.startListeningForRequestStatus(fromUserId: avm.user?.uid ?? "", toUserId: user.uid)
-                    }
-                    .onDisappear {
-                        friendRequestVM.stopListeningForRequestStatus(toUserId: user.uid)
-                    }
                 }
             }
             .listStyle(PlainListStyle())
@@ -116,11 +83,11 @@ struct SearchBarView: View {
                 UIApplication.shared.dismissKeyboard()
             }
         }
-        .onChange(of: tvm.searchText, perform: { value in
+        .onChange(of: tvm.searchText) { _ in
             Task {
                 await tvm.searchUsers(query: tvm.searchText, excludedName: avm.user?.username ?? "Error")
             }
-        })
+        }
         .onDisappear {
             tvm.searchText = ""
             tvm.searchResults = []
@@ -128,47 +95,29 @@ struct SearchBarView: View {
     }
 }
 
-
-
 struct FriendRequestButton: View {
-    let requestStatus: String
-    let fromUserId: String
-    let toUserId: String
-    let sendFriendRequest: () -> Void
-    let cancelFriendRequest: () -> Void
+    let notificationId: String? // Now we pass the notificationId
+    let onSendRequest: () -> Void
+    let onUnsendRequest: () -> Void
     
     var body: some View {
         Button {
-            if requestStatus == "none" {
-                sendFriendRequest()
-            } else if requestStatus == "pending" {
-                cancelFriendRequest()
+            if notificationId == nil {
+                // Send friend request
+                onSendRequest()
+            } else {
+                // Unsend friend request
+                onUnsendRequest()
             }
         } label: {
-            buttonIcon
-                .padding(10) // Add padding for better touch size
-                .background(Color(.systemGray6)) // Optional: Add background for clearer boundaries
-                .clipShape(Circle()) // Optional: make the button circular or customize as needed
-        }
-        .buttonStyle(PlainButtonStyle()) // Prevents any unintended button expansion
-        .frame(width: 44, height: 44) // Explicit size for the button
-        .contentShape(Rectangle()) // Ensure button is the only tappable area
-    }
-    
-    @ViewBuilder
-    private var buttonIcon: some View {
-        if requestStatus == "none" {
-            Image(systemName: "plus")
-        } else if requestStatus == "pending" {
-            Image(systemName: "clock")
-        } else if requestStatus == "accepted" {
-            Image(systemName: "checkmark")
-        } else if requestStatus == "rejected" {
-            Image(systemName: "xmark")
+            if notificationId != nil {
+                Image(systemName: "clock") // Display clock for unsending
+            } else {
+                Image(systemName: "plus") // Display plus for sending
+            }
         }
     }
 }
-
 
 extension UIApplication {
     func dismissKeyboard() {
@@ -181,5 +130,6 @@ extension UIApplication {
         SearchBarView()
             .environmentObject(TypesenseVM())
             .environmentObject(AuthenticationVM())
+            .environmentObject(NotificationViewModel())
     }
 }
