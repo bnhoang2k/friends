@@ -11,6 +11,7 @@ struct MainView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
+    @StateObject private var nvm: NotificationViewModel = NotificationViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
@@ -33,8 +34,9 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     SearchBarView()
-                        .environmentObject(tvm)
                         .environmentObject(avm)
+                        .environmentObject(tvm)
+                        .environmentObject(nvm)
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
@@ -43,10 +45,8 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     NotificationsView()
-                        .environmentObject(avm)
                 } label: {
                     Image(systemName: "tray")
-//                        .padding(.trailing)
                 }
             }
             ToolbarItem(placement: .topBarLeading) {
@@ -63,6 +63,13 @@ struct MainView: View {
                     try await avm.loadCurrentUser()
                     avm.getAuthProviders()
                     try await tvm.createClient()
+                    guard let uid = avm.user?.uid else {
+                        throw AuthError.noUserSignedIn
+                    }
+                    try await nvm.fetchNotifications(uid: uid)
+                    try await nvm.fetchPendingFriendRequests(fromUserId: uid)
+                    nvm.listenForNotificationChanges(uid: uid)
+                    nvm.listenForPendingFriendRequests(uid: uid)
                 }
                 catch {}
                 firstAppear = true
