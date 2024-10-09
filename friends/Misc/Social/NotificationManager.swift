@@ -96,7 +96,10 @@ class NotificationViewModel: ObservableObject {
     
     // Fetch all notifications and update the friend request statuses
     func fetchNotifications(uid: String) async throws {
-        let notifications = Firestore.firestore().collection("notifications").whereField("to_uid", isEqualTo: uid)
+        let notifications = Firestore.firestore().collection("notifications")
+            .whereField("to_uid", isEqualTo: uid)
+            .order(by: "timestamp", descending: true)
+            .limit(to: 25)
         let snapshot = try await notifications.getDocuments()
 
         // Reset cached notifications before updating
