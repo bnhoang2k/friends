@@ -47,7 +47,7 @@ struct SearchBarView: View {
                         onUnsendRequest: {
                             Task {
                                 // Unsend friend request
-                                guard let notificationID = nvm.friendRequestStatuses[user.uid] else {
+                                guard nvm.friendRequestStatuses[user.uid] != nil else {
                                     print("Error: No pending request to unsend")
                                     return
                                 }
