@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import FirebaseFunctions
 
 enum notificationType: String, Codable {
     case friendRequest = "friendRequest"
@@ -101,17 +102,18 @@ class NotificationViewModel: ObservableObject {
             .order(by: "timestamp", descending: true)
             .limit(to: 25)
         let snapshot = try await notifications.getDocuments()
-
         // Reset cached notifications before updating
         self.cachedNotifications = snapshot.documents.compactMap { doc in
             // Decode the notification
             guard let notification = try? doc.data(as: Notification.self) else {
                 return nil
             }
-
+            
             // Store incoming friend requests or other notifications
             return notification
         }
+        
+        handlePendingFriendRequests() // Ensure friend request statuses are updated after fetching
     }
     
     func fetchPendingFriendRequests(fromUserId: String) async throws {
@@ -119,12 +121,12 @@ class NotificationViewModel: ObservableObject {
             .whereField("from_uid", isEqualTo: fromUserId)
             .whereField("type", isEqualTo: notificationType.friendRequest.rawValue)
             .whereField("status", isEqualTo: "pending")
-
+        
         let snapshot = try await requests.getDocuments()
-
+        
         // Reset friend request statuses before updating
         friendRequestStatuses.removeAll()
-
+        
         for document in snapshot.documents {
             if let notification = try? document.data(as: Notification.self) {
                 // Store the notificationId for this friend request
@@ -135,6 +137,7 @@ class NotificationViewModel: ObservableObject {
     
     // Function to listen for real-time updates to notifications
     func listenForNotificationChanges(uid: String) {
+        stopAllListeners() // Stop any existing listeners before adding a new one
         let notifications = Firestore.firestore()
             .collection("notifications")
             .whereField("to_uid", isEqualTo: uid)
@@ -145,7 +148,7 @@ class NotificationViewModel: ObservableObject {
                 print("Error fetching notifications: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-
+            
             snapshot.documentChanges.forEach { diff in
                 switch diff.type {
                 case .added:
@@ -166,26 +169,23 @@ class NotificationViewModel: ObservableObject {
                     }
                 }
             }
-
+            
             handlePendingFriendRequests()
         }
-
+        
         // Append the listener to the listeners array
         self.listeners.append(listener)
     }
-
+    
     func handlePendingFriendRequests() {
         let pendingRequests = cachedNotifications.filter {
             $0.type == .friendRequest && $0.status == "pending"
         }
-
+        
         for request in pendingRequests {
             friendRequestStatuses[request.toUserId] = request.notificationId
         }
-
-        print("Updated friendRequestStatuses: \(friendRequestStatuses)")
     }
-
     
     // Stop all listeners when not needed
     func stopAllListeners() {
@@ -194,39 +194,63 @@ class NotificationViewModel: ObservableObject {
     }
 }
 
+// TODO: Move functions outside of notifications vm
 extension NotificationViewModel {
     // Function to send friend request (as a Notification)
     func sendFriendRequest(fromUserId: String,
                            fromUsername: String,
                            fromUserPP: [String],
                            toUserId: String) async {
-        // Check if there's already a pending friend request
-        if friendRequestStatuses[toUserId] != nil {
+        // Check if there's already a pending friend request in local state
+        if let existingRequestId = friendRequestStatuses[toUserId],
+           cachedNotifications.contains(where: { $0.notificationId == existingRequestId && $0.status == "pending" }) {
             print("A pending friend request already exists for \(toUserId)")
             return
         }
-
-        let notificationRef = Firestore.firestore().collection("notifications").document()
-        let notificationId = notificationRef.documentID
-
-        let friendRequestNotification = Notification(
-            notificationId: notificationId,
-            fromUserId: fromUserId,
-            fromUserPP: fromUserPP,
-            toUserId: toUserId,
-            type: .friendRequest,
-            message: "Friend request from \(fromUsername)",
-            status: "pending"
-        )
-
-        do {
-            try notificationRef.setData(from: friendRequestNotification, merge: false, encoder: Firestore.Encoder())
-            print("Notification successfully sent: \(friendRequestNotification)")
-
+        
+        // Check if any of the values are null or empty ("")
+        guard !fromUserId.isEmpty, !toUserId.isEmpty, !fromUsername.isEmpty, !fromUserPP.isEmpty else {
+            print("Error: One or more parameters are missing.")
+            return
+        }
+        
+        // Call the Cloud Function to send the friend request
+        let functions = Functions.functions()
+        let data: [String: Any] = [
+            "from_uid": fromUserId,
+            "to_uid": toUserId,
+            "from_username": fromUsername,
+            "from_pp": fromUserPP
+        ]
+        
+        functions.httpsCallable("handleFriendRequests").call(data) { result, error in
+            if let error = error {
+                print("Error sending friend request via Cloud Function: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let notificationData = result?.data as? [String: Any],
+                  let notificationId = notificationData["notification_id"] as? String else {
+                print("Error: Invalid data received from Cloud Function.")
+                return
+            }
+            
+            let friendRequestNotification = Notification(
+                notificationId: notificationId,
+                fromUserId: fromUserId,
+                fromUserPP: fromUserPP,
+                toUserId: toUserId,
+                type: .friendRequest,
+                message: "Friend request from \(fromUsername)",
+                status: "pending"
+            )
+            
             // Store the notificationId in friendRequestStatuses for future reference
-            friendRequestStatuses[toUserId] = notificationId
-        } catch {
-            print("Error sending friend request: \(error.localizedDescription)")
+            self.friendRequestStatuses[toUserId] = notificationId
+            
+            // Update cachedNotifications to include the new friend request
+            self.cachedNotifications.append(friendRequestNotification)
+            print("Notification successfully sent via Cloud Function: \(friendRequestNotification)")
         }
     }
     
@@ -237,17 +261,60 @@ extension NotificationViewModel {
             print("Error: Could not find stored notification ID for unsending")
             return
         }
-
+        
         let notificationRef = Firestore.firestore().collection("notifications").document(notificationId)
-
+        
         do {
             try await notificationRef.delete()
             print("Notification \(notificationId) successfully deleted")
-
+            
             // Remove from friendRequestStatuses (outgoing request)
             friendRequestStatuses[toUserId] = nil
+            
+            // Remove the notification from cachedNotifications
+            self.cachedNotifications.removeAll { $0.notificationId == notificationId }
         } catch {
             print("Error unsending friend request: \(error.localizedDescription)")
+        }
+    }
+    
+    // General function for updating notification status.
+    func updateNotificationStatus(notification: Notification, status: String) async {
+        guard let notificationId = notification.notificationId else {
+            print("Error: Notification ID is missing.")
+            return
+        }
+        
+        let notificationRef = Firestore.firestore()
+            .collection("notifications")
+            .document(notificationId)
+        
+        do {
+            // Read the current status of the notification before updating
+            let currentSnapshot = try await notificationRef.getDocument()
+            if let currentData = currentSnapshot.data(),
+               let currentStatus = currentData["status"] as? String, currentStatus == notification.status {
+                
+                // Proceed with update only if the current status matches the local state
+                try await notificationRef.updateData(["status": status])
+                print("Notification status updated to \(status).")
+                
+                // Update local cachedNotifications to reflect the status change
+                if let index = cachedNotifications.firstIndex(where: { $0.notificationId == notificationId }) {
+                    cachedNotifications[index].status = status
+                }
+                
+                // Update friendRequestStatuses if the status is pending or remove if not
+                if status == "pending" {
+                    friendRequestStatuses[notification.toUserId] = notificationId
+                } else {
+                    friendRequestStatuses[notification.toUserId] = nil
+                }
+            } else {
+                print("Status mismatch: The document status has changed since last read.")
+            }
+        } catch {
+            print("Error updating notification status: \(error.localizedDescription)")
         }
     }
 }

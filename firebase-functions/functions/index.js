@@ -25,6 +25,9 @@ const {SecretManagerServiceClient} = require("@google-cloud/secret-manager");
 // Initialize Firebase Admin SDK
 admin.initializeApp();
 
+// Initialize database
+const db = admin.firestore();
+
 // Initialize secret manager
 const secretClient = new SecretManagerServiceClient();
 
@@ -60,5 +63,51 @@ exports.getTypesenseAPIKey = functions.https.onCall(async (data, context) => {
   } catch (error) {
     throw new functions.https.HttpsError("internal 2",
         "Failed to retrieve the API key");
+  }
+});
+
+exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
+  try {
+    // Extract and log incoming data for debugging
+    // console.log("Received data:", data);
+    const {from_uid, to_uid, from_username, from_pp} = data.data;
+    // console.log(
+    //    "Parsed data:",
+    //    "fromUserId:", fromUserId,
+    //    "toUserId:", toUserId,
+    //    "fromUsername:", fromUsername,
+    //    "fromUserPP:", fromUserPP,
+    // );
+
+    // Create a new notification reference
+    const notificationRef = db.collection("notifications").doc();
+    const notification_id = notificationRef.id;
+
+    const friendRequestNotification = {
+      notification_id,
+      from_uid,
+      from_pp: from_pp,
+      to_uid,
+      type: "friendRequest",
+      message: `${from_username} wants to be your friend`,
+      status: "pending",
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Write data to Firestore in a transaction
+    await db.runTransaction(async (transaction) => {
+      const notificationSnapshot = await transaction.get(notificationRef);
+      if (!notificationSnapshot.exists) {
+        transaction.set(notificationRef, friendRequestNotification);
+      } else {
+        throw new Error("Friend request already exists.");
+      }
+    });
+
+    return {notification_id: notification_id};
+  } catch (error) {
+    // Log the error for debugging
+    console.error("Error handling friend request notification:", error.message);
+    throw new functions.https.HttpsError("internal", error.message);
   }
 });
