@@ -13,10 +13,43 @@ struct SearchBarView: View {
     @EnvironmentObject private var tvm: TypesenseVM
     @EnvironmentObject private var nvm: NotificationViewModel
     
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var toUserId: String? = nil
     
     var body: some View {
-        NavigationStack {
+        VStack {
+            HStack {
+                TextField("Search", text: $tvm.searchText)
+                    .padding(10)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .onChange(of: tvm.searchText) { _ in
+                        Task {
+                            await tvm.searchUsers(query: tvm.searchText, excludedName: avm.user?.username ?? "Error")
+                        }
+                    }
+                Button {
+                    Task {
+                        guard let fromUserId = avm.user?.uid,
+                              let fromUsername = avm.user?.username,
+                              let fromUserPP = avm.user?.photoURL,
+                              let toUserId = toUserId else {
+                            print("Error: Missing user details")
+                            return
+                        }
+                        await nvm.sendFriendRequest(fromUserId: fromUserId,
+                                                    fromUsername: fromUsername,
+                                                    fromUserPP: [fromUserPP],
+                                                    toUserId: toUserId)
+                        dismiss()
+                    }
+                } label: {
+                    Text("Add Friend")
+                        .bold()
+                }
+            }
+            .padding()
             List(tvm.searchResults, id: \.uid) { user in
                 HStack {
                     ImageView(urlString: user.photoURL, pictureWidth: 50)
@@ -27,94 +60,23 @@ struct SearchBarView: View {
                             .foregroundColor(.gray)
                     }
                     Spacer()
-                    FriendRequestButton(
-                        notificationId: nvm.friendRequestStatuses[user.uid],
-                        onSendRequest: {
-                            Task {
-                                guard let fromUserId = avm.user?.uid,
-                                      let fromUsername = avm.user?.username,
-                                      let fromUserPP = avm.user?.photoURL else {
-                                    print("Error: Missing user details")
-                                    return
-                                }
-                                // Send friend request
-                                await nvm.sendFriendRequest(fromUserId: fromUserId,
-                                                            fromUsername: fromUsername,
-                                                            fromUserPP: [fromUserPP],
-                                                            toUserId: user.uid)
-                            }
-                        },
-                        onUnsendRequest: {
-                            Task {
-                                // Unsend friend request
-                                guard nvm.friendRequestStatuses[user.uid] != nil else {
-                                    print("Error: No pending request to unsend")
-                                    return
-                                }
-                                guard let FromUserId = avm.user?.uid else {
-                                    print("Error can't get from user id.")
-                                    return
-                                }
-                                await nvm.unsendFriendRequest(toUserId: user.uid, fromUserId: FromUserId)
-                            }
-                        }
-                    )
+                }
+                .contentShape(.rect)
+                .onTapGesture {
+                    guard let username = user.username else {return}
+                    tvm.searchText = username
+                    toUserId = user.uid
                 }
             }
             .listStyle(PlainListStyle())
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack {
-                        TextField("Search", text: $tvm.searchText)
-                            .frame(maxWidth: .infinity)
-                            .textFieldStyle(.plain)
-                            .padding(7)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .autocorrectionDisabled()
-                    }
-                }
-            }
+            Spacer()
         }
-        .onChange(of: presentationMode.wrappedValue.isPresented) { isPresented in
-            if !isPresented {
-                UIApplication.shared.dismissKeyboard()
-            }
-        }
-        .onChange(of: tvm.searchText) { _ in
-            Task {
-                await tvm.searchUsers(query: tvm.searchText, excludedName: avm.user?.username ?? "Error")
-            }
-        }
+        .navigationTitle("Search and Add Friends")
+        .navigationBarTitleDisplayMode(.inline)
         .onDisappear {
             tvm.searchText = ""
             tvm.searchResults = []
-        }
-    }
-}
-
-struct FriendRequestButton: View {
-    let notificationId: String? // Now we pass the notificationId
-    let onSendRequest: () -> Void
-    let onUnsendRequest: () -> Void
-    
-    var body: some View {
-        Button {
-            if notificationId == nil {
-                // Send friend request
-                onSendRequest()
-            } else {
-                // Unsend friend request
-                onUnsendRequest()
-            }
-        } label: {
-            if notificationId != nil {
-                Image(systemName: "clock") // Display clock for unsending
-            } else {
-                Image(systemName: "plus") // Display plus for sending
-            }
+            toUserId = ""
         }
     }
 }

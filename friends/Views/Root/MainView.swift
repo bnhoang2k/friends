@@ -33,12 +33,13 @@ struct MainView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    SearchBarView()
+                    FriendsListView()
                         .environmentObject(avm)
                         .environmentObject(tvm)
                         .environmentObject(nvm)
                 } label: {
-                    Image(systemName: "magnifyingglass")
+                    Image(systemName: "person.2.fill")
+                        .scaleEffect(x: -1, y: 1)
                 }
                 
             }
