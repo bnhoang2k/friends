@@ -261,20 +261,27 @@ extension NotificationViewModel {
             print("Error: Could not find stored notification ID for unsending")
             return
         }
-        
-        let notificationRef = Firestore.firestore().collection("notifications").document(notificationId)
-        
+
+        let functions = Functions.functions()
+        let data: [String: Any] = [
+            "notification_id": notificationId
+        ]
+
         do {
-            try await notificationRef.delete()
-            print("Notification \(notificationId) successfully deleted")
-            
-            // Remove from friendRequestStatuses (outgoing request)
-            friendRequestStatuses[toUserId] = nil
-            
-            // Remove the notification from cachedNotifications
-            self.cachedNotifications.removeAll { $0.notificationId == notificationId }
+            let result = try await functions.httpsCallable("unsendFriendRequest").call(data)
+            if let response = result.data as? [String: Any], let success = response["success"] as? Bool, success {
+                print("Notification \(notificationId) successfully deleted via Cloud Function")
+
+                // Remove from friendRequestStatuses (outgoing request)
+                friendRequestStatuses[toUserId] = nil
+
+                // Remove the notification from cachedNotifications
+                self.cachedNotifications.removeAll { $0.notificationId == notificationId }
+            } else {
+                print("Error: Unexpected response from unsendFriendRequest Cloud Function.")
+            }
         } catch {
-            print("Error unsending friend request: \(error.localizedDescription)")
+            print("Error unsending friend request via Cloud Function: \(error.localizedDescription)")
         }
     }
     
@@ -284,26 +291,23 @@ extension NotificationViewModel {
             print("Error: Notification ID is missing.")
             return
         }
-        
-        let notificationRef = Firestore.firestore()
-            .collection("notifications")
-            .document(notificationId)
-        
+
+        let functions = Functions.functions()
+        let data: [String: Any] = [
+            "notificationId": notificationId,
+            "status": status
+        ]
+
         do {
-            // Read the current status of the notification before updating
-            let currentSnapshot = try await notificationRef.getDocument()
-            if let currentData = currentSnapshot.data(),
-               let currentStatus = currentData["status"] as? String, currentStatus == notification.status {
-                
-                // Proceed with update only if the current status matches the local state
-                try await notificationRef.updateData(["status": status])
-                print("Notification status updated to \(status).")
-                
+            let result = try await functions.httpsCallable("updateNotificationStatus").call(data)
+            if let response = result.data as? [String: Any], let success = response["success"] as? Bool, success {
+                print("Notification status updated to \(status) via Cloud Function")
+
                 // Update local cachedNotifications to reflect the status change
                 if let index = cachedNotifications.firstIndex(where: { $0.notificationId == notificationId }) {
                     cachedNotifications[index].status = status
                 }
-                
+
                 // Update friendRequestStatuses if the status is pending or remove if not
                 if status == "pending" {
                     friendRequestStatuses[notification.toUserId] = notificationId
@@ -311,10 +315,10 @@ extension NotificationViewModel {
                     friendRequestStatuses[notification.toUserId] = nil
                 }
             } else {
-                print("Status mismatch: The document status has changed since last read.")
+                print("Error: Unexpected response from updateNotificationStatus Cloud Function.")
             }
         } catch {
-            print("Error updating notification status: \(error.localizedDescription)")
+            print("Error updating notification status via Cloud Function: \(error.localizedDescription)")
         }
     }
 }

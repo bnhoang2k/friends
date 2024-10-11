@@ -111,3 +111,71 @@ exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError("internal", error.message);
   }
 });
+
+exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
+  const {notification_id} = data.data;
+  if (!notification_id) {
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "The notification ID is missing.",
+    );
+  }
+
+  try {
+    await db.runTransaction(async (transaction) => {
+      const notificationRef = db.collection("notifications").doc(notification_id);
+      const notificationSnapshot = await transaction.get(notificationRef);
+
+      if (!notificationSnapshot.exists) {
+        throw new Error("Notification does not exist.");
+      }
+
+      transaction.delete(notificationRef);
+      console.log(`Notification ${notification_id} successfully deleted`);
+    });
+
+    return {success: true, message: `Notification ${notification_id} deleted successfully`};
+  } catch (error) {
+    console.error("Error unsending friend request:", error.message);
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
+
+exports.updateFriendRequestStatus = functions.https.onCall(async (data, context) => {
+  const {notification_id, status} = data.data;
+  if (!notification_id || !status) {
+    console.log(
+        "notification_id: ", notification_id,
+        "status: ", status,
+    );
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "The notification ID is missing or the status is missing.",
+    );
+  }
+
+  try {
+    await db.runTransaction(async (transaction) => {
+      const notificationRef = db.collection("notifications").doc(notification_id);
+      const currentSnapshot = await transaction.get(notificationRef);
+
+      if (!currentSnapshot.exists) {
+        throw new Error("Notification does not exist.");
+      }
+
+      const currentData = currentSnapshot.data();
+      if (currentData.status === status) {
+        console.log("No change in status; skipping update.");
+        return {success: true, message: "No change in status."};
+      }
+
+      transaction.update(notificationRef, {status});
+      console.log(`Notification status updated to ${status}`);
+    });
+
+    return {success: true, message: `Notification status updated to ${status}`};
+  } catch (error) {
+    console.error("Error updating notification status:", error.message);
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
