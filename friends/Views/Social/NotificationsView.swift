@@ -14,6 +14,7 @@ struct NotificationsView: View {
         NavigationStack {
             List(nvm.cachedNotifications, id: \.notificationId) {notification in
                 NotificationRow(notification: notification)
+                    .environmentObject(nvm)
             }
             .listStyle(.plain)
         }
@@ -21,8 +22,10 @@ struct NotificationsView: View {
 }
 
 struct NotificationRow: View {
-    let notification: Notification
-
+    @EnvironmentObject private var nvm: NotificationViewModel
+    @State private var showActionButtons: Bool = false
+    var notification: Notification
+    
     var body: some View {
         HStack {
             ImageView(urlString: notification.fromUserPP?.first)
@@ -31,29 +34,54 @@ struct NotificationRow: View {
             
             VStack(alignment: .leading) {
                 Text(notification.message ?? "No message")
-                    .font(.headline)
+                    .font(.subheadline)
                 Text(notification.timestamp, style: .time)
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
-
+            
             Spacer()
-
-            // Show different icons or actions depending on the type of notification
+            
+            // Action buttons for accepting or rejecting
             if notification.type == .friendRequest {
                 if notification.status == "pending" {
-                    Button("Accept") {
-                        // Action to accept the request
+                    HStack(spacing: 20) {
+                        Button {
+                            // Action for accepting
+                            Task {
+                                await nvm.updateNotificationStatus(notification: notification,
+                                                                   status: "accepted")
+                            }
+                        } label: {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.green)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        Button {
+                            Task {
+                                await nvm.updateNotificationStatus(notification: notification,
+                                                                   status: "rejected")
+                            }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.red)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                } else {
-                    Text("Accepted")
                 }
-            } else if notification.type == .hangoutRequest {
-                // Handle hangout requests
-                Text("Hangout request")
-            } else if notification.type == .reminder {
-                // Handle reminders
-                Text("Reminder")
+                else if notification.status == "accepted" {
+                    Text("Accepted")
+                        .bold()
+                        .foregroundColor(.green)
+                } else if notification.status == "rejected" {
+                    Text("Rejected")
+                        .bold()
+                        .foregroundColor(.red)
+                }
             }
         }
         .padding(.vertical, 8)
@@ -67,4 +95,3 @@ struct NotificationRow: View {
             .environmentObject(NotificationViewModel())
     }
 }
-    
