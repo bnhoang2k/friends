@@ -294,7 +294,7 @@ extension NotificationViewModel {
 
         let functions = Functions.functions()
         let data: [String: Any] = [
-            "notificationId": notificationId,
+            "notification_id": notificationId,
             "status": status
         ]
 

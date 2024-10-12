@@ -141,7 +141,7 @@ exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.updateFriendRequestStatus = functions.https.onCall(async (data, context) => {
+exports.updateNotificationStatus = functions.https.onCall(async (data, context) => {
   const {notification_id, status} = data.data;
   if (!notification_id || !status) {
     console.log(
