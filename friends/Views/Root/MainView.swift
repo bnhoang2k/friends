@@ -34,7 +34,6 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     FriendsListView()
-                        .environmentObject(avm)
                         .environmentObject(tvm)
                         .environmentObject(nvm)
                 } label: {
@@ -46,7 +45,6 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     NotificationsView()
-                        .environmentObject(avm)
                         .environmentObject(nvm)
                 } label: {
                     Image(systemName: "tray")

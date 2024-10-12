@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var nvm: NotificationViewModel
     var body: some View {
         NavigationStack {
@@ -91,7 +90,6 @@ struct NotificationRow: View {
 #Preview {
     NavigationStack {
         NotificationsView()
-            .environmentObject(AuthenticationVM())
             .environmentObject(NotificationViewModel())
     }
 }
