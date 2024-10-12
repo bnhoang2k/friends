@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FriendsListView: View {
     
+    @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
     @EnvironmentObject private var nvm: NotificationViewModel
     
@@ -62,6 +63,7 @@ struct FriendsListView: View {
         }
         .sheet(isPresented: $showAddFriendView, content: {
             SearchBarView()
+                .environmentObject(avm)
                 .environmentObject(tvm)
                 .environmentObject(nvm)
         })
@@ -71,6 +73,7 @@ struct FriendsListView: View {
 #Preview {
     NavigationStack {
         FriendsListView()
+            .environmentObject(AuthenticationVM())
             .environmentObject(TypesenseVM())
             .environmentObject(NotificationViewModel())
     }

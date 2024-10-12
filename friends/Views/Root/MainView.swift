@@ -34,6 +34,7 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     FriendsListView()
+                        .environmentObject(avm)
                         .environmentObject(tvm)
                         .environmentObject(nvm)
                 } label: {

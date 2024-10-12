@@ -43,13 +43,13 @@ struct NotificationRow: View {
             
             // Action buttons for accepting or rejecting
             if notification.type == .friendRequest {
-                if notification.status == "pending" {
+                if notification.status == .pending {
                     HStack(spacing: 20) {
                         Button {
                             // Action for accepting
                             Task {
                                 await nvm.updateNotificationStatus(notification: notification,
-                                                                   status: "accepted")
+                                                                   status: .accepted)
                             }
                         } label: {
                             Image(systemName: "checkmark.circle.fill")
@@ -61,7 +61,7 @@ struct NotificationRow: View {
                         Button {
                             Task {
                                 await nvm.updateNotificationStatus(notification: notification,
-                                                                   status: "rejected")
+                                                                   status: .rejected)
                             }
                         } label: {
                             Image(systemName: "xmark.circle.fill")
@@ -72,11 +72,12 @@ struct NotificationRow: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
-                else if notification.status == "accepted" {
+                else if notification.status == .accepted {
                     Text("Accepted")
                         .bold()
                         .foregroundColor(.green)
-                } else if notification.status == "rejected" {
+                } 
+                else if notification.status == .rejected {
                     Text("Rejected")
                         .bold()
                         .foregroundColor(.red)

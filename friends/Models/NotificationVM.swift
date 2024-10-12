@@ -100,7 +100,7 @@ class NotificationViewModel: ObservableObject {
     
     func handlePendingFriendRequests() {
         let pendingRequests = cachedNotifications.filter {
-            $0.type == .friendRequest && $0.status == "pending"
+            $0.type == .friendRequest && $0.status == .pending
         }
         
         for request in pendingRequests {
@@ -115,7 +115,7 @@ class NotificationViewModel: ObservableObject {
     }
 }
 
-// TODO: Move functions outside of notifications vm
+// MARK: Social functions
 extension NotificationViewModel {
     // Function to send friend request (as a Notification)
     func sendFriendRequest(fromUserId: String,
@@ -124,7 +124,7 @@ extension NotificationViewModel {
                            toUserId: String) async {
         // Check if there's already a pending friend request in local state
         if let existingRequestId = friendRequestStatuses[toUserId],
-           cachedNotifications.contains(where: { $0.notificationId == existingRequestId && $0.status == "pending" }) {
+           cachedNotifications.contains(where: { $0.notificationId == existingRequestId && $0.status == .pending }) {
             print("A pending friend request already exists for \(toUserId)")
             return
         }
@@ -135,7 +135,6 @@ extension NotificationViewModel {
             return
         }
         
-        // Call the Cloud Function to send the friend request
         let functions = Functions.functions()
         let data: [String: Any] = [
             "from_uid": fromUserId,
@@ -144,13 +143,9 @@ extension NotificationViewModel {
             "from_pp": fromUserPP
         ]
         
-        functions.httpsCallable("handleFriendRequests").call(data) { result, error in
-            if let error = error {
-                print("Error sending friend request via Cloud Function: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let notificationData = result?.data as? [String: Any],
+        do {
+            let result = try await functions.httpsCallable("handleFriendRequests").call(data)
+            guard let notificationData = result.data as? [String: Any],
                   let notificationId = notificationData["notification_id"] as? String else {
                 print("Error: Invalid data received from Cloud Function.")
                 return
@@ -163,7 +158,7 @@ extension NotificationViewModel {
                 toUserId: toUserId,
                 type: .friendRequest,
                 message: "Friend request from \(fromUsername)",
-                status: "pending"
+                status: .pending
             )
             
             // Store the notificationId in friendRequestStatuses for future reference
@@ -172,6 +167,8 @@ extension NotificationViewModel {
             // Update cachedNotifications to include the new friend request
             self.cachedNotifications.append(friendRequestNotification)
             print("Notification successfully sent via Cloud Function: \(friendRequestNotification)")
+        } catch {
+            print("Error sending friend request via Cloud Function: \(error.localizedDescription)")
         }
     }
     
@@ -207,7 +204,7 @@ extension NotificationViewModel {
     }
     
     // General function for updating notification status.
-    func updateNotificationStatus(notification: Notification, status: String) async {
+    func updateNotificationStatus(notification: Notification, status: notificationStatus) async {
         guard let notificationId = notification.notificationId else {
             print("Error: Notification ID is missing.")
             return
@@ -216,7 +213,7 @@ extension NotificationViewModel {
         let functions = Functions.functions()
         let data: [String: Any] = [
             "notification_id": notificationId,
-            "status": status
+            "status": status.rawValue
         ]
 
         do {
@@ -228,18 +225,15 @@ extension NotificationViewModel {
                 if let index = cachedNotifications.firstIndex(where: { $0.notificationId == notificationId }) {
                     cachedNotifications[index].status = status
                 }
-
-                // Update friendRequestStatuses if the status is pending or remove if not
-                if status == "pending" {
-                    friendRequestStatuses[notification.toUserId] = notificationId
-                } else {
-                    friendRequestStatuses[notification.toUserId] = nil
-                }
             } else {
                 print("Error: Unexpected response from updateNotificationStatus Cloud Function.")
             }
         } catch {
             print("Error updating notification status via Cloud Function: \(error.localizedDescription)")
         }
+    }
+    
+    func handleFriendRequest(notification: Notification) async {
+        await updateNotificationStatus(notification: notification, status: .accepted)
     }
 }
