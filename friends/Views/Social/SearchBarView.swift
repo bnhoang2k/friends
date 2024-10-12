@@ -11,7 +11,7 @@ import Firebase
 struct SearchBarView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @EnvironmentObject private var nvm: NotificationViewModel
+    @EnvironmentObject private var svm: SocialViewModel
     
     @Environment(\.dismiss) private var dismiss
     
@@ -38,7 +38,7 @@ struct SearchBarView: View {
                             print("Error: Missing user details")
                             return
                         }
-                        await nvm.sendFriendRequest(fromUserId: fromUserId,
+                        await svm.sendFriendRequest(fromUserId: fromUserId,
                                                     fromUsername: fromUsername,
                                                     fromUserPP: [fromUserPP],
                                                     toUserId: toUserId)
@@ -92,6 +92,6 @@ extension UIApplication {
         SearchBarView()
             .environmentObject(TypesenseVM())
             .environmentObject(AuthenticationVM())
-            .environmentObject(NotificationViewModel())
+            .environmentObject(SocialViewModel())
     }
 }

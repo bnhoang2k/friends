@@ -1,5 +1,5 @@
 //
-//  NotificationVM.swift
+//  SocialVM.swift
 //  friends
 //
 //  Created by Bryan Hoang on 10/11/24.
@@ -11,7 +11,7 @@ import FirebaseFirestoreSwift
 import FirebaseFunctions
 
 @MainActor
-class NotificationViewModel: ObservableObject {
+class SocialViewModel: ObservableObject {
     @Published var cachedNotifications: [Notification] = []
     @Published var friendRequestStatuses: [String: String] = [:]
     private var listeners: [ListenerRegistration] = []
@@ -116,7 +116,7 @@ class NotificationViewModel: ObservableObject {
 }
 
 // MARK: Social functions
-extension NotificationViewModel {
+extension SocialViewModel {
     // Function to send friend request (as a Notification)
     func sendFriendRequest(fromUserId: String,
                            fromUsername: String,

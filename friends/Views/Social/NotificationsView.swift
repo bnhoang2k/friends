@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @EnvironmentObject private var nvm: NotificationViewModel
+    @EnvironmentObject private var svm: SocialViewModel
     var body: some View {
         NavigationStack {
-            List(nvm.cachedNotifications, id: \.notificationId) {notification in
+            List(svm.cachedNotifications, id: \.notificationId) {notification in
                 NotificationRow(notification: notification)
-                    .environmentObject(nvm)
+                    .environmentObject(svm)
             }
             .listStyle(.plain)
         }
@@ -21,7 +21,7 @@ struct NotificationsView: View {
 }
 
 struct NotificationRow: View {
-    @EnvironmentObject private var nvm: NotificationViewModel
+    @EnvironmentObject private var svm: SocialViewModel
     @State private var showActionButtons: Bool = false
     var notification: Notification
     
@@ -48,7 +48,7 @@ struct NotificationRow: View {
                         Button {
                             // Action for accepting
                             Task {
-                                await nvm.updateNotificationStatus(notification: notification,
+                                await svm.updateNotificationStatus(notification: notification,
                                                                    status: .accepted)
                             }
                         } label: {
@@ -60,7 +60,7 @@ struct NotificationRow: View {
                         .buttonStyle(PlainButtonStyle())
                         Button {
                             Task {
-                                await nvm.updateNotificationStatus(notification: notification,
+                                await svm.updateNotificationStatus(notification: notification,
                                                                    status: .rejected)
                             }
                         } label: {
@@ -91,6 +91,6 @@ struct NotificationRow: View {
 #Preview {
     NavigationStack {
         NotificationsView()
-            .environmentObject(NotificationViewModel())
+            .environmentObject(SocialViewModel())
     }
 }

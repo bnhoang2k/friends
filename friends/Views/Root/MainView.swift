@@ -11,7 +11,7 @@ struct MainView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @StateObject private var nvm: NotificationViewModel = NotificationViewModel()
+    @StateObject private var svm: SocialViewModel = SocialViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
@@ -36,7 +36,7 @@ struct MainView: View {
                     FriendsListView()
                         .environmentObject(avm)
                         .environmentObject(tvm)
-                        .environmentObject(nvm)
+                        .environmentObject(svm)
                 } label: {
                     Image(systemName: "person.2.fill")
                         .scaleEffect(x: -1, y: 1)
@@ -46,7 +46,7 @@ struct MainView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     NotificationsView()
-                        .environmentObject(nvm)
+                        .environmentObject(svm)
                 } label: {
                     Image(systemName: "tray")
                 }
@@ -68,9 +68,9 @@ struct MainView: View {
                     guard let uid = avm.user?.uid else {
                         throw AuthError.noUserSignedIn
                     }
-                    try await nvm.fetchNotifications(uid: uid)
-                    try await nvm.fetchPendingFriendRequests(fromUserId: uid)
-                    nvm.listenForNotificationChanges(uid: uid)
+                    try await svm.fetchNotifications(uid: uid)
+                    try await svm.fetchPendingFriendRequests(fromUserId: uid)
+                    svm.listenForNotificationChanges(uid: uid)
                 }
                 catch {}
                 firstAppear = true
