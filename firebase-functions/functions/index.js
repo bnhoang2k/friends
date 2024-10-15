@@ -66,7 +66,7 @@ exports.getTypesenseAPIKey = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
+exports.sendFriendRequest = functions.https.onCall(async (data, context) => {
   try {
     // Extract and log incoming data for debugging
     // console.log("Received data:", data);
@@ -79,8 +79,8 @@ exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
     //    "fromUserPP:", fromUserPP,
     // );
 
-    // Create a new notification reference
-    const notificationRef = db.collection("notifications").doc();
+    // Create a new notification reference for the recipient
+    const notificationRef = db.collection("users").doc(to_uid).collection("notifications").doc();
     const notification_id = notificationRef.id;
 
     const friendRequestNotification = {
@@ -94,6 +94,9 @@ exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     };
 
+    // Create a pending friend request file for the sender
+    const senderRef = db.collection("users").doc(from_uid).collection("pending_fr").doc(to_uid);
+
     // Write data to Firestore in a transaction
     await db.runTransaction(async (transaction) => {
       const notificationSnapshot = await transaction.get(notificationRef);
@@ -102,8 +105,14 @@ exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
       } else {
         throw new Error("Friend request already exists.");
       }
+      // Add friend request to sender's pending friend requests subcollection
+      transaction.set(senderRef, {
+        to_uid,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        recipient_nid: notification_id,
+        status: "pending",
+      });
     });
-
     return {notification_id: notification_id};
   } catch (error) {
     // Log the error for debugging
@@ -113,8 +122,8 @@ exports.handleFriendRequests = functions.https.onCall(async (data, context) => {
 });
 
 exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
-  const {notification_id} = data.data;
-  if (!notification_id) {
+  const {to_uid, notification_id} = data.data;
+  if (!to_uid || !notification_id) {
     throw new functions.https.HttpsError(
         "invalid-argument",
         "The notification ID is missing.",
@@ -123,7 +132,7 @@ exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
 
   try {
     await db.runTransaction(async (transaction) => {
-      const notificationRef = db.collection("notifications").doc(notification_id);
+      const notificationRef = db.collection("users").doc(to_uid).collection("notifications").doc(notification_id);
       const notificationSnapshot = await transaction.get(notificationRef);
 
       if (!notificationSnapshot.exists) {
@@ -142,21 +151,22 @@ exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
 });
 
 exports.updateNotificationStatus = functions.https.onCall(async (data, context) => {
-  const {notification_id, status} = data.data;
-  if (!notification_id || !status) {
+  const {to_uid, notification_id, status} = data.data;
+  if (!to_uid || !notification_id || !status) {
     console.log(
+        "to_uid: ", to_uid,
         "notification_id: ", notification_id,
         "status: ", status,
     );
     throw new functions.https.HttpsError(
         "invalid-argument",
-        "The notification ID is missing or the status is missing.",
+        "The to_uid, notification ID, or status is missing.",
     );
   }
 
   try {
     await db.runTransaction(async (transaction) => {
-      const notificationRef = db.collection("notifications").doc(notification_id);
+      const notificationRef = db.collection("users").doc(to_uid).collection("notifications").doc(notification_id);
       const currentSnapshot = await transaction.get(notificationRef);
 
       if (!currentSnapshot.exists) {
@@ -177,5 +187,48 @@ exports.updateNotificationStatus = functions.https.onCall(async (data, context) 
   } catch (error) {
     console.error("Error updating notification status:", error.message);
     throw new functions.https.HttpsError("internal", error.message);
+  }
+});
+
+exports.handleFriendRequest = functions.https.onCall(async (data, context) => {
+  const {from_uid, to_uid} = data.data;
+  // if (!context.auth) {
+  //   throw new functions.https.HttpsError("unauthenticated",
+  //       "The function must be called while authenticated.");
+  // }
+  try {
+    // Fetch user details from Firestore
+    const fromUserDoc = await db.collection("users").doc(from_uid).get();
+    const toUserDoc = await db.collection("users").doc(to_uid).get();
+
+    if (!fromUserDoc.exists || !toUserDoc.exists) {
+      throw new Error("User does not exist.");
+    }
+
+    const fromUserData = fromUserDoc.data();
+    const toUserData = toUserDoc.data();
+
+    const fromFriendsListRef = db.collection("users").doc(from_uid).collection("friends").doc(to_uid);
+    const toFriendsListRef = db.collection("users").doc(to_uid).collection("friends").doc(from_uid);
+
+    await fromFriendsListRef.set({
+      uid: to_uid,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      photo_url: toUserData.photo_url || null,
+      full_name: toUserData.full_name || null,
+      username: toUserData.username || null,
+    });
+
+    await toFriendsListRef.set({
+      uid: from_uid,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      photo_url: fromUserData.photo_url || null,
+      full_name: fromUserData.full_name || null,
+      username: fromUserData.username || null,
+    });
+    return {success: true};
+  } catch (error) {
+    console.error("Error adding friends: ", error);
+    throw new functions.https.HttpsError("unknown", "Failed to add friends.", error);
   }
 });
