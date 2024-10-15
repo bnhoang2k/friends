@@ -68,9 +68,12 @@ struct MainView: View {
                     guard let uid = avm.user?.uid else {
                         throw AuthError.noUserSignedIn
                     }
-                    try await svm.fetchNotifications(uid: uid)
-                    try await svm.fetchPendingFriendRequests(fromUserId: uid)
                     svm.listenForNotificationChanges(uid: uid)
+                    svm.listenForFriendsListChanges(uid: uid)
+                    svm.listenForPendingFriendRequests(uid: uid)
+                    try await svm.fetchNotifications(uid: uid)
+                    try await svm.fetchPendingFR(uid: uid)
+                    try await svm.fetchFriendsList(uid: uid)
                 }
                 catch {}
                 firstAppear = true
