@@ -18,32 +18,49 @@ struct FriendsListView: View {
     @State private var searchText: String = ""
     @State private var showAddFriendView: Bool = false
     
-    let dummyData = [
-        "Alice Johnson", "Bob Smith", "Charlie Brown", "David Williams", "Emma Thomas", "Frank White", "Grace Lee",
-        "Hannah Scott", "Ian Clark", "Jack Morgan", "Katie Bell", "Liam Miller", "Mia Davis", "Noah Wilson", "Olivia Martinez", "Paul Walker", "Quinn Adams", "Rachel Moore", "Sam Harris",
-        "Tina Brown", "Umar Khan", "Violet Ray", "Will Turner", "Xander Lee", "Yara Singh", "Zack Collins", "Amy Brooks", "Brian Jenkins", "Cathy Owens", "Daniel Carter", "Evelyn Ross", "Fred Stone",
-        "George Baker", "Harper Young", "Isla Green", "James Reed", "Kara Foster", "Leo Perry", "Megan Stewart", "Nina Scott", "Oscar Hughes", "Penny Ford", "Quincy Webb", "Riley Cooper", "Sophia Hayes",
-        "Tommy Grant", "Uma Patel", "Victor Lane", "Wendy Shaw", "Xavier Cruz", "Yvonne Mitchell", "Zoe Gray", "Aaron West", "Bethany Morris", "Caleb Jenkins", "Diana Hughes", "Ethan Price", "Fiona Kelly",
-        "Gavin Morgan", "Holly Brown", "Isaac Lee", "Jenna Cooper", "Kyle Evans", "Laura Clark", "Mason Hill", "Natalie Adams", "Owen Parker", "Phoebe Collins", "Quinn Richards", "Ryan Scott", "Sienna Thompson",
-        "Travis Murphy", "Ursula Carter", "Vince Rogers", "Willow Baker", "Xena Lowe", "Yusuf Allen", "Zara Graham", "Alex King", "Bailey Anderson", "Cody Bryant", "Daisy Clark", "Eli Carter", "Faith Watson",
-        "Grant Hall", "Hailey Adams", "Ian Foster", "Jade Peterson", "Kevin Green", "Lily Gray", "Maddox Lee", "Nora Walker", "Omar Price"
-    ]
+    @State private var friendsList: [Friend] = []
     
-    var filteredData: [String] {
+    var filteredData: [Friend] {
         if searchText.isEmpty {
-            return dummyData
+            return friendsList
         } else {
-            return dummyData.filter { $0.localizedCaseInsensitiveContains(searchText) }
+            return friendsList.filter { friend in
+                friend.fullName?.localizedCaseInsensitiveContains(searchText) == true ||
+                friend.username?.localizedCaseInsensitiveContains(searchText) == true
+            }
         }
     }
     
     var body: some View {
         NavigationStack {
-            List(filteredData, id: \.self) { name in
-                Text(name)
+            List(filteredData, id: \.uid) { friend in
+                HStack {
+                    if let photoURL = friend.photoURL, let url = URL(string: photoURL) {
+                        AsyncImage(url: url) { image in
+                            image.resizable()
+                                .scaledToFill()
+                                .frame(width: 40, height: 40)
+                                .clipShape(Circle())
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    } else {
+                        Circle()
+                            .fill(Color.gray)
+                            .frame(width: 40, height: 40)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text(friend.fullName ?? "Unknown Name")
+                            .font(.headline)
+                        Text(friend.username ?? "@unknown")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             .listStyle(.plain)
-            .searchable(text: $searchText, 
+            .searchable(text: $searchText,
                         placement: .navigationBarDrawer(displayMode: .automatic),
                         prompt: "Search friends")
         }
@@ -67,6 +84,13 @@ struct FriendsListView: View {
                 .environmentObject(tvm)
                 .environmentObject(svm)
         })
+        .onAppear {
+            if friendsList.isEmpty {
+                friendsList = svm.cachedFriendsList
+                print(friendsList)
+                print(svm.cachedFriendsList)
+            }
+        }
     }
 }
 
