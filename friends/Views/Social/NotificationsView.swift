@@ -48,8 +48,9 @@ struct NotificationRow: View {
                         Button {
                             // Action for accepting
                             Task {
-                                await svm.updateNotificationStatus(notification: notification,
-                                                                   status: .accepted)
+                                try await svm.updateNotificationStatus(notification: notification,
+                                                                       status: .accepted)
+                                try await svm.handleFriendRequest(notification: notification, status: .accepted)
                             }
                         } label: {
                             Image(systemName: "checkmark.circle.fill")
@@ -60,8 +61,9 @@ struct NotificationRow: View {
                         .buttonStyle(PlainButtonStyle())
                         Button {
                             Task {
-                                await svm.updateNotificationStatus(notification: notification,
-                                                                   status: .rejected)
+                                try await svm.updateNotificationStatus(notification: notification,
+                                                                       status: .rejected)
+                                try await svm.handleFriendRequest(notification: notification, status: .rejected)
                             }
                         } label: {
                             Image(systemName: "xmark.circle.fill")

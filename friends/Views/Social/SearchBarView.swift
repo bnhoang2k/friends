@@ -38,10 +38,10 @@ struct SearchBarView: View {
                             print("Error: Missing user details")
                             return
                         }
-                        await svm.sendFriendRequest(fromUserId: fromUserId,
-                                                    fromUsername: fromUsername,
-                                                    fromUserPP: [fromUserPP],
-                                                    toUserId: toUserId)
+                        try await svm.sendFriendRequest(fromUserId: fromUserId,
+                                                        fromUsername: fromUsername,
+                                                        fromUserPP: [fromUserPP],
+                                                        toUserId: toUserId)
                         dismiss()
                     }
                 } label: {
