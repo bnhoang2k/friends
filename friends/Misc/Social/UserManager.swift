@@ -137,6 +137,10 @@ final class UserManager {
         return userCollection.document(uid).collection("notifications")
     }
     
+    func userPendingFR(uid: String) -> CollectionReference {
+        return userCollection.document(uid).collection("pending_fr")
+    }
+    
     private let encoder: Firestore.Encoder = {
         let encoder = Firestore.Encoder()
         //        encoder.keyEncodingStrategy = .convertToSnakeCase
