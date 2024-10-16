@@ -74,9 +74,12 @@ struct SearchBarView: View {
         .navigationTitle("Search and Add Friends")
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear {
-            tvm.searchText = ""
-            tvm.searchResults = []
-            toUserId = ""
+            UIApplication.shared.dismissKeyboard()
+            Task {
+                tvm.searchText = ""
+                tvm.searchResults = []
+                toUserId = ""
+            }
         }
     }
 }
