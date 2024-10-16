@@ -18,13 +18,11 @@ struct FriendsListView: View {
     @State private var searchText: String = ""
     @State private var showAddFriendView: Bool = false
     
-    @State private var friendsList: [Friend] = []
-    
     var filteredData: [Friend] {
         if searchText.isEmpty {
-            return friendsList
+            return svm.cachedFriendsList
         } else {
-            return friendsList.filter { friend in
+            return svm.cachedFriendsList.filter { friend in
                 friend.fullName?.localizedCaseInsensitiveContains(searchText) == true ||
                 friend.username?.localizedCaseInsensitiveContains(searchText) == true
             }
@@ -35,21 +33,7 @@ struct FriendsListView: View {
         NavigationStack {
             List(filteredData, id: \.uid) { friend in
                 HStack {
-                    if let photoURL = friend.photoURL, let url = URL(string: photoURL) {
-                        AsyncImage(url: url) { image in
-                            image.resizable()
-                                .scaledToFill()
-                                .frame(width: 40, height: 40)
-                                .clipShape(Circle())
-                        } placeholder: {
-                            ProgressView()
-                        }
-                    } else {
-                        Circle()
-                            .fill(Color.gray)
-                            .frame(width: 40, height: 40)
-                    }
-                    
+                    ImageView(urlString: friend.photoURL, pictureWidth: 40)
                     VStack(alignment: .leading) {
                         Text(friend.fullName ?? "Unknown Name")
                             .font(.headline)
@@ -84,13 +68,6 @@ struct FriendsListView: View {
                 .environmentObject(tvm)
                 .environmentObject(svm)
         })
-        .onAppear {
-            if friendsList.isEmpty {
-                friendsList = svm.cachedFriendsList
-                print(friendsList)
-                print(svm.cachedFriendsList)
-            }
-        }
     }
 }
 
