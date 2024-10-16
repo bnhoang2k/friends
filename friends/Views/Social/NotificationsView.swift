@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
     var body: some View {
         NavigationStack {
             List(svm.cachedNotifications, id: \.notificationId) {notification in
@@ -21,7 +21,7 @@ struct NotificationsView: View {
 }
 
 struct NotificationRow: View {
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
     @State private var showActionButtons: Bool = false
     var notification: Notification
     
@@ -93,6 +93,6 @@ struct NotificationRow: View {
 #Preview {
     NavigationStack {
         NotificationsView()
-            .environmentObject(SocialViewModel())
+            .environmentObject(SocialVM())
     }
 }

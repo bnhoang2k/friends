@@ -20,7 +20,7 @@
 		D3750ADA2CB9D94A00FF69F2 /* FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */; };
 		D3847E372C89437200694EF8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E362C89437200694EF8 /* FirebaseStorage */; };
 		D3847E392C89437200694EF8 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */; };
-		D39136CB2CBC76B4009C1C2E /* SocialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39136CA2CBC76B4009C1C2E /* SocialViewModel.swift */; };
+		D39136CB2CBC76B4009C1C2E /* SocialVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39136CA2CBC76B4009C1C2E /* SocialVM.swift */; };
 		D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39960DA2C82667800A641E6 /* TestFunctions.swift */; };
 		D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */; };
 		D39EF7C22C69819700040765 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BD2C69819700040765 /* Utilities.swift */; };
@@ -66,7 +66,7 @@
 		D36B6C852C8A41C400FF25CC /* AccessCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessCameraView.swift; sourceTree = "<group>"; };
 		D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsListView.swift; sourceTree = "<group>"; };
 		D390C6132C66EFB7008BC14B /* friends.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = friends.entitlements; sourceTree = "<group>"; };
-		D39136CA2CBC76B4009C1C2E /* SocialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialViewModel.swift; sourceTree = "<group>"; };
+		D39136CA2CBC76B4009C1C2E /* SocialVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialVM.swift; sourceTree = "<group>"; };
 		D39960DA2C82667800A641E6 /* TestFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFunctions.swift; sourceTree = "<group>"; };
 		D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleSignInHelper.swift; sourceTree = "<group>"; };
 		D39EF7BD2C69819700040765 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -235,7 +235,7 @@
 			children = (
 				D39EF7D52C6981C400040765 /* AuthenticationVM.swift */,
 				D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */,
-				D39136CA2CBC76B4009C1C2E /* SocialViewModel.swift */,
+				D39136CA2CBC76B4009C1C2E /* SocialVM.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -388,7 +388,7 @@
 				D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */,
 				D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */,
 				D35AD3BE2CB7014A00CC7B58 /* SocialManager.swift in Sources */,
-				D39136CB2CBC76B4009C1C2E /* SocialViewModel.swift in Sources */,
+				D39136CB2CBC76B4009C1C2E /* SocialVM.swift in Sources */,
 				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,
 				D3D459CA2CB4D195005B6B51 /* NotificationsView.swift in Sources */,
 			);

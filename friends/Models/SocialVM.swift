@@ -11,7 +11,7 @@ import FirebaseFirestoreSwift
 import FirebaseFunctions
 
 @MainActor
-class SocialViewModel: ObservableObject {
+class SocialVM: ObservableObject {
     @Published var cachedNotifications: [Notification] = []
     @Published var cachedFriendsList: [Friend] = []
     @Published var cachedFriendRequests: [friendRequest] = []
@@ -19,7 +19,7 @@ class SocialViewModel: ObservableObject {
 }
 
 // MARK: Listener Functions
-extension SocialViewModel {
+extension SocialVM {
     func listenForFriendsListChanges(uid: String) {
         let friendsCollection = UserManager.shared.userFriendsList(uid: uid)
         
@@ -128,7 +128,7 @@ extension SocialViewModel {
 }
 
 // MARK: Initial Fetch Functions
-extension SocialViewModel {
+extension SocialVM {
     func fetchFriendsList(uid: String) async throws {
         let friendsList = UserManager.shared.userFriendsList(uid: uid)
         let snapshot = try await friendsList.getDocuments()
@@ -165,7 +165,7 @@ extension SocialViewModel {
 }
 
 // MARK: Friend Request Functions
-extension SocialViewModel {
+extension SocialVM {
     func sendFriendRequest(fromUserId: String,
                            fromUsername: String,
                            fromUserPP: [String],
@@ -276,7 +276,7 @@ extension SocialViewModel {
 }
 
 // MARK: General?
-extension SocialViewModel {
+extension SocialVM {
     func updateNotificationStatus(notification: Notification, status: notificationStatus) async throws {
         guard let notificationId = notification.notificationId else {
             print("Error: Notification ID is missing.")

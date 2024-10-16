@@ -10,7 +10,7 @@ import SwiftUI
 struct GetInformationView: View {
     @EnvironmentObject var avm: AuthenticationVM
     @EnvironmentObject var tvm: TypesenseVM
-    @EnvironmentObject var svm: SocialViewModel
+    @EnvironmentObject var svm: SocialVM
     @State private var fullName: String = ""
     @State private var username: String = ""
     
@@ -75,6 +75,6 @@ struct GetInformationView_Previews: PreviewProvider {
         GetInformationView()
             .environmentObject(AuthenticationVM())
             .environmentObject(TypesenseVM())
-            .environmentObject(SocialViewModel())
+            .environmentObject(SocialVM())
     }
 }

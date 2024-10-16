@@ -10,7 +10,7 @@ import SwiftUI
 struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
     @Environment(\.colorScheme) private var colorScheme
     @Binding var firstAppear: Bool
     
@@ -86,7 +86,7 @@ struct UserProfileView_Previews: PreviewProvider {
         NavigationStack {
             UserProfileView(firstAppear: .constant(false))
                 .environmentObject(AuthenticationVM())
-                .environmentObject(SocialViewModel())
+                .environmentObject(SocialVM())
         }
     }
 }

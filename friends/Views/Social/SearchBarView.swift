@@ -11,7 +11,7 @@ import Firebase
 struct SearchBarView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
     
     @Environment(\.dismiss) private var dismiss
     
@@ -92,6 +92,6 @@ extension UIApplication {
         SearchBarView()
             .environmentObject(TypesenseVM())
             .environmentObject(AuthenticationVM())
-            .environmentObject(SocialViewModel())
+            .environmentObject(SocialVM())
     }
 }

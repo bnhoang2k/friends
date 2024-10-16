@@ -11,7 +11,7 @@ struct FriendsListView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
     
     @Environment(\.presentationMode) private var presentationMode
     
@@ -76,6 +76,6 @@ struct FriendsListView: View {
         FriendsListView()
             .environmentObject(AuthenticationVM())
             .environmentObject(TypesenseVM())
-            .environmentObject(SocialViewModel())
+            .environmentObject(SocialVM())
     }
 }

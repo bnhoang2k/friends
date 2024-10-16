@@ -11,7 +11,7 @@ struct RootView: View {
     
     @StateObject private var avm: AuthenticationVM = AuthenticationVM()
     @StateObject private var tvm: TypesenseVM = TypesenseVM()
-    @StateObject private var svm: SocialViewModel = SocialViewModel()
+    @StateObject private var svm: SocialVM = SocialVM()
     @State var isLoading: Bool = true
     
     var body: some View {

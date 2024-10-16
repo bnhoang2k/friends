@@ -11,7 +11,7 @@ struct MainView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @EnvironmentObject private var svm: SocialViewModel
+    @EnvironmentObject private var svm: SocialVM
 
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
@@ -98,7 +98,7 @@ struct MainView_Previews: PreviewProvider {
             MainView()
                 .environmentObject(AuthenticationVM())
                 .environmentObject(TypesenseVM())
-                .environmentObject(SocialViewModel())
+                .environmentObject(SocialVM())
         }
     }
 }
