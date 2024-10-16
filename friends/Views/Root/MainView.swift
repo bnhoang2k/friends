@@ -12,9 +12,10 @@ struct MainView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
     @StateObject private var svm: SocialViewModel = SocialViewModel()
-    @Environment(\.colorScheme) private var colorScheme
+
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
+    @State private var showAddHangout: Bool = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -22,15 +23,22 @@ struct MainView: View {
             DummyListWrapped()
                 .tabItem {Image(systemName: "calendar")}
                 .tag(0)
-            TestFunctions()
-                .tabItem {Image(systemName: "wrench.and.screwdriver")}
-                .tag(1)
+//            TestFunctions()
+//                .tabItem {Image(systemName: "wrench.and.screwdriver")}
+//                .tag(1)
+            NotificationsView()
+                .environmentObject(svm)
+                .tabItem{Image(systemName: "tray")}
             UserProfileView(firstAppear: $firstAppear)
                 .environmentObject(avm)
                 .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(2)
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Text("friends")
+                    .font(.custom(GlobalVariables.shared.APP_FONT, size: 25, relativeTo: .largeTitle))
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     FriendsListView()
@@ -41,24 +49,22 @@ struct MainView: View {
                     Image(systemName: "person.2.fill")
                         .scaleEffect(x: -1, y: 1)
                 }
-                
             }
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    NotificationsView()
-                        .environmentObject(svm)
+                Button {
+                    showAddHangout.toggle()
                 } label: {
-                    Image(systemName: "tray")
+                    Image(systemName: "plus")
                 }
-            }
-            ToolbarItem(placement: .topBarLeading) {
-                Text("friends")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: 35, relativeTo: .largeTitle))
+
             }
         }
         .onAppear {
             customizeAppearance()
         }
+        .sheet(isPresented: $showAddHangout, content: {
+            AddHangoutView()
+        })
         .task {
             if !firstAppear {
                 do {
@@ -79,6 +85,7 @@ struct MainView: View {
                 firstAppear = true
             }
         }
+        .tint(.primary)
     }
     private func customizeAppearance() {
         let tabAppearance = UITabBarAppearance()

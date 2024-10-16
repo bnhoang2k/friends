@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
+		D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */; };
 		D35AD3BE2CB7014A00CC7B58 /* SocialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */; };
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
@@ -54,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHangoutView.swift; sourceTree = "<group>"; };
 		D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialManager.swift; sourceTree = "<group>"; };
 		D36173222C657A240002CDED /* friends.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = friends.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36173252C657A240002CDED /* friendsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = friendsApp.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */,
 				D3DA02582CB4582900F271E7 /* SearchBarView.swift */,
 				D3D459C92CB4D195005B6B51 /* NotificationsView.swift */,
+				D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D36B6C862C8A41C400FF25CC /* AccessCameraView.swift in Sources */,
+				D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */,
 				D39EF7C22C69819700040765 /* Utilities.swift in Sources */,
 				D3750ADA2CB9D94A00FF69F2 /* FriendsListView.swift in Sources */,
 				D39EF7D02C6981BD00040765 /* UserProfileView.swift in Sources */,

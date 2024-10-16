@@ -159,3 +159,71 @@ struct friendRequest: Codable {
         try container.encode(self.status, forKey: .status)
     }
 }
+
+struct Hangout: Codable {
+    let hangoutId: String
+    let date: Date
+    let type: HangoutType
+    let status: HangoutStatus
+    let participants: [Friend] // Reusing the Friend struct
+    let groupId: String? // Optional identifier if it's a group hangout
+    let location: String?
+    let title: String?
+    let description: String?
+    let tags: [String]? // For quick categorization and recall
+    let createdAt: Date?
+    let updatedAt: Date?
+
+    enum HangoutType: String, Codable {
+        case oneOnOne = "one_on_one"
+        case group = "group"
+    }
+
+    enum HangoutStatus: String, Codable {
+        case pending = "pending"
+        case confirmed = "confirmed"
+        case completed = "completed"
+        case cancelled = "cancelled"
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case hangoutId = "hangout_id"
+        case date = "date"
+        case type = "type"
+        case status = "status"
+        case participants = "participants"
+        case groupId = "group_id"
+        case location = "location"
+        case title = "title"
+        case description = "description"
+        case tags = "tags"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+
+    init(hangoutId: String,
+         date: Date,
+         type: HangoutType,
+         status: HangoutStatus,
+         participants: [Friend],
+         groupId: String? = nil,
+         location: String? = nil,
+         title: String? = nil,
+         description: String? = nil,
+         tags: [String]? = nil,
+         createdAt: Date? = nil,
+         updatedAt: Date? = nil) {
+        self.hangoutId = hangoutId
+        self.date = date
+        self.type = type
+        self.status = status
+        self.participants = participants
+        self.groupId = groupId
+        self.location = location
+        self.title = title
+        self.description = description
+        self.tags = tags
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+}
