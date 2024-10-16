@@ -10,6 +10,7 @@ import SwiftUI
 struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var svm: SocialViewModel
     @Environment(\.colorScheme) private var colorScheme
     @Binding var firstAppear: Bool
     
@@ -53,6 +54,7 @@ extension UserProfileView {
         Button(role: .destructive) {
             Task {
                 do {
+                    svm.stopAllListeners()
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true
@@ -84,6 +86,7 @@ struct UserProfileView_Previews: PreviewProvider {
         NavigationStack {
             UserProfileView(firstAppear: .constant(false))
                 .environmentObject(AuthenticationVM())
+                .environmentObject(SocialViewModel())
         }
     }
 }
