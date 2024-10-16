@@ -9,8 +9,9 @@ import SwiftUI
 
 struct RootView: View {
     
-    @StateObject var avm: AuthenticationVM = AuthenticationVM()
+    @StateObject private var avm: AuthenticationVM = AuthenticationVM()
     @StateObject private var tvm: TypesenseVM = TypesenseVM()
+    @StateObject private var svm: SocialViewModel = SocialViewModel()
     @State var isLoading: Bool = true
     
     var body: some View {
@@ -27,6 +28,13 @@ struct RootView: View {
                             // Load client if user was already signed in.
                             if (avm.user != nil) {
                                 try await tvm.createClient()
+                                guard let uid = avm.user?.uid else {return}
+                                svm.listenForNotificationChanges(uid: uid)
+                                svm.listenForFriendsListChanges(uid: uid)
+                                svm.listenForPendingFriendRequests(uid: uid)
+                                try await svm.fetchNotifications(uid: uid)
+                                try await svm.fetchPendingFR(uid: uid)
+                                try await svm.fetchFriendsList(uid: uid)
                             }
                             
                             // Load screen after everything is done and complete
@@ -47,12 +55,15 @@ struct RootView: View {
                 else if avm.showGetInformationView {
                     GetInformationView()
                         .environmentObject(avm)
+                        .environmentObject(tvm)
+                        .environmentObject(svm)
                 }
                 else {
                     NavigationStack {
                         MainView()
                             .environmentObject(avm)
                             .environmentObject(tvm)
+                            .environmentObject(svm)
                     }
                 }
             }
@@ -67,6 +78,6 @@ extension RootView {
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
-        RootView(avm: AuthenticationVM())
+        RootView()
     }
 }

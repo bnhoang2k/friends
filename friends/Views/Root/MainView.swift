@@ -11,7 +11,7 @@ struct MainView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
-    @StateObject private var svm: SocialViewModel = SocialViewModel()
+    @EnvironmentObject private var svm: SocialViewModel
 
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
@@ -31,6 +31,7 @@ struct MainView: View {
                 .tabItem{Image(systemName: "tray")}
             UserProfileView(firstAppear: $firstAppear)
                 .environmentObject(avm)
+                .environmentObject(svm)
                 .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(2)
         }
@@ -65,26 +66,16 @@ struct MainView: View {
         .sheet(isPresented: $showAddHangout, content: {
             AddHangoutView()
         })
-        .task {
-            if !firstAppear {
-                do {
-                    try await avm.loadCurrentUser()
-                    avm.getAuthProviders()
-                    try await tvm.createClient()
-                    guard let uid = avm.user?.uid else {
-                        throw AuthError.noUserSignedIn
-                    }
-                    svm.listenForNotificationChanges(uid: uid)
-                    svm.listenForFriendsListChanges(uid: uid)
-                    svm.listenForPendingFriendRequests(uid: uid)
-                    try await svm.fetchNotifications(uid: uid)
-                    try await svm.fetchPendingFR(uid: uid)
-                    try await svm.fetchFriendsList(uid: uid)
-                }
-                catch {}
-                firstAppear = true
-            }
-        }
+//        .task {
+//            if !firstAppear {
+//                do {
+//                    try await avm.loadCurrentUser()
+//                    avm.getAuthProviders()
+//                }
+//                catch {}
+//                firstAppear = true
+//            }
+//        }
         .tint(.primary)
     }
     private func customizeAppearance() {
@@ -107,6 +98,7 @@ struct MainView_Previews: PreviewProvider {
             MainView()
                 .environmentObject(AuthenticationVM())
                 .environmentObject(TypesenseVM())
+                .environmentObject(SocialViewModel())
         }
     }
 }
