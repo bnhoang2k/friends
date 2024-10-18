@@ -13,6 +13,8 @@
     gnupg
     pinentry-curses
     git-cliff
+
+    pre-commit
     commitizen
 
     fastfetch
