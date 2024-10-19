@@ -12,10 +12,11 @@ struct MainView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
     @EnvironmentObject private var svm: SocialVM
-
+    
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = false
-    @State private var showAddHangout: Bool = false
+    @State private var showAddFriendView: Bool = false
+    @State private var showAddHangoutView: Bool = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -40,19 +41,33 @@ struct MainView: View {
                     .font(.custom(GlobalVariables.shared.APP_FONT, size: 25, relativeTo: .largeTitle))
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showAddHangout.toggle()
+                Menu {
+                    Button(action: {
+                        showAddHangoutView.toggle()
+                    }) {
+                        Label("Add Hangout", systemImage: "person.3.fill")
+                    }
+                    Button(action: {
+                        showAddFriendView.toggle()
+                    }) {
+                        Label("Add Friend", systemImage: "person.crop.circle.badge.plus")
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }
-
             }
         }
         .onAppear {
             customizeAppearance()
         }
-        .sheet(isPresented: $showAddHangout, content: {
+        .sheet(isPresented: $showAddHangoutView, content: {
             AddHangoutView()
+        })
+        .sheet(isPresented: $showAddFriendView, content: {
+            SearchBarView()
+                .environmentObject(avm)
+                .environmentObject(tvm)
+                .environmentObject(svm)
         })
         .tint(.primary)
     }
