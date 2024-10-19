@@ -10,10 +10,7 @@ import SwiftUI
 struct UserProfileView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
-    @EnvironmentObject private var tvm: TypesenseVM
     @EnvironmentObject private var svm: SocialVM
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var showAddFriendView: Bool = false
     @Binding var firstAppear: Bool
     
     var body: some View {
@@ -22,19 +19,12 @@ struct UserProfileView: View {
                 Section(header: HeaderView(headerText: "User Information")) {
                     userInfo
                 }
-                addFriendButton
                 logoutButton
             }
         }
         .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
         .navigationTitle("User Profile")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showAddFriendView, content: {
-            SearchBarView()
-                .environmentObject(avm)
-                .environmentObject(tvm)
-                .environmentObject(svm)
-        })
     }
 }
 
@@ -56,26 +46,8 @@ extension UserProfileView {
                     .padding([.trailing])
             }
             .padding(.horizontal)
-            .tint(colorScheme == .dark ? Color.white : Color.black)
+            .tint(.primary)
         }
-    }
-    private var addFriendButton: some View {
-        Button {
-            showAddFriendView.toggle()
-        } label: {
-            HStack {
-                Spacer()
-                Text("Add Friend")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical)
-                    .background(
-                        RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS)
-                            .fill(Color(UIColor.secondarySystemBackground))
-                    )
-                Spacer()
-            }
-        }
-        .buttonStyle(.borderless)
     }
     private var logoutButton: some View {
         Button(role: .destructive) {
@@ -112,7 +84,6 @@ struct UserProfileView_Previews: PreviewProvider {
         NavigationStack {
             UserProfileView(firstAppear: .constant(false))
                 .environmentObject(AuthenticationVM())
-                .environmentObject(TypesenseVM())
                 .environmentObject(SocialVM())
         }
     }
