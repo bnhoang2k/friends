@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
 		D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */; };
+		D33C44312CC4527A005A7062 /* FriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33C44302CC4527A005A7062 /* FriendView.swift */; };
 		D35AD3BE2CB7014A00CC7B58 /* SocialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */; };
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
@@ -56,6 +57,7 @@
 
 /* Begin PBXFileReference section */
 		D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHangoutView.swift; sourceTree = "<group>"; };
+		D33C44302CC4527A005A7062 /* FriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendView.swift; sourceTree = "<group>"; };
 		D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialManager.swift; sourceTree = "<group>"; };
 		D36173222C657A240002CDED /* friends.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = friends.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36173252C657A240002CDED /* friendsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = friendsApp.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				D3DA02582CB4582900F271E7 /* SearchBarView.swift */,
 				D3D459C92CB4D195005B6B51 /* NotificationsView.swift */,
 				D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */,
+				D33C44302CC4527A005A7062 /* FriendView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 				D39136CB2CBC76B4009C1C2E /* SocialVM.swift in Sources */,
 				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,
 				D3D459CA2CB4D195005B6B51 /* NotificationsView.swift in Sources */,
+				D33C44312CC4527A005A7062 /* FriendView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
