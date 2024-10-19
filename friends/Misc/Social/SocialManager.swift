@@ -101,6 +101,14 @@ struct Friend: Codable {
         case username = "username"
     }
     
+    init(uid: String, timestamp: Date, photoURL: String? = nil, fullName: String? = nil, username: String? = nil) {
+        self.uid = uid
+        self.timestamp = timestamp
+        self.photoURL = photoURL
+        self.fullName = fullName
+        self.username = username
+    }
+    
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.uid = try container.decode(String.self, forKey: .uid)
@@ -165,7 +173,7 @@ struct Hangout: Codable {
     let date: Date
     let type: HangoutType
     let status: HangoutStatus
-    let participants: [Friend] // Reusing the Friend struct
+    let participantIds: [String]
     let groupId: String? // Optional identifier if it's a group hangout
     let location: String?
     let title: String?
@@ -191,7 +199,7 @@ struct Hangout: Codable {
         case date = "date"
         case type = "type"
         case status = "status"
-        case participants = "participants"
+        case participantIds = "participent_ids"
         case groupId = "group_id"
         case location = "location"
         case title = "title"
@@ -205,7 +213,7 @@ struct Hangout: Codable {
          date: Date,
          type: HangoutType,
          status: HangoutStatus,
-         participants: [Friend],
+         participantIds: [String],
          groupId: String? = nil,
          location: String? = nil,
          title: String? = nil,
@@ -217,7 +225,7 @@ struct Hangout: Codable {
         self.date = date
         self.type = type
         self.status = status
-        self.participants = participants
+        self.participantIds = participantIds
         self.groupId = groupId
         self.location = location
         self.title = title
@@ -225,5 +233,37 @@ struct Hangout: Codable {
         self.tags = tags
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.hangoutId = try container.decode(String.self, forKey: .hangoutId)
+        self.date = try container.decode(Date.self, forKey: .date)
+        self.type = try container.decode(Hangout.HangoutType.self, forKey: .type)
+        self.status = try container.decode(Hangout.HangoutStatus.self, forKey: .status)
+        self.participantIds = try container.decode([String].self, forKey: .participantIds)
+        self.groupId = try container.decodeIfPresent(String.self, forKey: .groupId)
+        self.location = try container.decodeIfPresent(String.self, forKey: .location)
+        self.title = try container.decodeIfPresent(String.self, forKey: .title)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.tags = try container.decodeIfPresent([String].self, forKey: .tags)
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(hangoutId, forKey: .hangoutId)
+        try container.encode(date, forKey: .date)
+        try container.encode(type, forKey: .type)
+        try container.encode(status, forKey: .status)
+        try container.encode(participantIds, forKey: .participantIds)
+        try container.encodeIfPresent(groupId, forKey: .groupId)
+        try container.encodeIfPresent(location, forKey: .location)
+        try container.encodeIfPresent(title, forKey: .title)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(tags, forKey: .tags)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
     }
 }
