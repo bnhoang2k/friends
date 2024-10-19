@@ -10,11 +10,24 @@ import SwiftUI
 struct FriendsListView: View {
     
     @EnvironmentObject private var svm: SocialVM
-    
     @State private var searchText: String = ""
     
     var body: some View {
         NavigationStack {
+            TextField("Search friends", text: $searchText)
+                .padding(10)
+                .padding(.leading, 30) // Add space for the icon
+                .background(RoundedRectangle(cornerRadius: 10).fill(Color(.systemGray6)))
+                .overlay(
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 8)
+                    }
+                )
+                .padding(.horizontal)
+                .padding(.top)
             List(svm.filteredFriends(query: searchText), id: \.uid) { friend in
                 NavigationLink {
                     FriendView(friend: friend)
@@ -33,9 +46,6 @@ struct FriendsListView: View {
                 }
             }
             .listStyle(.plain)
-            .searchable(text: $searchText,
-                        placement: .navigationBarDrawer(displayMode: .automatic),
-                        prompt: "Search friends")
         }
         .navigationTitle("Friends List")
         .navigationBarTitleDisplayMode(.inline)

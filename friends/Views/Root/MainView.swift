@@ -20,15 +20,14 @@ struct MainView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // Friends List
-            DummyListWrapped()
+            FriendsListView()
+                .environmentObject(svm)
                 .tabItem {Image(systemName: "calendar")}
                 .tag(0)
-//            TestFunctions()
-//                .tabItem {Image(systemName: "wrench.and.screwdriver")}
-//                .tag(1)
             NotificationsView()
                 .environmentObject(svm)
                 .tabItem{Image(systemName: "tray")}
+                .tag(1)
             UserProfileView(firstAppear: $firstAppear)
                 .environmentObject(avm)
                 .environmentObject(svm)
@@ -39,17 +38,6 @@ struct MainView: View {
             ToolbarItem(placement: .topBarLeading) {
                 Text("friends")
                     .font(.custom(GlobalVariables.shared.APP_FONT, size: 25, relativeTo: .largeTitle))
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    FriendsListView()
-                        .environmentObject(avm)
-                        .environmentObject(tvm)
-                        .environmentObject(svm)
-                } label: {
-                    Image(systemName: "person.2.fill")
-                        .scaleEffect(x: -1, y: 1)
-                }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -66,16 +54,6 @@ struct MainView: View {
         .sheet(isPresented: $showAddHangout, content: {
             AddHangoutView()
         })
-//        .task {
-//            if !firstAppear {
-//                do {
-//                    try await avm.loadCurrentUser()
-//                    avm.getAuthProviders()
-//                }
-//                catch {}
-//                firstAppear = true
-//            }
-//        }
         .tint(.primary)
     }
     private func customizeAppearance() {
