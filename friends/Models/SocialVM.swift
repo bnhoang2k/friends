@@ -306,4 +306,14 @@ extension SocialVM {
             print("Error updating notification status via Cloud Function: \(error.localizedDescription)")
         }
     }
+    func filteredFriends(query: String) -> [Friend] {
+        if query.isEmpty {
+            return cachedFriendsList
+        } else {
+            return cachedFriendsList.filter { friend in
+                (friend.fullName?.localizedCaseInsensitiveContains(query) == true ||
+                friend.username?.localizedCaseInsensitiveContains(query) == true)
+            }
+        }
+    }
 }
