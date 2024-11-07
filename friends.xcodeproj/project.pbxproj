@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
+		D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BAE2CDD559A00C802BA /* Hangout.swift */; };
+		D3214BB12CDD55A900C802BA /* SocialNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BB02CDD55A900C802BA /* SocialNotification.swift */; };
 		D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */; };
 		D33C44312CC4527A005A7062 /* FriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33C44302CC4527A005A7062 /* FriendView.swift */; };
-		D35AD3BE2CB7014A00CC7B58 /* SocialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */; };
+		D35AD3BE2CB7014A00CC7B58 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35AD3BD2CB7014A00CC7B58 /* Friend.swift */; };
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
 		D361732D2C657A240002CDED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D361732C2C657A240002CDED /* Preview Assets.xcassets */; };
@@ -56,9 +58,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D3214BAE2CDD559A00C802BA /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
+		D3214BB02CDD55A900C802BA /* SocialNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNotification.swift; sourceTree = "<group>"; };
 		D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHangoutView.swift; sourceTree = "<group>"; };
 		D33C44302CC4527A005A7062 /* FriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendView.swift; sourceTree = "<group>"; };
-		D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialManager.swift; sourceTree = "<group>"; };
+		D35AD3BD2CB7014A00CC7B58 /* Friend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Friend.swift; sourceTree = "<group>"; };
 		D36173222C657A240002CDED /* friends.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = friends.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36173252C657A240002CDED /* friendsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = friendsApp.swift; sourceTree = "<group>"; };
 		D36173292C657A240002CDED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -133,7 +137,9 @@
 			children = (
 				D39EF7EA2C6AB73000040765 /* UserManager.swift */,
 				D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */,
-				D35AD3BD2CB7014A00CC7B58 /* SocialManager.swift */,
+				D35AD3BD2CB7014A00CC7B58 /* Friend.swift */,
+				D3214BB02CDD55A900C802BA /* SocialNotification.swift */,
+				D3214BAE2CDD559A00C802BA /* Hangout.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -373,6 +379,7 @@
 				D39EF7D02C6981BD00040765 /* UserProfileView.swift in Sources */,
 				D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */,
 				D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */,
+				D3214BB12CDD55A900C802BA /* SocialNotification.swift in Sources */,
 				D3A84B5E2C6C13680023500F /* GetInformationView.swift in Sources */,
 				D3DA02592CB4582900F271E7 /* SearchBarView.swift in Sources */,
 				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
@@ -388,9 +395,10 @@
 				D36B6C842C8A3B3800FF25CC /* SettingsViewExtras.swift in Sources */,
 				D3DA02572CB43FFC00F271E7 /* TypesenseVM.swift in Sources */,
 				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,
+				D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */,
 				D39EF7D22C6981BD00040765 /* SignInView.swift in Sources */,
 				D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */,
-				D35AD3BE2CB7014A00CC7B58 /* SocialManager.swift in Sources */,
+				D35AD3BE2CB7014A00CC7B58 /* Friend.swift in Sources */,
 				D39136CB2CBC76B4009C1C2E /* SocialVM.swift in Sources */,
 				D39EF7C32C69819700040765 /* AuthenticationManager.swift in Sources */,
 				D3D459CA2CB4D195005B6B51 /* NotificationsView.swift in Sources */,

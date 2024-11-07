@@ -61,7 +61,8 @@ struct MainView: View {
             customizeAppearance()
         }
         .sheet(isPresented: $showAddHangoutView, content: {
-            AddHangoutView()
+            AddHangoutView(accessType: .fromMain)
+                .environmentObject(svm)
         })
         .sheet(isPresented: $showAddFriendView, content: {
             SearchBarView()
