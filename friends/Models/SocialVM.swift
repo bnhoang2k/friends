@@ -316,4 +316,20 @@ extension SocialVM {
             }
         }
     }
+    
+    // Overloaded version: returns an empty list if the query is empty
+    func filteredFriends(query: String, returnEmptyIfNoQuery: Bool) -> [Friend] {
+        if query.isEmpty {
+            return returnEmptyIfNoQuery ? [] : cachedFriendsList
+        } else {
+            return cachedFriendsList.filter { friend in
+                (friend.fullName?.localizedCaseInsensitiveContains(query) == true ||
+                friend.username?.localizedCaseInsensitiveContains(query) == true)
+            }
+        }
+    }
+    
+    func getFriendFromID(_ id: String) -> Friend? {
+        return cachedFriendsList.first { $0.uid == id }
+    }
 }
