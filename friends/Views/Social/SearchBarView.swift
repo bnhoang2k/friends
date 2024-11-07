@@ -144,16 +144,6 @@ struct SearchBarView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        SearchBarView()
-            .environmentObject(TypesenseVM())
-            .environmentObject(AuthenticationVM())
-            .environmentObject(SocialVM())
-    }
-}
-
-
 extension UIApplication {
     func dismissKeyboard() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
