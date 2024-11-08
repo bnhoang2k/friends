@@ -14,18 +14,18 @@ struct AddHangoutView: View {
     let accessType: AccessType
     
     var body: some View {
-        TabView {
-            if accessType == .fromMain {
-                FromMainView(searchText: $searchText, hangout: $hangout)
-                    .environmentObject(svm)
-            } else if accessType == .fromFriend {
-                FromFriendView()
+            TabView {
+                if accessType == .fromMain {
+                    FromMainView(searchText: $searchText, hangout: $hangout)
+                        .environmentObject(svm)
+                } else if accessType == .fromFriend {
+                    FromFriendView()
+                }
+                FormView(hangout: $hangout)
             }
-            FormView(hangout: $hangout)
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
-        .tint(.primary)
+            .tabViewStyle(.page)
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            .tint(.primary)
     }
 }
 
@@ -35,7 +35,6 @@ struct FromMainView: View {
     @Binding var hangout: Hangout
     
     var body: some View {
-        NavigationStack {
             VStack {
                 TextField("Search friends", text: $searchText)
                     .multilineTextAlignment(.center)
@@ -50,6 +49,7 @@ struct FromMainView: View {
                                 .padding(.leading, 8)
                         }
                     )
+                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                     .padding(.horizontal)
                     .padding(.top)
                 
@@ -58,9 +58,9 @@ struct FromMainView: View {
                         ImageView(urlString: friend.photoURL, pictureWidth: 40)
                         VStack(alignment: .leading) {
                             Text(friend.fullName ?? "Unknown Name")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textHeader))
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                             Text(friend.username ?? "@unknown")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
@@ -83,12 +83,10 @@ struct FromMainView: View {
                         }
                     }
                 }.listStyle(.plain)
-                
                 SelectedFriendsView(participantIds: $hangout.participants)
                     .environmentObject(svm)
                     .padding([.horizontal, .bottom])
             }
-        }
     }
 }
 
@@ -105,7 +103,7 @@ struct SelectedFriendsView: View {
                             ImageView(urlString: friend.photoURL, pictureWidth: 30)
                                 .clipShape(Circle())
                             Text(friend.username ?? "@unknown")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textHeader))
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                                 .foregroundColor(.primary)
                             Button(action: {
                                 withAnimation(.spring()) {
