@@ -17,14 +17,14 @@ struct SearchBarView: View {
     
     @State private var toUserId: String? = nil
     @State private var keyboardHeight: CGFloat = 0.0
-
+    
     var body: some View {
         VStack {
             Text("Search and Add Friends")
-                .font(.headline)
+                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .title))
                 .fontWeight(.bold)
                 .padding(.vertical)
-
+            
             // Search bar at the top
             HStack {
                 SearchBar(searchText: $tvm.searchText)
@@ -37,7 +37,7 @@ struct SearchBarView: View {
                         }
                     }
             }
-
+            
             // ScrollView for search results
             if !tvm.searchText.isEmpty {
                 ScrollView {
@@ -60,9 +60,9 @@ struct SearchBarView: View {
                     .padding([.horizontal, .top])
                 }
             }
-
+            
             Spacer()
-
+            
             // "Add Friend" button at the bottom
             Button(action: addFriend) {
                 Text("Add Friend")
@@ -94,13 +94,13 @@ struct SearchBarView: View {
             clearSearchState()
         }
     }
-
+    
     // Select user action
     private func selectUser(_ user: DBUser) {
         tvm.searchText = user.username ?? ""
         toUserId = user.uid
     }
-
+    
     // Add friend action
     private func addFriend() {
         Task {
@@ -120,7 +120,7 @@ struct SearchBarView: View {
             dismiss()
         }
     }
-
+    
     // Clear search state when view disappears
     private func clearSearchState() {
         Task {
