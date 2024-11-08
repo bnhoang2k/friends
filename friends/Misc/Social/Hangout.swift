@@ -12,7 +12,6 @@ struct Hangout: Codable {
     var date: Date
     var duration: HangoutDuration
     var vibe: HangoutVibe
-    var category: HangoutCategory
     var status: HangoutStatus
     var participants: [String]
     var groupId: String? // Optional identifier if it's a group hangout
@@ -59,11 +58,6 @@ struct Hangout: Codable {
         }
     }
     
-    enum HangoutCategory: String, Codable, CaseIterable {
-        case oneOnOne = "one_on_one"
-        case group = "group"
-    }
-    
     enum HangoutStatus: String, Codable {
         case pending = "pending"
         case confirmed = "confirmed"
@@ -76,6 +70,19 @@ struct Hangout: Codable {
         case halfDay = "half_day"
         case fullDay = "full_day"
         case overnight = "overnight"
+        
+        var description: String {
+            switch self {
+            case .quick:
+                return "Quick"
+            case .halfDay:
+                return "Half Day"
+            case .fullDay:
+                return "Full Day"
+            case .overnight:
+                return "Overnight"
+            }
+        }
     }
     
     enum ActivityLevel: String, Codable {
@@ -93,7 +100,6 @@ struct Hangout: Codable {
         case date = "date"
         case duration = "duration"
         case vibe = "vibe"
-        case category = "category"
         case status = "status"
         case participantIds = "participant_ids"
         case groupId = "group_id"
@@ -116,7 +122,6 @@ struct Hangout: Codable {
             date: Date(),
             duration: .quick,
             vibe: .chill,
-            category: .group,
             status: .pending,
             participantIds: [],
             budget: 20.0,
@@ -132,7 +137,6 @@ struct Hangout: Codable {
          date: Date,
          duration: HangoutDuration,
          vibe: HangoutVibe,
-         category: HangoutCategory,
          status: HangoutStatus,
          participantIds: [String],
          groupId: String? = nil,
@@ -150,7 +154,6 @@ struct Hangout: Codable {
         self.date = date
         self.duration = duration
         self.vibe = vibe
-        self.category = category
         self.status = status
         self.participants = participantIds
         self.groupId = groupId
@@ -172,7 +175,6 @@ struct Hangout: Codable {
         self.date = try container.decode(Date.self, forKey: .date)
         self.duration = try container.decode(HangoutDuration.self, forKey: .duration)
         self.vibe = try container.decode(HangoutVibe.self, forKey: .vibe)
-        self.category = try container.decode(HangoutCategory.self, forKey: .category)
         self.status = try container.decode(HangoutStatus.self, forKey: .status)
         self.participants = try container.decode([String].self, forKey: .participantIds)
         self.groupId = try container.decodeIfPresent(String.self, forKey: .groupId)
@@ -194,7 +196,6 @@ struct Hangout: Codable {
         try container.encode(date, forKey: .date)
         try container.encode(duration, forKey: .duration)
         try container.encode(vibe, forKey: .vibe)
-        try container.encode(category, forKey: .category)
         try container.encode(status, forKey: .status)
         try container.encode(participants, forKey: .participantIds)
         try container.encodeIfPresent(groupId, forKey: .groupId)
