@@ -36,41 +36,13 @@ struct FromMainView: View {
     
     var body: some View {
             VStack {
-                TextField("Search friends", text: $searchText)
-                    .multilineTextAlignment(.center)
-                    .padding(10)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .overlay(
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading, 8)
-                        }
-                    )
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-                    .padding(.horizontal)
-                    .padding(.top)
-                
+                SearchBar(searchText: $searchText)
                 List(svm.filteredFriends(query: searchText, returnEmptyIfNoQuery: true), id: \ .uid) { friend in
                     HStack {
-                        ImageView(urlString: friend.photoURL, pictureWidth: 40)
-                        VStack(alignment: .leading) {
-                            Text(friend.fullName ?? "Unknown Name")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-                            Text(friend.username ?? "@unknown")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
-                                .foregroundColor(.secondary)
-                        }
+                        FriendCard(friend: friend)
                         Spacer()
-                        if hangout.participants.contains(friend.uid) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.blue)
-                        } else {
-                            Image(systemName: "circle")
-                                .foregroundColor(.gray)
-                        }
+                        Image(systemName: hangout.participants.contains(friend.uid) ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(hangout.participants.contains(friend.uid) ? .blue : .gray)
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -100,11 +72,7 @@ struct SelectedFriendsView: View {
                 ForEach(participantIds, id: \.self) { participantId in
                     if let friend = svm.getFriendFromID(participantId) {
                         HStack {
-                            ImageView(urlString: friend.photoURL, pictureWidth: 30)
-                                .clipShape(Circle())
-                            Text(friend.username ?? "@unknown")
-                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-                                .foregroundColor(.primary)
+                            FriendCard(friend: friend, showUsername: false)
                             Button(action: {
                                 withAnimation(.spring()) {
                                     if let index = participantIds.firstIndex(of: participantId) {

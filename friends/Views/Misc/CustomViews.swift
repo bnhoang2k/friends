@@ -185,6 +185,63 @@ struct testSwiftyCropView: View {
     }
 }
 
+struct FriendCard: View {
+    var friend: Friend  // Proper declaration
+    var showfullName: Bool? = true
+    var showUsername: Bool? = true
+    
+    var body: some View {
+        HStack {
+            ImageView(urlString: friend.photoURL, pictureWidth: 40)
+            VStack(alignment: .leading) {
+                Text(friend.fullName ?? "Unknown Name")
+                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+                Text(friend.username ?? "@unknown")
+                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+struct UserCard: View {
+    var user: DBUser
+    var showfullName: Bool? = true
+    var showUsername: Bool? = true
+    var body: some View {
+        ImageView(urlString: user.photoURL, pictureWidth: 50)
+        VStack(alignment: .leading) {
+            Text(user.fullName ?? "full name error")
+                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+            Text(user.username ?? "username error")
+                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
+                .foregroundColor(.secondary)
+        }
+    }
+}
+
+struct SearchBar: View {
+    @Binding var searchText: String
+    var body: some View {
+        TextField("Search friends", text: $searchText)
+            .multilineTextAlignment(.center)
+            .padding(10)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(8)
+            .overlay(
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 8)
+                }
+            )
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+            .padding(.horizontal)
+            .padding(.top)
+    }
+}
+
 struct CustomViews_Previews: PreviewProvider {
     static var previews: some View {
         @State var d1: String = ""

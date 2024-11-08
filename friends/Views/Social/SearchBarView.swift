@@ -27,21 +27,7 @@ struct SearchBarView: View {
 
             // Search bar at the top
             HStack {
-                TextField("Search for friends", text: $tvm.searchText)
-                    .multilineTextAlignment(.center)
-                    .padding(10)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .overlay(
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading, 8)
-                        }
-                    )
-                    .padding(.horizontal)
-                    .padding(.top)
+                SearchBar(searchText: $tvm.searchText)
                     .onChange(of: tvm.searchText) { _ in
                         Task {
                             await tvm.searchUsers(
@@ -58,13 +44,7 @@ struct SearchBarView: View {
                     VStack(spacing: 10) {
                         ForEach(tvm.searchResults, id: \.uid) { user in
                             HStack {
-                                ImageView(urlString: user.photoURL, pictureWidth: 50)
-                                VStack(alignment: .leading) {
-                                    Text(user.username ?? "username error")
-                                    Text(user.fullName ?? "full name error")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
+                                UserCard(user: user)
                                 Spacer()
                                 Button(action: {
                                     withAnimation {
@@ -75,7 +55,6 @@ struct SearchBarView: View {
                                         .foregroundColor(.blue)
                                 }
                             }
-                            .padding(.horizontal)
                         }
                     }
                     .padding([.horizontal, .top])
@@ -87,14 +66,12 @@ struct SearchBarView: View {
             // "Add Friend" button at the bottom
             Button(action: addFriend) {
                 Text("Add Friend")
-                    .font(.headline)
-                    .foregroundColor(.white)
+                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(8)
             }
-            .padding([.horizontal, .bottom])
+            .buttonStyle(.bordered)
+            .tint(.primary)
+            .padding()
         }
         .offset(y: -self.keyboardHeight)
         .animation(.spring(), value: keyboardHeight)
