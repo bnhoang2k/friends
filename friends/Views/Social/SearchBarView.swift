@@ -51,7 +51,6 @@ struct SearchBarView: View {
                         }
                     }
             }
-            .padding(.horizontal)
 
             // ScrollView for search results
             if !tvm.searchText.isEmpty {

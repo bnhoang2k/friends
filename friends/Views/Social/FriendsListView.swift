@@ -15,9 +15,10 @@ struct FriendsListView: View {
     var body: some View {
         NavigationStack {
             TextField("Search friends", text: $searchText)
+                .multilineTextAlignment(.center)
                 .padding(10)
-                .padding(.leading, 30) // Add space for the icon
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color(.systemGray6)))
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
                 .overlay(
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -26,6 +27,7 @@ struct FriendsListView: View {
                             .padding(.leading, 8)
                     }
                 )
+                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                 .padding(.horizontal)
                 .padding(.top)
             List(svm.filteredFriends(query: searchText), id: \.uid) { friend in
@@ -37,9 +39,9 @@ struct FriendsListView: View {
                         ImageView(urlString: friend.photoURL, pictureWidth: 40)
                         VStack(alignment: .leading) {
                             Text(friend.fullName ?? "Unknown Name")
-                                .font(.headline)
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
                             Text(friend.username ?? "@unknown")
-                                .font(.subheadline)
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
                                 .foregroundColor(.secondary)
                         }
                     }
