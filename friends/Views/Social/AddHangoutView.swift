@@ -38,9 +38,10 @@ struct FromMainView: View {
         NavigationStack {
             VStack {
                 TextField("Search friends", text: $searchText)
+                    .multilineTextAlignment(.center)
                     .padding(10)
-                    .padding(.leading, 30)
-                    .background(RoundedRectangle(cornerRadius: 10).fill(Color(.systemGray6)))
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
                     .overlay(
                         HStack {
                             Image(systemName: "magnifyingglass")
@@ -143,6 +144,7 @@ struct FormView: View {
         Form {
             Section(header: Text("Basic Information")) {
                 DatePicker("Date", selection: $hangout.date, displayedComponents: .date)
+                    .padding(5)
             }
             Section(header: Text("Vibe")) {
                 Slider(value: Binding(
@@ -150,8 +152,6 @@ struct FormView: View {
                     set: { newValue in hangout.vibe = Hangout.HangoutVibe.allCases[Int(newValue)] }
                 ), in: 0...Double(Hangout.HangoutVibe.allCases.count - 1))
                 .contentShape(Rectangle()) // Extend the clickable area to the entire slider box
-                .padding(.vertical, 30) // Increase vertical padding to enlarge hitbox
-                .frame(height: 60) // Increase frame height to make slider easier to interact with
                 Text("\(hangout.vibe.description)")
                     .frame(maxWidth: .infinity, alignment: .center)
             }
@@ -195,7 +195,6 @@ struct FormView: View {
                     } label: {
                         Text("Generate")
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical)
                     }
                     .buttonStyle(.bordered)
                 }

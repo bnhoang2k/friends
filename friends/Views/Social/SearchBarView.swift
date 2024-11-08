@@ -28,9 +28,20 @@ struct SearchBarView: View {
             // Search bar at the top
             HStack {
                 TextField("Search for friends", text: $tvm.searchText)
+                    .multilineTextAlignment(.center)
                     .padding(10)
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(8)
+                    .overlay(
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 8)
+                        }
+                    )
+                    .padding(.horizontal)
+                    .padding(.top)
                     .onChange(of: tvm.searchText) { _ in
                         Task {
                             await tvm.searchUsers(
