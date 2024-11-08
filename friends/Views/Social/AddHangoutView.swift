@@ -25,6 +25,7 @@ struct AddHangoutView: View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .tint(.primary)
     }
 }
 
@@ -56,9 +57,9 @@ struct FromMainView: View {
                         ImageView(urlString: friend.photoURL, pictureWidth: 40)
                         VStack(alignment: .leading) {
                             Text(friend.fullName ?? "Unknown Name")
-                                .font(.headline)
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textHeader))
                             Text(friend.username ?? "@unknown")
-                                .font(.subheadline)
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
@@ -103,7 +104,7 @@ struct SelectedFriendsView: View {
                             ImageView(urlString: friend.photoURL, pictureWidth: 30)
                                 .clipShape(Circle())
                             Text(friend.username ?? "@unknown")
-                                .font(.subheadline)
+                                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textHeader))
                                 .foregroundColor(.primary)
                             Button(action: {
                                 withAnimation(.spring()) {
@@ -133,56 +134,76 @@ struct FromFriendView: View {
 
 struct FormView: View {
     @Binding var hangout: Hangout
-    @State private var sliderValue: Double = 0.5 // Initial value for slider
+    
+    var wordCount: Int {
+        return hangout.description?.split { $0.isWhitespace }.count ?? 0
+    }
     
     var body: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("Participants")) {
-                    Text("Selected Friends: \(hangout.participants.joined(separator: ", "))")
-                }
-                
-                Section(header: Text("Basic Information")) {
-                    DatePicker("Date", selection: $hangout.date, displayedComponents: .date)
-                    Picker("Duration", selection: $hangout.duration) {
-                        ForEach(Hangout.HangoutDuration.allCases, id: \.self) { duration in
-                            Text(duration.rawValue.capitalized).tag(duration)
-                        }
-                    }
-                }
-                
-                Section(header: Text("Vibe")) {
+        Form {
+            Section(header: Text("Basic Information")) {
+                DatePicker("Date", selection: $hangout.date, displayedComponents: .date)
+            }
+            Section(header: Text("Vibe")) {
+                Slider(value: Binding(
+                    get: { Double(Hangout.HangoutVibe.allCases.firstIndex(of: hangout.vibe) ?? 0) },
+                    set: { newValue in hangout.vibe = Hangout.HangoutVibe.allCases[Int(newValue)] }
+                ), in: 0...Double(Hangout.HangoutVibe.allCases.count - 1))
+                .contentShape(Rectangle()) // Extend the clickable area to the entire slider box
+                .padding(.vertical, 30) // Increase vertical padding to enlarge hitbox
+                .frame(height: 60) // Increase frame height to make slider easier to interact with
+                Text("\(hangout.vibe.description)")
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            
+            Section(header: Text("Details")) {
+                HStack {
+                    Text("\(hangout.duration.description)")
                     Slider(value: Binding(
-                        get: { Double(Hangout.HangoutVibe.allCases.firstIndex(of: hangout.vibe) ?? 0) },
-                        set: { newValue in hangout.vibe = Hangout.HangoutVibe.allCases[Int(newValue)] }
-                    ), in: 0...Double(Hangout.HangoutVibe.allCases.count - 1))
-                    .contentShape(Rectangle()) // Extend the clickable area to the entire slider box
-                    .padding(.vertical, 30) // Increase vertical padding to enlarge hitbox
-                    .frame(height: 60) // Increase frame height to make slider easier to interact with
-                    Text("\(hangout.vibe.description)")
-                        .frame(maxWidth: .infinity, alignment: .center)
+                        get: { Double(Hangout.HangoutDuration.allCases.firstIndex(of: hangout.duration) ?? 0) },
+                        set: { newValue in hangout.duration = Hangout.HangoutDuration.allCases[Int(newValue)] }
+                    ), in: 0...Double(Hangout.HangoutDuration.allCases.count - 1))
                 }
-                
-                Section(header: Text("Details")) {
-                    TextField("Location (Optional)", text: Binding(
-                        get: { hangout.location ?? "" },
-                        set: { hangout.location = $0.isEmpty ? nil : $0 }
-                    ))
-                    TextField("Description (Optional)", text: Binding(
+                Stepper("Budget: $\(hangout.budget, specifier: "%.2f")", value: $hangout.budget, in: 0...1000, step: 5)
+                Toggle("Outdoors?", isOn: $hangout.isOutdoor)
+                VStack(alignment: .leading) {
+                    TextEditor(text: Binding(
                         get: { hangout.description ?? "" },
-                        set: { hangout.description = $0.isEmpty ? nil : $0 }
+                        set: { newValue in
+                            let words = newValue.split { $0.isWhitespace }
+                            if words.count <= 100 {
+                                hangout.description = newValue
+                            } else {
+                                // Limit the text to 100 words
+                                hangout.description = words.prefix(100).joined(separator: " ")
+                            }
+                        }
                     ))
-                    TextField("Tags (comma separated)", text: Binding(
-                        get: { hangout.tags?.joined(separator: ", ") ?? "" },
-                        set: { hangout.tags = $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
-                    ))
-                    Stepper("Budget: $\(hangout.budget, specifier: "%.2f")", value: $hangout.budget, in: 0...1000, step: 5)
-                    Toggle("Is Outdoor Hangout", isOn: $hangout.isOutdoor)
+                    .frame(height: 100)
+                    .padding(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(wordCount > 50 ? .red : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    
+                    // Character and word count
+                    Text("\(wordCount) / 25 words")
+                        .foregroundColor(wordCount > 50 ? .red : .gray) // Tint red if word count exceeds 50
+                        .padding(.top, 4)
+                    Button {
+                        
+                    } label: {
+                        Text("Generate")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical)
+                    }
+                    .buttonStyle(.bordered)
                 }
+                .padding(.top, 10)
             }
         }
         .scrollContentBackground(.hidden)
-        .scrollDisabled(true)
+        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
     }
 }
 
