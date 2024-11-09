@@ -19,8 +19,6 @@ struct AddHangoutView: View {
             if accessType == .fromMain {
                 FromMainView(searchText: $searchText, hangout: $hangout)
                     .environmentObject(svm)
-            } else if accessType == .fromFriend {
-                FromFriendView()
             }
             FormView(hangout: $hangout)
             ProgressView()
@@ -54,7 +52,7 @@ extension AddHangoutView {
 }
 
 #Preview {
-    AddHangoutView(accessType: .fromMain)
+    AddHangoutView(accessType: .fromFriend)
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
     //    var hangout = Hangout.defaultHangout()
