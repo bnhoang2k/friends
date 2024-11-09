@@ -62,6 +62,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $showAddHangoutView, content: {
             AddHangoutView(accessType: .fromMain)
+                .environmentObject(avm)
                 .environmentObject(svm)
         })
         .sheet(isPresented: $showAddFriendView, content: {
