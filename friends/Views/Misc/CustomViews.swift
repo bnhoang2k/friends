@@ -186,7 +186,7 @@ struct testSwiftyCropView: View {
 }
 
 struct FriendCard: View {
-    var friend: Friend  // Proper declaration
+    var friend: DBUser  // Proper declaration
     var showfullName: Bool? = true
     var showUsername: Bool? = true
     

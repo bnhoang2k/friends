@@ -12,7 +12,7 @@ struct FriendView: View {
     @EnvironmentObject private var svm: SocialVM
     @State private var showAddHangout: Bool = false
     
-    let friend: Friend
+    let friend: DBUser
     
     var body: some View {
         NavigationStack {
@@ -38,11 +38,7 @@ struct FriendView: View {
 
 #Preview {
     NavigationStack {
-        FriendView(friend: Friend(uid: "1",
-                                  timestamp: Date(),
-                                  photoURL: "",
-                                  fullName: "John Doe",
-                                  username: "johndoe"))
+        FriendView(friend: DBUser(uid: "1"))
             .environmentObject(SocialVM())
     }
 }

@@ -13,13 +13,17 @@ import FirebaseFunctions
 @MainActor
 class SocialVM: ObservableObject {
     @Published var cachedNotifications: [Notification] = []
-    @Published var cachedFriendsList: [Friend] = []
+    // Dictionary to store Friend UID and corresponding DBUser data
+    @Published var cachedFriendsList: [String: DBUser] = [:]
     @Published var cachedFriendRequests: [friendRequest] = []
     private var listeners: [ListenerRegistration] = []
 }
 
 // MARK: Listener Functions
 extension SocialVM {
+    // Listener to see if any changes occur in the friends list of the user.
+    // Changes that can occur:
+    // 1. Friends are added/deleted
     func listenForFriendsListChanges(uid: String) {
         let friendsCollection = UserManager.shared.userFriendsList(uid: uid)
         
@@ -33,26 +37,20 @@ extension SocialVM {
             snapshot.documentChanges.forEach { diff in
                 switch diff.type {
                 case .added:
-                    if let newFriend = try? diff.document.data(as: Friend.self) {
-                        if !self.cachedFriendsList.contains(where: { $0.uid == newFriend.uid }) {
-                            self.cachedFriendsList.append(newFriend)
-                        }
-                    }
+                    let friendUID = diff.document.documentID
+                    Task { await self.fetchUserDetails(uid: friendUID) }
                 case .modified:
-                    if let updatedFriend = try? diff.document.data(as: Friend.self),
-                       let index = self.cachedFriendsList.firstIndex(where: { $0.uid == updatedFriend.uid }) {
-                        self.cachedFriendsList[index] = updatedFriend
-                    }
+                    let friendUID = diff.document.documentID
+                    Task { await self.fetchUserDetails(uid: friendUID, forceUpdate: true) }
                 case .removed:
-                    if let removedFriend = try? diff.document.data(as: Friend.self) {
-                        self.cachedFriendsList.removeAll { $0.uid == removedFriend.uid }
-                    }
+                    let friendUID = diff.document.documentID
+                    self.cachedFriendsList.removeValue(forKey: friendUID)
                 }
             }
         }
         self.listeners.append(listener)
     }
-    
+    // Listener to check for notifications sent to the user.
     func listenForNotificationChanges(uid: String) {
         let notifications = UserManager.shared.userNotificationsList(uid: uid)
         
@@ -86,7 +84,7 @@ extension SocialVM {
         }
         self.listeners.append(listener)
     }
-    
+    // Listener to see if any new friend requests are sent to the current user.
     func listenForPendingFriendRequests(uid: String) {
         let pendingRequestsCollection = UserManager.shared.userPendingFR(uid: uid)
         
@@ -132,12 +130,31 @@ extension SocialVM {
     func fetchFriendsList(uid: String) async throws {
         let friendsList = UserManager.shared.userFriendsList(uid: uid)
         let snapshot = try await friendsList.getDocuments()
-        self.cachedFriendsList = snapshot.documents.compactMap({ doc in
-            guard let friend = try? doc.data(as: Friend.self) else {
-                return nil
+        for doc in snapshot.documents {
+            let friendUID = doc.documentID
+            await fetchUserDetails(uid: friendUID)
+        }
+    }
+    func fetchUserDetails(uid: String, forceUpdate: Bool = false) async {
+        // Check if the user details are already cached
+        if let _ = cachedFriendsList[uid], !forceUpdate {
+            return
+        }
+        // Fetch user details from db_user collection
+        let userRef = UserManager.shared.userDocument(uid: uid)
+        do {
+            let document = try await userRef.getDocument()
+            if let user = try? document.data(as: DBUser.self) {
+                // Remove sensitive information
+                var sanitizedUser = user
+                sanitizedUser.email = nil
+                sanitizedUser.dateCreated = nil
+                // Cache the user details
+                self.cachedFriendsList[uid] = sanitizedUser
             }
-            return friend
-        })
+        } catch {
+            print("Error fetching user details: \(error.localizedDescription)")
+        }
     }
     func fetchNotifications(uid: String) async throws {
         let notifications = UserManager.shared
@@ -306,30 +323,30 @@ extension SocialVM {
             print("Error updating notification status via Cloud Function: \(error.localizedDescription)")
         }
     }
-    func filteredFriends(query: String) -> [Friend] {
+    func filteredFriends(query: String) -> [DBUser] {
         if query.isEmpty {
-            return cachedFriendsList
+            return Array(cachedFriendsList.values)
         } else {
-            return cachedFriendsList.filter { friend in
+            return cachedFriendsList.values.filter { friend in
                 (friend.fullName?.localizedCaseInsensitiveContains(query) == true ||
-                friend.username?.localizedCaseInsensitiveContains(query) == true)
+                 friend.username?.localizedCaseInsensitiveContains(query) == true)
             }
         }
     }
     
     // Overloaded version: returns an empty list if the query is empty
-    func filteredFriends(query: String, returnEmptyIfNoQuery: Bool) -> [Friend] {
+    func filteredFriends(query: String, returnEmptyIfNoQuery: Bool) -> [DBUser] {
         if query.isEmpty {
-            return returnEmptyIfNoQuery ? [] : cachedFriendsList
+            return returnEmptyIfNoQuery ? [] : Array(cachedFriendsList.values)
         } else {
-            return cachedFriendsList.filter { friend in
+            return cachedFriendsList.values.filter { friend in
                 (friend.fullName?.localizedCaseInsensitiveContains(query) == true ||
-                friend.username?.localizedCaseInsensitiveContains(query) == true)
+                 friend.username?.localizedCaseInsensitiveContains(query) == true)
             }
         }
     }
     
-    func getFriendFromID(_ id: String) -> Friend? {
-        return cachedFriendsList.first { $0.uid == id }
+    func getFriendFromID(_ id: String) -> DBUser? {
+        return cachedFriendsList[id]
     }
 }

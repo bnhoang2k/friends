@@ -205,26 +205,17 @@ exports.handleFriendRequest = functions.https.onCall(async (data, context) => {
       throw new Error("User does not exist.");
     }
 
-    const fromUserData = fromUserDoc.data();
-    const toUserData = toUserDoc.data();
-
     const fromFriendsListRef = db.collection("users").doc(from_uid).collection("friends").doc(to_uid);
     const toFriendsListRef = db.collection("users").doc(to_uid).collection("friends").doc(from_uid);
 
     await fromFriendsListRef.set({
       uid: to_uid,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      photo_url: toUserData.photo_url || null,
-      full_name: toUserData.full_name || null,
-      username: toUserData.username || null,
     });
 
     await toFriendsListRef.set({
       uid: from_uid,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      photo_url: fromUserData.photo_url || null,
-      full_name: fromUserData.full_name || null,
-      username: fromUserData.username || null,
     });
     return {success: true};
   } catch (error) {
