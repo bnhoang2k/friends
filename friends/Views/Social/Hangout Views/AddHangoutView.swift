@@ -23,6 +23,7 @@ struct AddHangoutView: View {
             FormView(hangout: $hangout)
             ProgressView()
         }
+        .padding(.top)
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
         .tint(.primary)

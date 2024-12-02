@@ -64,6 +64,7 @@ struct MainView: View {
             AddHangoutView(accessType: .fromMain)
                 .environmentObject(avm)
                 .environmentObject(svm)
+                .presentationDragIndicator(.visible)
         })
         .sheet(isPresented: $showAddFriendView, content: {
             SearchBarView()
