@@ -1,9 +1,7 @@
-//
 //  SignInView.swift
 //  friends
 //
 //  Created by Bryan Hoang on 6/5/24.
-//
 
 import SwiftUI
 import GoogleSignIn
@@ -17,10 +15,11 @@ struct SignInView: View {
     
     @Binding var showSignInView: Bool
     
+    // Validation logic extracted for readability and separation of concerns
     private var isValid: Bool {
-        !avm.email.isEmpty
-        && !avm.pwd.isEmpty
-        && Utilities.shared.is_valid_email(email: avm.email)
+        !avm.email.isEmpty &&
+        !avm.pwd.isEmpty &&
+        Utilities.shared.is_valid_email(email: avm.email)
     }
     
     var body: some View {
@@ -28,89 +27,76 @@ struct SignInView: View {
             Spacer()
             logo
                 .frame(alignment: .centerLastTextBaseline)
-            login_email
-            login_button
+            loginForm
+            loginButton
             Spacer()
-            googleButton
-            appleButton
-            su_email
-            // TODO: Add a "Forgot Password?" View to send a password reset.
+            socialSignInButtons
+            emailSignUpLink
         }
         .frame(width: 300)
-        .id(colorScheme)
-        .onAppear {avm.resetFields()}
-        
+        .onAppear { avm.resetFields() }
     }
 }
+
+// MARK: - Subviews
 extension SignInView {
+    
+    // App logo at the top
     private var logo: some View {
-        Group {
-            Text("friends")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: 45))
-        }
+        Text("friends")
+            .font(.custom(GlobalVariables.shared.APP_FONT, size: 45))
     }
-    private var login_email: some View {
+    
+    // Grouped email and password fields
+    private var loginForm: some View {
         Group {
             CustomTF(filler_text: "Email", text_binding: $avm.email)
             CustomPF(filler_text: "Password", text_binding: $avm.pwd)
         }
     }
-    private var login_button: some View {
-        Button {
-            Task {
-                do {
-                    try await avm.signIn()
-                    try await avm.handlePostSignIn()
-                } catch {
-                    print("Login Button: \(error)")
-                }
-            }
-        } label: {
+    
+    // Login button with validation
+    private var loginButton: some View {
+        Button(action: handleLogin) {
             Text("Login")
                 .frame(maxWidth: .infinity)
                 .padding(5)
                 .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
+                .foregroundColor(isValid ? .white : Color(UIColor.systemGray))
                 .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
         }
         .disabled(!isValid)
     }
+    
+    // Social sign-in buttons grouped for cleaner layout
+    private var socialSignInButtons: some View {
+        VStack(spacing: 10) {
+            googleButton
+            appleButton
+        }
+    }
+    
+    // Google sign-in button
     private var googleButton: some View {
         GoogleSignInButton(scheme: .dark, style: .wide, state: .normal) {
-            Task {
-                do {
-                    try await avm.signInGoogle()
-                    try await avm.handlePostSignIn()
-                } catch {
-                    print("GoogleSignInButton: \(error)")
-                }
-            }
+            handleGoogleSignIn()
         }
         .frame(height: 44)
     }
-    // https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple
+    
+    // Apple sign-in button
     private var appleButton: some View {
-        Button {
-            Task {
-                do {
-                    try await avm.signInApple()
-                    try await avm.handlePostSignIn()
-                } catch {
-                    print("AppleSignInButton: \(error)")
-                }
-            }
-        } label: {
-            SignInWithAppleButtonViewRepresentable(type: .default,
-                                                   style: colorScheme == .dark ? .white : .black)
-            .frame(height: 44)
+        Button(action: handleAppleSignIn) {
+            SignInWithAppleButtonViewRepresentable(type: .default, style: colorScheme == .dark ? .white : .black)
+                .frame(height: 44)
         }
     }
-    private var su_email: some View {
-        NavigationLink {
-            SignUpView()
-                .environmentObject(avm)
-                .navigationTitle("Sign Up")
-        } label: {
+    
+    // Sign-up link
+    private var emailSignUpLink: some View {
+        NavigationLink(destination: SignUpView()
+                        .environmentObject(avm)
+                        .navigationTitle("Sign Up")) {
             Text("Don't have an account? Sign up with email")
                 .frame(height: 25)
                 .font(.footnote)
@@ -118,6 +104,44 @@ extension SignInView {
     }
 }
 
+// MARK: - Actions
+extension SignInView {
+    
+    private func handleLogin() {
+        Task {
+            do {
+                try await avm.signIn()
+                try await avm.handlePostSignIn()
+            } catch {
+                print("Login Error: \(error)")
+            }
+        }
+    }
+    
+    private func handleGoogleSignIn() {
+        Task {
+            do {
+                try await avm.signInGoogle()
+                try await avm.handlePostSignIn()
+            } catch {
+                print("Google Sign-In Error: \(error)")
+            }
+        }
+    }
+    
+    private func handleAppleSignIn() {
+        Task {
+            do {
+                try await avm.signInApple()
+                try await avm.handlePostSignIn()
+            } catch {
+                print("Apple Sign-In Error: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - Preview
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
         SignInView(showSignInView: .constant(true))

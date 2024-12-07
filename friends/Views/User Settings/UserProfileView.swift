@@ -57,7 +57,7 @@ extension UserProfileView {
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true
-                    firstAppear = false
+                    firstAppear = true
                 } catch {
                     print("Log Out Fail")
                 }
