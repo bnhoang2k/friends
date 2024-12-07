@@ -24,7 +24,8 @@ struct FormView: View {
             DetailsSection(hangout: $hangout, wordCount: wordCount)
         }
         .scrollContentBackground(.hidden)
-        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
         .onTapGesture { dismissKeyboard() }
     }
 }

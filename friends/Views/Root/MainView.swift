@@ -38,7 +38,8 @@ struct MainView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Text("friends")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: 25, relativeTo: .largeTitle))
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textHeader))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {

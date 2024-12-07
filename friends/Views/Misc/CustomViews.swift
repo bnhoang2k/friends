@@ -16,7 +16,8 @@ struct CustomTF: View {
     
     var body: some View {
         TextField(filler_text, text: $text_binding)
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
@@ -37,7 +38,8 @@ struct CustomPF: View {
                 if show_password {TextField(filler_text, text: $text_binding)}
                 else {SecureField(filler_text, text: $text_binding)}
             }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
@@ -83,7 +85,8 @@ struct HeaderView: View {
     
     var body: some View {
         Text(headerText)
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: 20, relativeTo: .headline))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: GlobalVariables.shared.textMed))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
             .background(colorScheme == .dark ? Color.black : Color.white)
@@ -170,27 +173,13 @@ struct FriendCard: View {
             ImageView(urlString: friend.photoURL, pictureWidth: 40)
             VStack(alignment: .leading) {
                 Text(friend.fullName ?? "Unknown Name")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textMed))
                 Text(friend.username ?? "@unknown")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textBody))
                     .foregroundColor(.secondary)
             }
-        }
-    }
-}
-
-struct UserCard: View {
-    var user: DBUser
-    var showfullName: Bool? = true
-    var showUsername: Bool? = true
-    var body: some View {
-        ImageView(urlString: user.photoURL, pictureWidth: 50)
-        VStack(alignment: .leading) {
-            Text(user.fullName ?? "full name error")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-            Text(user.username ?? "username error")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
-                .foregroundColor(.secondary)
         }
     }
 }
@@ -211,7 +200,8 @@ struct SearchBar: View {
                         .padding(.leading, 8)
                 }
             )
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: GlobalVariables.shared.textBody))
             .padding(.horizontal)
             .padding(.top)
     }

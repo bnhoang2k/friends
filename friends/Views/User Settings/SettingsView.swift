@@ -80,7 +80,8 @@ struct SettingsView: View {
                 }
             }
         }
-        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

@@ -19,7 +19,8 @@ struct UserProfileView: View {
             logoutButton
         }
         .padding(.top)
-        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
     }
 }
 

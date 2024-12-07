@@ -21,7 +21,8 @@ struct SearchBarView: View {
     var body: some View {
         VStack {
             Text("Search and Add Friends")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .title))
+                .font(.custom(GlobalVariables.shared.APP_FONT,
+                              size: GlobalVariables.shared.textBody))
                 .fontWeight(.bold)
                 .padding(.vertical)
             
@@ -66,7 +67,8 @@ struct SearchBarView: View {
             // "Add Friend" button at the bottom
             Button(action: addFriend) {
                 Text("Add Friend")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textBody))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
