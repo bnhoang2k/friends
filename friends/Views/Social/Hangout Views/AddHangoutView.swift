@@ -14,18 +14,24 @@ struct AddHangoutView: View {
     @State private var searchText: String = ""
     let accessType: AccessType
     
+    @State var selectedTab: Int = 0
+    
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             if accessType == .fromMain {
                 FromMainView(searchText: $searchText, hangout: $hangout)
                     .environmentObject(svm)
+                    .tag(0)
             }
-            FormView(hangout: $hangout)
-            ProgressView()
+            FormView(hangout: $hangout, selectedTab: $selectedTab)
+                .environmentObject(avm)
+                .environmentObject(svm)
+                .tag(1)
+            GenerateLocationsView()
+                .tag(2)
         }
         .padding(.top)
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .tabViewStyle(.page(indexDisplayMode: .never))
         .tint(.primary)
         .onAppear {
             // Add yourself to the hangout

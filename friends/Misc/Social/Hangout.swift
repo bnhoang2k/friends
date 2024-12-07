@@ -14,17 +14,12 @@ struct Hangout: Codable {
     var vibe: HangoutVibe
     var status: HangoutStatus
     var participants: [String]
-    var groupId: String? // Optional identifier if it's a group hangout
     var location: String?
     var title: String?
     var description: String?
     var tags: [String]? // For quick categorization and recall
     var budget: Double
     var isOutdoor: Bool
-    var activityLevel: ActivityLevel
-    var foodAndDrinkPreferences: FoodAndDrinkPreferences
-    var createdAt: Date?
-    var updatedAt: Date?
     
     enum HangoutVibe: String, Codable, CaseIterable {
         case calm = "Calm"
@@ -35,7 +30,7 @@ struct Hangout: Codable {
         case exciting = "Exciting"
         case adventurous = "Adventurous"
         case wild = "Wild"
-
+        
         var description: String {
             switch self {
             case .calm:
@@ -85,12 +80,6 @@ struct Hangout: Codable {
         }
     }
     
-    enum ActivityLevel: String, Codable {
-        case low
-        case moderate
-        case high
-    }
-    
     struct FoodAndDrinkPreferences: Codable {
         let diningOut: Bool
     }
@@ -109,7 +98,6 @@ struct Hangout: Codable {
         case tags = "tags"
         case budget = "budget"
         case isOutdoor = "is_outdoor"
-        case activityLevel = "activity_level"
         case foodAndDrinkPreferences = "food_and_drink_preferences"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -126,7 +114,6 @@ struct Hangout: Codable {
             participantIds: [],
             budget: 20.0,
             isOutdoor: false,
-            activityLevel: .low,
             foodAndDrinkPreferences: FoodAndDrinkPreferences(
                 diningOut: true
             )
@@ -146,7 +133,6 @@ struct Hangout: Codable {
          tags: [String]? = nil,
          budget: Double,
          isOutdoor: Bool,
-         activityLevel: ActivityLevel,
          foodAndDrinkPreferences: FoodAndDrinkPreferences,
          createdAt: Date? = nil,
          updatedAt: Date? = nil) {
@@ -156,17 +142,12 @@ struct Hangout: Codable {
         self.vibe = vibe
         self.status = status
         self.participants = participantIds
-        self.groupId = groupId
         self.location = location
         self.title = title
         self.description = description
         self.tags = tags
         self.budget = budget
         self.isOutdoor = isOutdoor
-        self.activityLevel = activityLevel
-        self.foodAndDrinkPreferences = foodAndDrinkPreferences
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
     }
     
     init(from decoder: any Decoder) throws {
@@ -177,17 +158,12 @@ struct Hangout: Codable {
         self.vibe = try container.decode(HangoutVibe.self, forKey: .vibe)
         self.status = try container.decode(HangoutStatus.self, forKey: .status)
         self.participants = try container.decode([String].self, forKey: .participantIds)
-        self.groupId = try container.decodeIfPresent(String.self, forKey: .groupId)
         self.location = try container.decodeIfPresent(String.self, forKey: .location)
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
         self.tags = try container.decodeIfPresent([String].self, forKey: .tags)
         self.budget = try container.decode(Double.self, forKey: .budget)
         self.isOutdoor = try container.decode(Bool.self, forKey: .isOutdoor)
-        self.activityLevel = try container.decode(ActivityLevel.self, forKey: .activityLevel)
-        self.foodAndDrinkPreferences = try container.decode(FoodAndDrinkPreferences.self, forKey: .foodAndDrinkPreferences)
-        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
-        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -198,17 +174,12 @@ struct Hangout: Codable {
         try container.encode(vibe, forKey: .vibe)
         try container.encode(status, forKey: .status)
         try container.encode(participants, forKey: .participantIds)
-        try container.encodeIfPresent(groupId, forKey: .groupId)
         try container.encodeIfPresent(location, forKey: .location)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(description, forKey: .description)
         try container.encodeIfPresent(tags, forKey: .tags)
         try container.encode(budget, forKey: .budget)
         try container.encode(isOutdoor, forKey: .isOutdoor)
-        try container.encode(activityLevel, forKey: .activityLevel)
-        try container.encode(foodAndDrinkPreferences, forKey: .foodAndDrinkPreferences)
-        try container.encodeIfPresent(createdAt, forKey: .createdAt)
-        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
     }
 }
 
@@ -232,5 +203,50 @@ extension Hangout {
         default:
             return .calm
         }
+    }
+}
+
+extension Hangout {
+    // Converts the Hangout object into a descriptive text representation for the LLM model in a human-friendly paragraph format.
+    func hangoutToText(userID: String, cachedFriendsList: [String: DBUser]) -> String {
+        var textComponents: [String] = []
+        
+        textComponents.append("On \(formattedDate(date)), a hangout is planned with a \(duration.description.lowercased()) duration, aiming for a \(vibe.description.lowercased()) vibe.")
+        
+        if let title = title {
+            textComponents.append("The event is titled '\(title)'.")
+        }
+        
+        if let description = description {
+            textComponents.append("Here's a bit more about it: \(description).")
+        }
+        
+        if !participants.isEmpty {
+            let participantInformation = participants.filter{ $0 != userID }.map{ cachedFriendsList[$0]?.fullName ?? $0 }
+            if !participantInformation.isEmpty {
+                textComponents.append("The participants include: \(participantInformation.joined(separator: ", ")).")
+            }
+        }
+        
+        if let location = location {
+            textComponents.append("The hangout will take place at \(location).")
+        }
+        
+        if let tags = tags, !tags.isEmpty {
+            textComponents.append("It is categorized under: \(tags.joined(separator: ", ")).")
+        }
+        
+        textComponents.append("The budget for this hangout is approximately $\(String(format: "%.2f", budget)).")
+        textComponents.append("This hangout is \(isOutdoor ? "outdoors" : "indoors")")
+        
+        return textComponents.joined(separator: " ")
+    }
+    
+    // Helper function to format the date
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
