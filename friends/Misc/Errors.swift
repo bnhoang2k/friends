@@ -90,3 +90,17 @@ enum DatabaseError: Error, LocalizedError {
         }
     }
 }
+
+enum MarkdownParsingError: Error, LocalizedError {
+    case noTableFound
+    case malformedTableRow(line: String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .noTableFound:
+            return "No valid markdown table was found in the response."
+        case .malformedTableRow(let line):
+            return "Malformed table row: \(line)"
+        }
+    }
+}

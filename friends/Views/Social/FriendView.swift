@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FriendView: View {
     
+    @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     @State private var showAddHangout: Bool = false
     
@@ -30,6 +31,7 @@ struct FriendView: View {
         }
         .sheet(isPresented: $showAddHangout, content: {
             AddHangoutView(accessType: .fromFriend)
+                .environmentObject(avm)
                 .environmentObject(svm)
         })
         .tint(.primary)
@@ -39,6 +41,7 @@ struct FriendView: View {
 #Preview {
     NavigationStack {
         FriendView(friend: DBUser(uid: "1"))
+            .environmentObject(AuthenticationVM())
             .environmentObject(SocialVM())
     }
 }

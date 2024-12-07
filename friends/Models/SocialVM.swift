@@ -350,3 +350,8 @@ extension SocialVM {
         return cachedFriendsList[id]
     }
 }
+
+// MARK: Hangout Functions
+extension SocialVM {
+    
+}

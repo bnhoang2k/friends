@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 struct Hangout: Codable {
     var hangoutId: String
@@ -248,5 +250,36 @@ extension Hangout {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+}
+
+final class HangoutManager {
+    static let shared = HangoutManager()
+    private init() {}
+    
+    // High-level hangout collection
+    private let hangoutCollection = Firestore.firestore().collection("hangouts")
+    
+    // Low-level hangout collection holding hangout reference files.
+    func userHangoutCollection(uid: String) -> CollectionReference {
+        return UserManager.shared.userDocument(uid: uid).collection("hangouts")
+    }
+    
+    private let encoder: Firestore.Encoder = {
+        let encoder = Firestore.Encoder()
+        //        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return encoder
+    }()
+    
+    private let decoder: Firestore.Decoder = {
+        let decoder = Firestore.Decoder()
+        //        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+}
+
+extension HangoutManager {
+    func create_HighLevelHangout(hangout: Hangout) async throws {
+        
     }
 }

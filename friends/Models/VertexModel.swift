@@ -10,6 +10,14 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseVertexAI
 
+struct Location: Identifiable, Equatable {
+    let id = UUID()
+    let name: String
+    let location: String
+    let description: String
+    var imageURL: String? = nil
+}
+
 @MainActor
 class VertexViewModel: ObservableObject {
     
@@ -45,7 +53,7 @@ class VertexViewModel: ObservableObject {
             outputText = ""
             
             // Prepare the prompt for the AI model.
-            let prompt = "Given the information provided, your job is to find at least four places that the users would enjoy: \(self.userInput). If you don't have any information on any of the participants yet, recommend any generic places that you think would be interesting, based on popularity today and location."
+            let prompt = "Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. The response **must only** include a markdown table with exactly two columns: Place Name and Why It's Good. Do not include any headers, titles, explanations, or commentary before or after the table."
             
             // Use the model to generate a response based on the prompt and images.
             let outputContentStream = model.generateContentStream(prompt)
