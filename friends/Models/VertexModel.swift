@@ -13,7 +13,8 @@ import FirebaseVertexAI
 @MainActor
 class VertexViewModel: ObservableObject {
     
-    @Published var outputText: String? = nil
+    @Published var userInput: String = ""
+    @Published var outputText: String = ""
     @Published var errorMessage: String? = nil
     @Published var inProgress: Bool = false
     
@@ -25,7 +26,7 @@ class VertexViewModel: ObservableObject {
     }
     
     // Main function to perform reasoning based on user input and selected images.
-    func reason(userInput: String) async {
+    func reason() async {
         // The defer statement schedules code to run after the function finishes (either normally or with an error).
         // In this case, it ensures `inProgress` is set to false, no matter what happens (even in case of an error).
         defer {
@@ -44,7 +45,7 @@ class VertexViewModel: ObservableObject {
             outputText = ""
             
             // Prepare the prompt for the AI model.
-            let prompt = "Look at the image(s), and then answer the following question: \(userInput)"
+            let prompt = "Given the information provided, your job is to find at least four places that the users would enjoy: \(self.userInput). If you don't have any information on any of the participants yet, recommend any generic places that you think would be interesting, based on popularity today and location."
             
             // Use the model to generate a response based on the prompt and images.
             let outputContentStream = model.generateContentStream(prompt)
@@ -57,7 +58,7 @@ class VertexViewModel: ObservableObject {
                 }
                 
                 // Append each line to the outputText.
-                outputText = (outputText ?? "") + line
+                outputText = (outputText) + line
             }
         } catch {
             // If an error occurs, log the error and set the error message for the UI.

@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct AddHangoutView: View {
+    
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
+    
+    let accessType: AccessType
+    
+    @StateObject private var vvm: VertexViewModel = VertexViewModel()
     @State private var hangout: Hangout = Hangout.defaultHangout()
     @State private var searchText: String = ""
-    let accessType: AccessType
     
     @State var selectedTab: Int = 0
     
@@ -27,7 +31,7 @@ struct AddHangoutView: View {
                 .environmentObject(avm)
                 .environmentObject(svm)
                 .tag(1)
-            GenerateLocationsView()
+            GenerateLocationsView(vvm: vvm, hangout: $hangout)
                 .tag(2)
         }
         .padding(.top)
@@ -44,13 +48,6 @@ struct AddHangoutView: View {
     }
 }
 
-extension View {
-    func dismissKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
-
-
 extension AddHangoutView {
     enum AccessType {
         case fromMain
@@ -62,10 +59,4 @@ extension AddHangoutView {
     AddHangoutView(accessType: .fromFriend)
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
-    //    var hangout = Hangout.defaultHangout()
-    //    FormView(hangout: Binding(get: {
-    //        hangout
-    //    }, set: { newValue in
-    //        hangout = newValue
-    //    }))
 }

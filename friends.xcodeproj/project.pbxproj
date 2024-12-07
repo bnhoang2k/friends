@@ -60,6 +60,7 @@
 		D3DA02552CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3DA02542CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community */; };
 		D3DA02572CB43FFC00F271E7 /* TypesenseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */; };
 		D3DA02592CB4582900F271E7 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA02582CB4582900F271E7 /* SearchBarView.swift */; };
+		D3F4E0332D03F6DE000B6EE5 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = D3F4E0322D03F6DE000B6EE5 /* MarkdownUI */; };
 		D3FCD1072C6D5D8F002D4CEA /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FCD1062C6D5D8F002D4CEA /* Errors.swift */; };
 /* End PBXBuildFile section */
 
@@ -124,6 +125,7 @@
 				D3DA02552CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community in Frameworks */,
 				D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */,
 				D36B6C822C8A187300FF25CC /* Kingfisher in Frameworks */,
+				D3F4E0332D03F6DE000B6EE5 /* MarkdownUI in Frameworks */,
 				D3DA02532CB1ED0900F271E7 /* FirebaseFunctions in Frameworks */,
 				D3C5FD272C9CD2190092B0F7 /* Typesense in Frameworks */,
 				D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */,
@@ -334,6 +336,7 @@
 				D3DA02522CB1ED0900F271E7 /* FirebaseFunctions */,
 				D3DA02542CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community */,
 				D36F33D02D03BF5700710ACC /* FirebaseVertexAI-Preview */,
+				D3F4E0322D03F6DE000B6EE5 /* MarkdownUI */,
 			);
 			productName = friends;
 			productReference = D36173222C657A240002CDED /* friends.app */;
@@ -370,6 +373,7 @@
 				D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
 				D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D3C5FD252C9CD2190092B0F7 /* XCRemoteSwiftPackageReference "typesense-swift" */,
+				D32D70112D03F62300AE38B0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			productRefGroup = D36173232C657A240002CDED /* Products */;
 			projectDirPath = "";
@@ -662,6 +666,14 @@
 				kind = branch;
 			};
 		};
+		D32D70112D03F62300AE38B0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
 		D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -779,6 +791,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D3D88C8E2C6582ED00DEBE14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseFunctionsCombine-Community";
+		};
+		D3F4E0322D03F6DE000B6EE5 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D32D70112D03F62300AE38B0 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

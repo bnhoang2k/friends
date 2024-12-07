@@ -22,7 +22,6 @@ struct FormView: View {
             BasicInformationSection(date: $hangout.date)
             VibesSection(vibe: $hangout.vibe)
             DetailsSection(hangout: $hangout, wordCount: wordCount)
-            GenerateButtonSection(hangout: $hangout, avm: avm, svm: svm, selectedTab: $selectedTab)
         }
         .scrollContentBackground(.hidden)
         .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
@@ -101,28 +100,10 @@ private struct DetailsSection: View {
     }
 }
 
-private struct GenerateButtonSection: View {
-    @Binding var hangout: Hangout
-    var avm: AuthenticationVM
-    var svm: SocialVM
-    @Binding var selectedTab: Int
-    
-    var body: some View {
-            Button {
-                selectedTab = 2
-            } label: {
-                Text("Generate")
-                    .frame(maxWidth: .infinity)
-                    .padding([.horizontal])
-            }
-            .buttonStyle(.borderless)
-    }
-}
-
 #Preview {
     var hangout = Hangout.defaultHangout()
-    FormView(hangout: Binding(get: {
-        hangout
+    var userInput = ""
+    FormView( hangout: Binding(get: { hangout
     }, set: { newValue in
         hangout = newValue
     }), selectedTab: .constant(0))
