@@ -26,7 +26,7 @@ final class GlobalVariables {
     
     let APP_FONT = "Avenir Next"
     let textBody: CGFloat = 15
+    let textMed: CGFloat = 20
     let textHeader: CGFloat = 25
-    let textTitle: CGFloat = 35
     
 }
