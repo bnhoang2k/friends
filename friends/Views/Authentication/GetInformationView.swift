@@ -14,21 +14,22 @@ struct GetInformationView: View {
     @State private var fullName: String = ""
     @State private var username: String = ""
     
-    private var fontSize: CGFloat = 15
-    
-    private var isValid: Bool {
+    private var disableButton: Bool {
         // TODO: Add functionality to detect if username is already picked or not.
-        !fullName.isEmpty &&
-        !username.isEmpty
+        fullName.isEmpty ||
+        username.isEmpty
     }
     
     var body: some View {
         VStack {
             Spacer()
             Text("It looks like it's your first time logging in. Please write your full name and pick a username.")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: 15))
-            CustomTF(filler_text: "Full Name", size: fontSize, text_binding: $fullName)
-            CustomTF(filler_text: "Username", size: fontSize,text_binding: $username)
+                .font(.custom(GlobalVariables.shared.APP_FONT,
+                              size: GlobalVariables.shared.textBody))
+            CustomTF(filler_text: "Full Name",
+                     text_binding: $fullName)
+            CustomTF(filler_text: "Username",
+                     text_binding: $username)
             okButton
             Spacer()
             Spacer()
@@ -39,7 +40,7 @@ struct GetInformationView: View {
 
 extension GetInformationView {
     private var okButton: some View {
-        Button {
+        ConditionalButton(isDisabled: disableButton, buttonText: "Ok") {
             Task {
                 do {
                     try await avm.setUpProfile(username: username, fullName: fullName)
@@ -58,15 +59,7 @@ extension GetInformationView {
                     try await svm.fetchFriendsList(uid: uid)
                 }
             }
-        } label: {
-            Text("Ok")
-                .frame(maxWidth: .infinity)
-                .padding(5)
-                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: fontSize))
         }
-        .disabled(!isValid)
     }
 }
 

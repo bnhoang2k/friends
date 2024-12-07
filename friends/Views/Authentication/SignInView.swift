@@ -16,10 +16,10 @@ struct SignInView: View {
     @Binding var showSignInView: Bool
     
     // Validation logic extracted for readability and separation of concerns
-    private var isValid: Bool {
-        !avm.email.isEmpty &&
-        !avm.pwd.isEmpty &&
-        Utilities.shared.is_valid_email(email: avm.email)
+    private var disableButton: Bool {
+        avm.email.isEmpty ||
+        avm.pwd.isEmpty ||
+        !Utilities.shared.is_valid_email(email: avm.email)
     }
     
     var body: some View {
@@ -57,15 +57,10 @@ extension SignInView {
     
     // Login button with validation
     private var loginButton: some View {
-        Button(action: handleLogin) {
-            Text("Login")
-                .frame(maxWidth: .infinity)
-                .padding(5)
-                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(isValid ? .white : Color(UIColor.systemGray))
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
+        ConditionalButton(isDisabled: disableButton,
+                          buttonText: "Login") {
+            handleLogin()
         }
-        .disabled(!isValid)
     }
     
     // Social sign-in buttons grouped for cleaner layout
