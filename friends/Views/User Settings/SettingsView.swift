@@ -9,6 +9,10 @@ import SwiftUI
 import PhotosUI
 import SwiftyCrop
 
+import SwiftUI
+import PhotosUI
+import SwiftyCrop
+
 struct SettingsView: View {
     
     @EnvironmentObject var avm: AuthenticationVM
@@ -23,6 +27,8 @@ struct SettingsView: View {
     @State private var selectedUIImage: UIImage? = nil
     
     @State private var showImageCropper: Bool = false
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
     
     @State private var dummyUser: DBUser? = nil
     
@@ -38,71 +44,51 @@ struct SettingsView: View {
                         EditEmailFieldsView(dummyUser: $dummyUser)
                             .environmentObject(avm)
                     }
-                    Section {deleteAccountButton} header: {HeaderView(headerText: "")}
+                    Section {
+                        deleteAccountButton
+                    } header: {
+                        HeaderView(headerText: "")
+                    }
                 }
             }
         }
-        .onAppear {dummyUser = avm.user}
-        .sheet(isPresented: $showImageOptions,
-               onDismiss: {
-            if tempUIImage != nil && lastDismissAction == .photoLibrary { // Only show the cropper if an image was selected
-                showImageCropper.toggle()
-            }
-            else if lastDismissAction == .camera {
-                showCamera.toggle()
-            }
-            lastDismissAction = .placeholder
-        },
-               content: {
+        .onAppear { dummyUser = avm.user }
+        .sheet(isPresented: $showImageOptions, onDismiss: handleImageOptionsDismiss) {
             ImageOptionsView(selectedPhoto: $selectedPhoto) { action in
                 lastDismissAction = action
             }
-        })
-        .fullScreenCover(isPresented: $showImageCropper, content: {
+        }
+        .fullScreenCover(isPresented: $showImageCropper) {
             if let imageToCrop = tempUIImage {
                 SwiftyCropView(imageToCrop: imageToCrop, maskShape: .circle) { newImage in
                     selectedUIImage = newImage
                     tempUIImage = nil
                 }
             }
-        })
-        .fullScreenCover(isPresented: $showCamera, content: {
+        }
+        .fullScreenCover(isPresented: $showCamera) {
             AccessCameraView(selectedImage: $selectedUIImage, sourceType: .camera)
                 .ignoresSafeArea()
-        })
-        .onChange(of: selectedPhoto) { newPhoto in
-            if let newPhoto {
-                Task {
-                    if let image = await loadImage(from: newPhoto) {
-                        tempUIImage = image  // Store the selected image temporarily for cropping
-                        selectedPhoto = nil
-                    }
-                }
-            }
+        }
+        .onChange(of: selectedPhoto) { handleSelectedPhotoChange($0) }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
         .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
         .navigationTitle("Profile Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    Task {
-                        try await saveChanges()
-                        dismiss()
-                    }
-                },label: {
-                    Text("Save")
-                })
+                Button("Save", action: handleSave)
             }
         }
         .tint(.primary)
     }
 }
 
-// MARK: Misc.
+// MARK: - Subviews
 extension SettingsView {
     struct EditPhotoView: View {
-        
         @EnvironmentObject var avm: AuthenticationVM
         @Binding var dummyUser: DBUser?
         @Binding var selectedUIImage: UIImage?
@@ -119,15 +105,48 @@ extension SettingsView {
                     Spacer()
                     HStack {
                         Spacer()
-                        Spacer()
                         Image(systemName: "pencil")
                             .font(.largeTitle)
                         Spacer()
                     }
                 }
             }
-            .onTapGesture {showImageOptions.toggle()}
+            .onTapGesture { showImageOptions.toggle() }
             .padding(.vertical)
+        }
+    }
+}
+
+// MARK: - Helper Methods
+extension SettingsView {
+    func handleImageOptionsDismiss() {
+        if tempUIImage != nil && lastDismissAction == .photoLibrary {
+            showImageCropper.toggle()
+        } else if lastDismissAction == .camera {
+            showCamera.toggle()
+        }
+        lastDismissAction = .placeholder
+    }
+    
+    func handleSelectedPhotoChange(_ newPhoto: PhotosPickerItem?) {
+        guard let newPhoto else { return }
+        Task {
+            if let image = await loadImage(from: newPhoto) {
+                tempUIImage = image
+                selectedPhoto = nil
+            }
+        }
+    }
+    
+    func handleSave() {
+        Task {
+            do {
+                try await saveChanges()
+                dismiss()
+            } catch {
+                alertMessage = error.localizedDescription
+                showAlert = true
+            }
         }
     }
     
@@ -142,33 +161,17 @@ extension SettingsView {
     func saveChanges() async throws {
         guard var dummyUser else { return }
 
-        // Check if there is a new profile image to upload
         if let imageData = selectedUIImage?.jpegData(compressionQuality: 0.8) {
-            do {
-                // 1. Upload the image to Firebase Storage
-                let downloadURL = try await UserManager.shared.uploadProfileImage(uid: dummyUser.uid, imageData: imageData)
-                
-                // 2. Update the profile picture URL in Firebase Authentication
-                try await AuthenticationManager.shared.updateProfilePictureURL(downloadURL: downloadURL)
-                
-                // 3. Update the user object with the new photo URL
-                dummyUser.photoURL = downloadURL
-            } catch {
-                print("Error uploading image: \(error)")
-                throw error
-            }
+            let downloadURL = try await UserManager.shared.uploadProfileImage(uid: dummyUser.uid, imageData: imageData)
+            try await AuthenticationManager.shared.updateProfilePictureURL(downloadURL: downloadURL)
+            dummyUser.photoURL = downloadURL
         }
 
-        // 4. Update user information in Firestore
-        do {
-            try await UserManager.shared.updateUser(avm.user!, with: dummyUser)
-            try await avm.loadCurrentUser(newUser: dummyUser)
-        } catch {
-            print("Error updating user information in Firestore: \(error)")
-            throw error
-        }
+        try await UserManager.shared.updateUser(avm.user!, with: dummyUser)
+        try await avm.loadCurrentUser(newUser: dummyUser)
     }
 }
+
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {

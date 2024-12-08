@@ -11,12 +11,13 @@ import Kingfisher
 
 struct CustomTF: View {
     var filler_text: String = ""
-    var size: CGFloat = 20
+    var size: CGFloat = GlobalVariables.shared.textMed
     @Binding var text_binding: String
     
     var body: some View {
         TextField(filler_text, text: $text_binding)
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
@@ -27,10 +28,9 @@ struct CustomTF: View {
 struct CustomPF: View {
     @State private var show_password: Bool = false
     var filler_text: String = ""
-    var size: CGFloat = 20
+    var size: CGFloat = GlobalVariables.shared.textMed
     var eye: Bool = true
     @Binding var text_binding: String
-    @Environment(\.colorScheme) var color_scheme: ColorScheme
     
     var body: some View {
         HStack {
@@ -38,7 +38,8 @@ struct CustomPF: View {
                 if show_password {TextField(filler_text, text: $text_binding)}
                 else {SecureField(filler_text, text: $text_binding)}
             }
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: size))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: size))
             .textInputAutocapitalization(.never)
             .truncationMode(.tail)
             .autocorrectionDisabled(true)
@@ -48,13 +49,32 @@ struct CustomPF: View {
                     show_password.toggle()
                 } label: {
                     Image(systemName: show_password ? "eye.slash" : "eye")
-                        .foregroundColor(color_scheme == .dark ? .white : .black)
+                        .foregroundColor(Color.primary)
                         .opacity(0.6)
                 }
                 .frame(alignment: .trailing)
             }
         }
         .frame(height: GlobalVariables.shared.TEXTFIELD_FRAMEHEIGHT)
+    }
+}
+
+struct ConditionalButton: View {
+    var isDisabled: Bool
+    var buttonText: String
+    var buttonAction: () -> Void
+
+    var body: some View {
+        Button(action: buttonAction) {
+            Text(buttonText)
+                .frame(maxWidth: .infinity)
+                .padding(5)
+                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isDisabled ? Color.gray.opacity(0.2) : Color.blue))
+                .foregroundColor(isDisabled ? Color(UIColor.systemGray) : .white)
+                .font(.custom(GlobalVariables.shared.APP_FONT,
+                              size: GlobalVariables.shared.textMed))
+        }
+        .disabled(isDisabled)
     }
 }
 
@@ -65,54 +85,12 @@ struct HeaderView: View {
     
     var body: some View {
         Text(headerText)
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: 20, relativeTo: .headline))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: GlobalVariables.shared.textMed))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
             .background(colorScheme == .dark ? Color.black : Color.white)
             .zIndex(1) // Ensure the header stays above the scrolling content
-    }
-}
-
-struct DummyListSections: View {
-    
-    var body: some View {
-        Section(header: HeaderView(headerText: "Fruits")) {
-            ForEach(0..<25) { index in
-                HStack {
-                    Text("Fruit \(index + 1)")
-                }
-                .padding([.leading])
-            }
-        }
-        
-        Section(header: HeaderView(headerText: "Vegetables")) {
-            ForEach(0..<25) { index in
-                HStack {
-                    Text("Vegetable \(index + 1)")
-                }
-                .padding([.leading])
-            }
-        }
-        
-        Section(header: HeaderView(headerText: "Dairy Products")) {
-            ForEach(0..<25) { index in
-                HStack {
-                    Text("Dairy Product \(index + 1)")
-                }
-                .padding([.leading])
-            }
-        }
-    }
-}
-
-struct DummyListWrapped: View {
-    var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
-                DummyListSections()
-            }
-        }
-        .navigationTitle("Dummy List")
     }
 }
 
@@ -185,37 +163,23 @@ struct testSwiftyCropView: View {
     }
 }
 
-struct FriendCard: View {
-    var friend: DBUser  // Proper declaration
+struct UserCard: View {
+    var user: DBUser  // Proper declaration
     var showfullName: Bool? = true
     var showUsername: Bool? = true
     
     var body: some View {
         HStack {
-            ImageView(urlString: friend.photoURL, pictureWidth: 40)
+            ImageView(urlString: user.photoURL, pictureWidth: 40)
             VStack(alignment: .leading) {
-                Text(friend.fullName ?? "Unknown Name")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-                Text(friend.username ?? "@unknown")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
+                Text(user.fullName ?? "Unknown Name")
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textMed))
+                Text(user.username ?? "@unknown")
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textBody))
                     .foregroundColor(.secondary)
             }
-        }
-    }
-}
-
-struct UserCard: View {
-    var user: DBUser
-    var showfullName: Bool? = true
-    var showUsername: Bool? = true
-    var body: some View {
-        ImageView(urlString: user.photoURL, pictureWidth: 50)
-        VStack(alignment: .leading) {
-            Text(user.fullName ?? "full name error")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
-            Text(user.username ?? "username error")
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .subheadline))
-                .foregroundColor(.secondary)
         }
     }
 }
@@ -236,7 +200,8 @@ struct SearchBar: View {
                         .padding(.leading, 8)
                 }
             )
-            .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody, relativeTo: .headline))
+            .font(.custom(GlobalVariables.shared.APP_FONT,
+                          size: GlobalVariables.shared.textBody))
             .padding(.horizontal)
             .padding(.top)
     }

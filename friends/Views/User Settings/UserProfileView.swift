@@ -15,16 +15,12 @@ struct UserProfileView: View {
     
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
-                Section(header: HeaderView(headerText: "User Information")) {
-                    userInfo
-                }
-                logoutButton
-            }
+            userInfo
+            logoutButton
         }
-        .font(.custom(GlobalVariables.shared.APP_FONT, size: GlobalVariables.shared.textBody))
-        .navigationTitle("User Profile")
-        .navigationBarTitleDisplayMode(.inline)
+        .padding(.top)
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
     }
 }
 
@@ -57,7 +53,7 @@ extension UserProfileView {
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true
-                    firstAppear = false
+                    firstAppear = true
                 } catch {
                     print("Log Out Fail")
                 }

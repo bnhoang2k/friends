@@ -115,11 +115,11 @@ struct EditPasswordView: View {
     @State private var showAlert: Bool = false
     
     // TODO: If more fields are added, adjust here.
-    private var isValid: Bool {
-        Utilities.shared.is_valid_email(email: email) &&
-        email == avm.user?.email! &&
-        Utilities.shared.is_valid_password(password: nPwd) &&
-        nPwd == nPwd2
+    private var disableButton: Bool {
+        !Utilities.shared.is_valid_email(email: email) ||
+        email != avm.user?.email! ||
+        !Utilities.shared.is_valid_password(password: nPwd) ||
+        nPwd != nPwd2
     }
     
     var body: some View {
@@ -137,7 +137,7 @@ struct EditPasswordView: View {
     }
     
     private var okButton: some View {
-        Button {
+        ConditionalButton(isDisabled: disableButton, buttonText: "Ok", buttonAction: {
             Task {
                 do {
                     try await avm.updatePassword(email: email, pwd: pwd, pwdN: nPwd)
@@ -146,15 +146,7 @@ struct EditPasswordView: View {
                 }
                 showAlert.toggle()
             }
-        } label: {
-            Text("OK")
-                .frame(maxWidth: .infinity)
-                .padding(5)
-                .background(RoundedRectangle(cornerRadius: GlobalVariables.shared.TEXTFIELD_RRRADIUS).fill(isValid ? Color.blue : Color.gray.opacity(0.2)))
-                .foregroundColor(isValid ? Color.white : Color(UIColor.systemGray))
-                .font(.custom(GlobalVariables.shared.APP_FONT, size: 20))
-        }
-        .disabled(!isValid)
+        })
         .alert(isPresented: $showAlert) {
             Alert(title: Text("A verification link has been sent to your email."), dismissButton: .default(Text("OK")){dismiss()})
         }

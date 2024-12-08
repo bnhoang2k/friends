@@ -14,7 +14,7 @@ struct MainView: View {
     @EnvironmentObject private var svm: SocialVM
     
     @State private var selectedTab: Int = 0
-    @State private var firstAppear: Bool = false
+    @State private var firstAppear: Bool = true
     @State private var showAddFriendView: Bool = false
     @State private var showAddHangoutView: Bool = false
     
@@ -38,7 +38,8 @@ struct MainView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Text("friends")
-                    .font(.custom(GlobalVariables.shared.APP_FONT, size: 25, relativeTo: .largeTitle))
+                    .font(.custom(GlobalVariables.shared.APP_FONT,
+                                  size: GlobalVariables.shared.textHeader))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -59,6 +60,19 @@ struct MainView: View {
         }
         .onAppear {
             customizeAppearance()
+            if firstAppear {
+                Task {
+                    try await tvm.createClient()
+                    guard let uid = avm.user?.uid else {return}
+                    svm.listenForNotificationChanges(uid: uid)
+                    svm.listenForFriendsListChanges(uid: uid)
+                    svm.listenForPendingFriendRequests(uid: uid)
+                    try await svm.fetchNotifications(uid: uid)
+                    try await svm.fetchPendingFR(uid: uid)
+                    try await svm.fetchFriendsList(uid: uid)
+                    firstAppear = false
+                }
+            }
         }
         .sheet(isPresented: $showAddHangoutView, content: {
             AddHangoutView(accessType: .fromMain)

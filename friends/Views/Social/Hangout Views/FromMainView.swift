@@ -18,7 +18,7 @@ struct FromMainView: View {
             if !searchText.isEmpty {
                 List(svm.filteredFriends(query: searchText, returnEmptyIfNoQuery: true), id: \ .uid) { friend in
                     HStack {
-                        FriendCard(friend: friend)
+                        UserCard(user: friend)
                         Spacer()
                         Image(systemName: hangout.participants.contains(friend.uid) ? "checkmark.circle.fill" : "circle")
                             .foregroundColor(hangout.participants.contains(friend.uid) ? .blue : .gray)
@@ -53,7 +53,7 @@ struct SelectedFriendsView: View {
                 ForEach(participantIds, id: \.self) { participantId in
                     if let friend = svm.getFriendFromID(participantId) {
                         HStack {
-                            FriendCard(friend: friend, showUsername: false)
+                            UserCard(user: friend, showUsername: false)
                             Button(action: {
                                 withAnimation(.spring()) {
                                     if let index = participantIds.firstIndex(of: participantId) {

@@ -45,6 +45,7 @@ final class AuthenticationVM: ObservableObject {
             showSignInView = false
             showGetInformationView = true
         }
+        self.user = try await UserManager.shared.getUser(uid: user.uid)
     }
     
     // Fills in misc. data
@@ -98,6 +99,7 @@ extension AuthenticationVM {
     
     func signOut() throws {
         try AuthenticationManager.shared.signOut()
+        user = nil
     }
     
     func updateEmail(newEmail: String, pwd: String) async throws {
