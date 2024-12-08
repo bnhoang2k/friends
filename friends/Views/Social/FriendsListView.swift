@@ -22,7 +22,7 @@ struct FriendsListView: View {
                         .environmentObject(avm)
                         .environmentObject(svm)
                 } label: {
-                    FriendCard(friend: friend)
+                    UserCard(user: friend)
                 }
             }
             .listStyle(.plain)

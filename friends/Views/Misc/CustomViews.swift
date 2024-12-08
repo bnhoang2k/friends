@@ -163,19 +163,19 @@ struct testSwiftyCropView: View {
     }
 }
 
-struct FriendCard: View {
-    var friend: DBUser  // Proper declaration
+struct UserCard: View {
+    var user: DBUser  // Proper declaration
     var showfullName: Bool? = true
     var showUsername: Bool? = true
     
     var body: some View {
         HStack {
-            ImageView(urlString: friend.photoURL, pictureWidth: 40)
+            ImageView(urlString: user.photoURL, pictureWidth: 40)
             VStack(alignment: .leading) {
-                Text(friend.fullName ?? "Unknown Name")
+                Text(user.fullName ?? "Unknown Name")
                     .font(.custom(GlobalVariables.shared.APP_FONT,
                                   size: GlobalVariables.shared.textMed))
-                Text(friend.username ?? "@unknown")
+                Text(user.username ?? "@unknown")
                     .font(.custom(GlobalVariables.shared.APP_FONT,
                                   size: GlobalVariables.shared.textBody))
                     .foregroundColor(.secondary)
