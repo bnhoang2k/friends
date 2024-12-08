@@ -7,34 +7,6 @@
 
 import Foundation
 
-// Stores metadata; put in a subcollection within the db_user.
-struct Friend: Codable {
-    var uid: String
-    var timestamp: Date
-    
-    enum CodingKeys: String, CodingKey {
-        case uid = "uid"
-        case timestamp = "timestamp"
-    }
-    
-    init(uid: String, timestamp: Date) {
-        self.uid = uid
-        self.timestamp = timestamp
-    }
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.uid = try container.decode(String.self, forKey: .uid)
-        self.timestamp = try container.decode(Date.self, forKey: .timestamp)
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.uid, forKey: .uid)
-        try container.encode(self.timestamp, forKey: .timestamp)
-    }
-}
-
 struct friendRequest: Codable {
     let friendId: String
     let requestDate: Date
