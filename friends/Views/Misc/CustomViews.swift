@@ -185,9 +185,10 @@ struct UserCard: View {
 }
 
 struct SearchBar: View {
+    var placeholderText: String
     @Binding var searchText: String
     var body: some View {
-        TextField("Search friends", text: $searchText)
+        TextField(placeholderText, text: $searchText)
             .multilineTextAlignment(.center)
             .padding(10)
             .background(Color(.secondarySystemBackground))
@@ -202,8 +203,6 @@ struct SearchBar: View {
             )
             .font(.custom(GlobalVariables.shared.APP_FONT,
                           size: GlobalVariables.shared.textBody))
-            .padding(.horizontal)
-            .padding(.top)
     }
 }
 
