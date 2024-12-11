@@ -223,3 +223,100 @@ exports.handleFriendRequest = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError("unknown", "Failed to add friends.", error);
   }
 });
+
+exports.createHangout = functions.https.onCall(async (data, context) => {
+  // Verify the user is authenticated
+  try {
+    // const uid = context.auth && context.auth.uid;
+    // if (!uid) {
+    // throw new functions.https.HttpsError("unauthenticated",
+    // "The function must be called while authenticated.");
+    // }
+
+    // Extract information from the data object.
+    const {
+      id,
+      // hangout_id,
+      date,
+      duration,
+      vibe,
+      participant_ids,
+      location,
+      title,
+      description,
+      tags,
+      budget,
+      is_outdoor,
+      uid,
+    } = data.data;
+
+    // Collect missing/invalid fields
+    const missingFields = [];
+
+    // if (!hangout_id) missingFields.push("hangout_id");
+    if (!date) missingFields.push("date");
+    if (!duration) missingFields.push("duration");
+    if (!vibe) missingFields.push("vibe");
+    if (!participant_ids) missingFields.push("participant_ids");
+    if (!budget) missingFields.push("budget");
+    if (!location) missingFields.push("location");
+    // if (!title) missingFields.push("title");
+    if (!tags) missingFields.push("tags");
+    if (is_outdoor === undefined) missingFields.push("is_outdoor");
+    if (!uid) missingFields.push("uid");
+
+    if (missingFields.length > 0) {
+      const errorMessage = `One or more required fields are missing or invalid: ${missingFields.join(", ")}.`;
+      throw new functions.https.HttpsError("invalid-argument", errorMessage);
+    }
+    const hangoutRef = db.collection("hangouts").doc();
+    const hangout_id = hangoutRef.id;
+    const userHangoutRef = db.collection("users").doc(uid).collection("hangouts").doc(hangout_id);
+
+    // Create the main hangout data object
+    const hangoutData = {
+      id: id,
+      hangout_id: hangout_id,
+      date: admin.firestore.Timestamp.fromMillis(date), // 'date' is sent as a timestamp in ms
+      duration: duration,
+      vibe: vibe,
+      participant_ids: participant_ids,
+      budget: budget,
+      location: location || "",
+      title: title || "",
+      description: description || "",
+      tags: tags || [],
+      is_outdoor: is_outdoor || false,
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+      status: "pending", // Assigned a default status
+    };
+
+    // Create meta user-facing doc referencing the main hangout data
+    const userHangoutData = {
+      hangout_id: hangout_id,
+      title: title || "",
+      hangoutRef: hangoutRef.path,
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Use a transaction to ensure atomicity
+    await db.runTransaction(async (transaction) => {
+      const hangoutSnapshot = await transaction.get(hangoutRef);
+      if (hangoutSnapshot.exists) {
+        throw new Error("Hangout with this ID already exists.");
+      }
+
+      // Set the master hangout doc
+      transaction.set(hangoutRef, hangoutData);
+
+      // Set the user reference doc
+      transaction.set(userHangoutRef, userHangoutData);
+    });
+
+    // Return the hangout_id so the client knows it was successfully created
+    return {hangout_id: hangout_id};
+  } catch (error) {
+    console.error("Error creating hangout:", error.message);
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
