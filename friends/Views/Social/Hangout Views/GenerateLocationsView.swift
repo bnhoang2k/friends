@@ -146,16 +146,17 @@ struct LocationCardView: View, Equatable {
             HStack {
                 Text(location.name)
                     .font(.headline)
+                    .foregroundColor(.primary) // Adaptable text color
                 Spacer()
             }
             Text(location.description)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary) // Adaptable text color
         }
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
+                .fill(Color(.secondarySystemBackground)) // Adaptable background
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(isSelected ? Color.green : Color.clear, lineWidth: 2)
