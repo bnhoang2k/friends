@@ -30,7 +30,6 @@ struct RootView: View {
                                 try await tvm.createClient()
                                 guard let uid = avm.user?.uid else {return}
                                 try await svm.loadData(uid: uid)
-                                print(svm.cachedHangoutsList)
                             }
                             
                             // Load screen after everything is done and complete
