@@ -42,14 +42,14 @@ private struct BasicInformationSection: View {
 }
 
 private struct VibesSection: View {
-    @Binding var vibe: Hangout.HangoutVibe
+    @Binding var vibe: HangoutVibe
     
     var body: some View {
         Section("Vibes") {
             Slider(value: Binding(
-                get: { Double(Hangout.HangoutVibe.allCases.firstIndex(of: vibe) ?? 0) },
-                set: { newValue in vibe = Hangout.HangoutVibe.allCases[Int(newValue)] }
-            ), in: 0...Double(Hangout.HangoutVibe.allCases.count - 1))
+                get: { Double(HangoutVibe.allCases.firstIndex(of: vibe) ?? 0) },
+                set: { newValue in vibe = HangoutVibe.allCases[Int(newValue)] }
+            ), in: 0...Double(HangoutVibe.allCases.count - 1))
             .contentShape(Rectangle())
             
             Text("\(vibe.description)")
@@ -67,9 +67,9 @@ private struct DetailsSection: View {
             HStack {
                 Text("\(hangout.duration.description)")
                 Slider(value: Binding(
-                    get: { Double(Hangout.HangoutDuration.allCases.firstIndex(of: hangout.duration) ?? 0) },
-                    set: { newValue in hangout.duration = Hangout.HangoutDuration.allCases[Int(newValue)] }
-                ), in: 0...Double(Hangout.HangoutDuration.allCases.count - 1))
+                    get: { Double(HangoutDuration.allCases.firstIndex(of: hangout.duration) ?? 0) },
+                    set: { newValue in hangout.duration = HangoutDuration.allCases[Int(newValue)] }
+                ), in: 0...Double(HangoutDuration.allCases.count - 1))
             }
             
             Stepper("Budget: $\(hangout.budget, specifier: "%.2f")", value: $hangout.budget, in: 0...1000, step: 5)
