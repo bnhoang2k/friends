@@ -44,6 +44,9 @@ struct GenerateLocationsView: View {
                 }
                 Button {
                     hangout.location = selectedLocation?.name
+                    Task {
+                        try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                    }
                 } label: {
                     Text("Finish")
                 }

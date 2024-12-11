@@ -14,10 +14,20 @@ struct FriendView: View {
     @State private var showAddHangout: Bool = false
     
     let friend: DBUser
+    @State var hangoutList: [Hangout] = []
     
     var body: some View {
         NavigationStack {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            if !hangoutList.isEmpty {
+                ScrollView {
+                    ForEach(hangoutList) { hangout in
+                        Text(hangout.hangoutToText(userID: avm.user?.uid ?? "", cachedFriendsList: svm.cachedFriendsList))
+                    }
+                }
+            }
+            else {
+                ProgressView()
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -34,13 +44,16 @@ struct FriendView: View {
                 .environmentObject(avm)
                 .environmentObject(svm)
         })
+        .onAppear {
+            hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+        }
         .tint(.primary)
     }
 }
 
 #Preview {
     NavigationStack {
-        FriendView(friend: DBUser(uid: "1"))
+        FriendView(friend: DBUser(uid: "1"), hangoutList: [])
             .environmentObject(AuthenticationVM())
             .environmentObject(SocialVM())
     }

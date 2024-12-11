@@ -40,8 +40,8 @@ struct AddHangoutView: View {
         .onAppear {
             // Add yourself to the hangout
             if let user = avm.user {
-                if !hangout.participants.contains(user.uid) {
-                    hangout.participants.append(user.uid)
+                if !hangout.participantIds.contains(user.uid) {
+                    hangout.participantIds.append(user.uid)
                 }
             }
         }

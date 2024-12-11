@@ -16,7 +16,20 @@ class SocialVM: ObservableObject {
     // Dictionary to store Friend UID and corresponding DBUser data
     @Published var cachedFriendsList: [String: DBUser] = [:]
     @Published var cachedFriendRequests: [friendRequest] = []
+    @Published var cachedHangoutsList: [String: Hangout] = [:]
     private var listeners: [ListenerRegistration] = []
+    
+    func loadData(uid: String) async throws {
+        listenForNotificationChanges(uid: uid)
+        listenForFriendsListChanges(uid: uid)
+        listenForPendingFriendRequests(uid: uid)
+        listenForHangouts(uid: uid)
+        try await fetchNotifications(uid: uid)
+        try await fetchFriendsList(uid: uid)
+        try await fetchPendingFR(uid: uid)
+        try await fetchHangouts(uid: uid)
+    }
+    
 }
 
 // MARK: Listener Functions
@@ -118,6 +131,31 @@ extension SocialVM {
         self.listeners.append(listener)
     }
     
+    func listenForHangouts(uid: String) {
+        let hangoutsCollection = HangoutManager.shared.userHangoutCollection(uid: uid)
+        let listener = hangoutsCollection.addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else { return }
+            guard let snapshot = snapshot else {
+                print("Error fetching hangouts: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            snapshot.documentChanges.forEach { diff in
+                switch diff.type {
+                case .added:
+                    let hangoutId = diff.document.documentID
+                    Task {await self.fetchHangoutDetails(hangoutId: hangoutId)}
+                case .modified:
+                    let hangoutId = diff.document.documentID
+                    Task {await self.fetchHangoutDetails(hangoutId: hangoutId, forceUpdate: true)}
+                case .removed:
+                    let hangoutId = diff.document.documentID
+                    self.cachedHangoutsList.removeValue(forKey: hangoutId)
+                }
+            }
+        }
+        self.listeners.append(listener)
+    }
+    
     // Stop all listeners when not needed
     func stopAllListeners() {
         listeners.forEach { $0.remove() }
@@ -178,6 +216,29 @@ extension SocialVM {
             }
             return request
         })
+    }
+    func fetchHangouts(uid: String) async throws {
+        let hangoutList = HangoutManager.shared.userHangoutCollection(uid: uid)
+        let snapshot = try await hangoutList.getDocuments()
+        for doc in snapshot.documents {
+            let hangoutId = doc.documentID
+            await fetchHangoutDetails(hangoutId: hangoutId)
+        }
+    }
+    func fetchHangoutDetails(hangoutId: String, forceUpdate: Bool = false) async {
+        // Check if hangout details are already cached
+        if let _ = cachedHangoutsList[hangoutId], !forceUpdate {
+            return
+        }
+        let hangoutRef = HangoutManager.shared.hangoutDocument(hangoutId: hangoutId)
+        do {
+            let document = try await hangoutRef.getDocument()
+            if let hangout = try? document.data(as: Hangout.self) {
+                self.cachedHangoutsList[hangoutId] = hangout
+            }
+        } catch {
+            print("Error fetching hangout details: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -353,5 +414,12 @@ extension SocialVM {
 
 // MARK: Hangout Functions
 extension SocialVM {
-    
+    func createHangout(uid: String, hangout: Hangout) async throws {
+        try await HangoutManager.shared.createHangout(uid: uid, hangout: hangout)
+    }
+    func getFilteredHangoutsByFriend(friendId: String) -> [Hangout] {
+        return cachedHangoutsList.values.filter { hangout in
+            hangout.participantIds.contains(friendId)
+        }
+    }
 }

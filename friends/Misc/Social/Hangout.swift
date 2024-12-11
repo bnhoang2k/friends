@@ -8,14 +8,16 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import FirebaseFunctions
 
-struct Hangout: Codable {
+struct Hangout: Codable, Identifiable {
+    var id: String
     var hangoutId: String
     var date: Date
     var duration: HangoutDuration
     var vibe: HangoutVibe
     var status: HangoutStatus
-    var participants: [String]
+    var participantIds: [String]
     var location: String?
     var title: String?
     var description: String?
@@ -87,13 +89,13 @@ struct Hangout: Codable {
     }
     
     enum CodingKeys: String, CodingKey {
+        case id = "id" // needed for identifiable
         case hangoutId = "hangout_id"
         case date = "date"
         case duration = "duration"
         case vibe = "vibe"
         case status = "status"
         case participantIds = "participant_ids"
-        case groupId = "group_id"
         case location = "location"
         case title = "title"
         case description = "description"
@@ -102,7 +104,6 @@ struct Hangout: Codable {
         case isOutdoor = "is_outdoor"
         case foodAndDrinkPreferences = "food_and_drink_preferences"
         case createdAt = "created_at"
-        case updatedAt = "updated_at"
     }
     
     // Default initializer for UI binding
@@ -138,12 +139,13 @@ struct Hangout: Codable {
          foodAndDrinkPreferences: FoodAndDrinkPreferences,
          createdAt: Date? = nil,
          updatedAt: Date? = nil) {
+        self.id = UUID().uuidString
         self.hangoutId = hangoutId
         self.date = date
         self.duration = duration
         self.vibe = vibe
         self.status = status
-        self.participants = participantIds
+        self.participantIds = participantIds
         self.location = location
         self.title = title
         self.description = description
@@ -154,12 +156,13 @@ struct Hangout: Codable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
         self.hangoutId = try container.decode(String.self, forKey: .hangoutId)
         self.date = try container.decode(Date.self, forKey: .date)
         self.duration = try container.decode(HangoutDuration.self, forKey: .duration)
         self.vibe = try container.decode(HangoutVibe.self, forKey: .vibe)
         self.status = try container.decode(HangoutStatus.self, forKey: .status)
-        self.participants = try container.decode([String].self, forKey: .participantIds)
+        self.participantIds = try container.decode([String].self, forKey: .participantIds)
         self.location = try container.decodeIfPresent(String.self, forKey: .location)
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
@@ -170,12 +173,13 @@ struct Hangout: Codable {
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encode(hangoutId, forKey: .hangoutId)
         try container.encode(date, forKey: .date)
         try container.encode(duration, forKey: .duration)
         try container.encode(vibe, forKey: .vibe)
         try container.encode(status, forKey: .status)
-        try container.encode(participants, forKey: .participantIds)
+        try container.encode(participantIds, forKey: .participantIds)
         try container.encodeIfPresent(location, forKey: .location)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(description, forKey: .description)
@@ -223,8 +227,8 @@ extension Hangout {
             textComponents.append("Here's a bit more about it: \(description).")
         }
         
-        if !participants.isEmpty {
-            let participantInformation = participants.filter{ $0 != userID }.map{ cachedFriendsList[$0]?.fullName ?? $0 }
+        if !participantIds.isEmpty {
+            let participantInformation = participantIds.filter{ $0 != userID }.map{ cachedFriendsList[$0]?.fullName ?? $0 }
             if !participantInformation.isEmpty {
                 textComponents.append("The participants include: \(participantInformation.joined(separator: ", ")).")
             }
@@ -253,6 +257,33 @@ extension Hangout {
     }
 }
 
+struct HangoutReference: Codable {
+    var id : String
+    var hangout_id : String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case hangoutId = "hangout_id"
+    }
+    
+    init(id: String, hangoutId: String) {
+        self.id = id
+        self.hangout_id = hangoutId
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        hangout_id = try container.decode(String.self, forKey: .hangoutId)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(hangout_id, forKey: .hangoutId)
+    }
+}
+
 final class HangoutManager {
     static let shared = HangoutManager()
     private init() {}
@@ -263,6 +294,10 @@ final class HangoutManager {
     // Low-level hangout collection holding hangout reference files.
     func userHangoutCollection(uid: String) -> CollectionReference {
         return UserManager.shared.userDocument(uid: uid).collection("hangouts")
+    }
+    
+    func hangoutDocument(hangoutId: String) -> DocumentReference {
+        return hangoutCollection.document(hangoutId)
     }
     
     private let encoder: Firestore.Encoder = {
@@ -279,7 +314,55 @@ final class HangoutManager {
 }
 
 extension HangoutManager {
-    func create_HighLevelHangout(hangout: Hangout) async throws {
+    func createHangout(uid: String, hangout: Hangout) async throws {
         
+        // When hangouts are created; our idea is as follows:
+        // 1. Create a document holding all of the information in a huge
+        // database for all hangouts. This is the master file that'll hold
+        // all of the hangout's information.
+        // 2. Create a "low-level" meta-document within the user's
+        // subcollection. It only holds sparse information and will
+        // point to the high-level document containg all of the information.
+        
+        let functions = Functions.functions()
+        
+        // Prepare data for the Cloud Function call
+        // Note: We don't use hangout_id because we're using a placeholder
+        // UUID value for it due to defaultHangout(). Therefore, we want to
+        // generate it from the firebase function.
+        let requestData: [String : Any] = [
+            "id" : hangout.id,
+//            "hangout_id": hangout.hangoutId,
+            "date": hangout.date.timeIntervalSince1970 * 1000, // Unix timestamp in ms
+            "duration": hangout.duration.rawValue,
+            "vibe": hangout.vibe.rawValue,
+//            "status", hangout.status.rawValue,
+            "participant_ids": hangout.participantIds,
+            "location": hangout.location ?? "",
+            "title": hangout.title ?? "",
+            "description": hangout.description ?? "",
+            "tags": hangout.tags ?? [],
+            "budget": hangout.budget,
+            "is_outdoor": hangout.isOutdoor,
+            "uid" : uid,
+        ]
+        
+        do {
+            let result = try await functions.httpsCallable("createHangout").call(requestData)
+            
+            // The Cloud Function should return something like { "hangout_id": "..." }
+            guard let hangoutReference = result.data as? [String: Any],
+                  let hangoutId = hangoutReference["hangout_id"] as? String else {
+                print("Error: Invalid data received from Cloud Function.")
+                return
+            }
+            
+            print("Successfully created hangout with ID: \(hangoutId)")
+        } catch {
+            // Handle errors from the function call
+            print("Error calling createHangout function: \(error)")
+            throw error
+        }
     }
+
 }

@@ -20,21 +20,21 @@ struct FromMainView: View {
                     HStack {
                         UserCard(user: friend)
                         Spacer()
-                        Image(systemName: hangout.participants.contains(friend.uid) ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(hangout.participants.contains(friend.uid) ? .blue : .gray)
+                        Image(systemName: hangout.participantIds.contains(friend.uid) ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(hangout.participantIds.contains(friend.uid) ? .blue : .gray)
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
                         withAnimation(.spring()) {
-                            if let index = hangout.participants.firstIndex(of: friend.uid) {
-                                hangout.participants.remove(at: index)
+                            if let index = hangout.participantIds.firstIndex(of: friend.uid) {
+                                hangout.participantIds.remove(at: index)
                             } else {
-                                hangout.participants.append(friend.uid)
+                                hangout.participantIds.append(friend.uid)
                             }
                         }
                     }
                 }.listStyle(.plain)
-                SelectedFriendsView(participantIds: $hangout.participants)
+                SelectedFriendsView(participantIds: $hangout.participantIds)
                     .environmentObject(svm)
                     .padding([.horizontal, .bottom])
             }
