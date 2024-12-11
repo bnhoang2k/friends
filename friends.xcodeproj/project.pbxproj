@@ -47,6 +47,7 @@
 		D39EF7E72C6AB16100040765 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E62C6AB16100040765 /* FirebaseFirestore */; };
 		D39EF7E92C6AB16100040765 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D39EF7E82C6AB16100040765 /* FirebaseFirestoreSwift */; };
 		D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7EA2C6AB73000040765 /* UserManager.swift */; };
+		D3A3624A2D0A3A06007B2C84 /* HangoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A362492D0A3A06007B2C84 /* HangoutListView.swift */; };
 		D3A84B5E2C6C13680023500F /* GetInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B5D2C6C13680023500F /* GetInformationView.swift */; };
 		D3A84B602C6D13B60023500F /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A84B5F2C6D13B60023500F /* MainView.swift */; };
 		D3C5FD272C9CD2190092B0F7 /* Typesense in Frameworks */ = {isa = PBXBuildFile; productRef = D3C5FD262C9CD2190092B0F7 /* Typesense */; };
@@ -59,7 +60,7 @@
 		D3DA02532CB1ED0900F271E7 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = D3DA02522CB1ED0900F271E7 /* FirebaseFunctions */; };
 		D3DA02552CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3DA02542CB1ED0900F271E7 /* FirebaseFunctionsCombine-Community */; };
 		D3DA02572CB43FFC00F271E7 /* TypesenseVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */; };
-		D3DA02592CB4582900F271E7 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA02582CB4582900F271E7 /* SearchBarView.swift */; };
+		D3DA02592CB4582900F271E7 /* SearchForFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA02582CB4582900F271E7 /* SearchForFriendsView.swift */; };
 		D3F4E0332D03F6DE000B6EE5 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = D3F4E0322D03F6DE000B6EE5 /* MarkdownUI */; };
 		D3F4E0382D093E32000B6EE5 /* HangoutEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F4E0372D093E2E000B6EE5 /* HangoutEnums.swift */; };
 		D3F4E03A2D093E95000B6EE5 /* HangoutFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F4E0392D093E92000B6EE5 /* HangoutFunctions.swift */; };
@@ -103,13 +104,14 @@
 		D39EF7CD2C6981BD00040765 /* SignUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		D39EF7D52C6981C400040765 /* AuthenticationVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationVM.swift; sourceTree = "<group>"; };
 		D39EF7EA2C6AB73000040765 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
+		D3A362492D0A3A06007B2C84 /* HangoutListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutListView.swift; sourceTree = "<group>"; };
 		D3A84B5D2C6C13680023500F /* GetInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInformationView.swift; sourceTree = "<group>"; };
 		D3A84B5F2C6D13B60023500F /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseManager.swift; sourceTree = "<group>"; };
 		D3D459C92CB4D195005B6B51 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseVM.swift; sourceTree = "<group>"; };
-		D3DA02582CB4582900F271E7 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		D3DA02582CB4582900F271E7 /* SearchForFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchForFriendsView.swift; sourceTree = "<group>"; };
 		D3F4E0372D093E2E000B6EE5 /* HangoutEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutEnums.swift; sourceTree = "<group>"; };
 		D3F4E0392D093E92000B6EE5 /* HangoutFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutFunctions.swift; sourceTree = "<group>"; };
 		D3F4E03B2D093EBC000B6EE5 /* HangoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutManager.swift; sourceTree = "<group>"; };
@@ -300,12 +302,21 @@
 			path = Root;
 			sourceTree = "<group>";
 		};
-		D3C4DB762CB4B0F5009FB177 /* Social */ = {
+		D3A362482D0A39DD007B2C84 /* Friend Views */ = {
 			isa = PBXGroup;
 			children = (
 				D33C44302CC4527A005A7062 /* FriendView.swift */,
+				D3A362492D0A3A06007B2C84 /* HangoutListView.swift */,
+			);
+			path = "Friend Views";
+			sourceTree = "<group>";
+		};
+		D3C4DB762CB4B0F5009FB177 /* Social */ = {
+			isa = PBXGroup;
+			children = (
 				D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */,
-				D3DA02582CB4582900F271E7 /* SearchBarView.swift */,
+				D3A362482D0A39DD007B2C84 /* Friend Views */,
+				D3DA02582CB4582900F271E7 /* SearchForFriendsView.swift */,
 				D3D459C92CB4D195005B6B51 /* NotificationsView.swift */,
 				D30033F52CE026AE00E42415 /* Hangout Views */,
 			);
@@ -440,8 +451,9 @@
 				D39EF7CF2C6981BD00040765 /* SettingsView.swift in Sources */,
 				D39EF7EB2C6AB73000040765 /* UserManager.swift in Sources */,
 				D3214BB12CDD55A900C802BA /* SocialNotification.swift in Sources */,
+				D3A3624A2D0A3A06007B2C84 /* HangoutListView.swift in Sources */,
 				D3A84B5E2C6C13680023500F /* GetInformationView.swift in Sources */,
-				D3DA02592CB4582900F271E7 /* SearchBarView.swift in Sources */,
+				D3DA02592CB4582900F271E7 /* SearchForFriendsView.swift in Sources */,
 				D3F4E03F2D0942AB000B6EE5 /* SNEnums.swift in Sources */,
 				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
 				D36173262C657A240002CDED /* friendsApp.swift in Sources */,

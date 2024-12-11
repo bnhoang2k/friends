@@ -15,17 +15,20 @@ struct FriendsListView: View {
     
     var body: some View {
         NavigationStack {
-            SearchBar(searchText: $searchText)
-            List(svm.filteredFriends(query: searchText), id: \.uid) { friend in
-                NavigationLink {
-                    FriendView(friend: friend)
-                        .environmentObject(avm)
-                        .environmentObject(svm)
-                } label: {
-                    UserCard(user: friend)
+            VStack {
+                SearchBar(placeholderText: "Search Friends", searchText: $searchText)
+                List(svm.filteredFriends(query: searchText), id: \.uid) { friend in
+                    NavigationLink {
+                        FriendView(friend: friend)
+                            .environmentObject(avm)
+                            .environmentObject(svm)
+                    } label: {
+                        UserCard(user: friend)
+                    }
                 }
+                .listStyle(.plain)
             }
-            .listStyle(.plain)
+            .padding()
         }
         .navigationTitle("Friends List")
         .navigationBarTitleDisplayMode(.inline)
