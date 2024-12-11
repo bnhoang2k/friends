@@ -1,5 +1,5 @@
 //
-//  SearchBarView.swift
+//  SearchForFriendsView.swift
 //  friends
 //
 //  Created by Bryan Hoang on 10/7/24.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Firebase
 
-struct SearchBarView: View {
+struct SearchForFriendsView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var tvm: TypesenseVM
     @EnvironmentObject private var svm: SocialVM
@@ -28,7 +28,7 @@ struct SearchBarView: View {
             
             // Search bar at the top
             HStack {
-                SearchBar(searchText: $tvm.searchText)
+                SearchBar(placeholderText: "Search for Friends", searchText: $tvm.searchText)
                     .onChange(of: tvm.searchText) { _ in
                         Task {
                             await tvm.searchUsers(
@@ -58,7 +58,6 @@ struct SearchBarView: View {
                             }
                         }
                     }
-                    .padding([.horizontal, .top])
                 }
             }
             
@@ -73,8 +72,8 @@ struct SearchBarView: View {
             }
             .buttonStyle(.bordered)
             .tint(.primary)
-            .padding()
         }
+        .padding([.horizontal])
         .offset(y: -self.keyboardHeight)
         .animation(.spring(), value: keyboardHeight)
         .onAppear {
@@ -141,7 +140,7 @@ extension UIApplication {
 
 #Preview {
     NavigationStack {
-        SearchBarView()
+        SearchForFriendsView()
             .environmentObject(TypesenseVM())
             .environmentObject(AuthenticationVM())
             .environmentObject(SocialVM())
