@@ -316,7 +316,7 @@ extension SocialVM {
             print("Error unsending friend request via Cloud Function: \(error.localizedDescription)")
         }
     }
-    func handleFriendRequest(notification: Notification, status: notificationStatus) async throws {
+    func handleFriendRequest(notification: Notification, status: NotificationStatus) async throws {
         guard status == .accepted else {
             let pendingFrRef = UserManager.shared.userPendingFR(uid: notification.fromUserId).document(notification.toUserId)
             try await pendingFrRef.updateData(["status": "rejected"] as [String: String])
@@ -355,7 +355,7 @@ extension SocialVM {
 
 // MARK: General?
 extension SocialVM {
-    func updateNotificationStatus(notification: Notification, status: notificationStatus) async throws {
+    func updateNotificationStatus(notification: Notification, status: NotificationStatus) async throws {
         guard let notificationId = notification.notificationId else {
             print("Error: Notification ID is missing.")
             return

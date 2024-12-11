@@ -11,7 +11,7 @@ struct friendRequest: Codable {
     let friendId: String
     let requestDate: Date
     let recipientNId: String?
-    let status: notificationStatus
+    let status: NotificationStatus
     
     enum CodingKeys: String, CodingKey {
         case friendId = "friend_id"
@@ -23,7 +23,7 @@ struct friendRequest: Codable {
     init(friendId: String,
          requestDate: Date,
          recipientNId: String,
-         status: notificationStatus) {
+         status: NotificationStatus) {
         self.friendId = friendId
         self.requestDate = requestDate
         self.recipientNId = recipientNId
@@ -35,7 +35,7 @@ struct friendRequest: Codable {
         self.friendId = try container.decode(String.self, forKey: .friendId)
         self.requestDate = try container.decode(Date.self, forKey: .requestDate)
         self.recipientNId = try container.decode(String.self, forKey: .recipientNId)
-        self.status = try container.decode(notificationStatus.self, forKey: .status)
+        self.status = try container.decode(NotificationStatus.self, forKey: .status)
     }
     
     func encode(to encoder: any Encoder) throws {

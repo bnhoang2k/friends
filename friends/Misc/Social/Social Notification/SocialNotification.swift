@@ -7,38 +7,23 @@
 
 import Foundation
 
-enum notificationType: String, Codable {
-    case friendRequest = "friendRequest"
-    case hangoutRequest = "hangoutRequest"
-    case reminder = "reminder"
-    case placeholder = "placeholder"
-}
-
-enum notificationStatus: String, Codable {
-    case accepted = "accepted"
-    case rejected = "rejected"
-    case pending = "pending"
-    case read = "read"
-    case unread = "unread"
-}
-
 struct Notification: Codable {
     var notificationId: String? // Store the generated notification ID
     var fromUserId: String
     var fromUserPP: [String]?
     var toUserId: String
-    var type: notificationType
+    var type: NotificationType
     var message: String?
-    var status: notificationStatus
+    var status: NotificationStatus
     var timestamp: Date
     
     init(notificationId: String? = nil,
          fromUserId: String,
          fromUserPP: [String],
          toUserId: String,
-         type: notificationType,
+         type: NotificationType,
          message: String?,
-         status: notificationStatus = .unread,
+         status: NotificationStatus = .unread,
          timestamp: Date = Date()) {
         self.notificationId = notificationId
         self.fromUserId = fromUserId
@@ -67,9 +52,9 @@ struct Notification: Codable {
         self.fromUserId = try container.decode(String.self, forKey: .fromUserId)
         self.fromUserPP = try container.decode([String].self, forKey: .fromUserPP)
         self.toUserId = try container.decode(String.self, forKey: .toUserId)
-        self.type = try container.decode(notificationType.self, forKey: .type)
+        self.type = try container.decode(NotificationType.self, forKey: .type)
         self.message = try container.decodeIfPresent(String.self, forKey: .message)
-        self.status = try container.decode(notificationStatus.self, forKey: .status)
+        self.status = try container.decode(NotificationStatus.self, forKey: .status)
         self.timestamp = try container.decode(Date.self, forKey: .timestamp)
     }
     
