@@ -59,7 +59,6 @@ struct MainView: View {
             }
         }
         .onAppear {
-            customizeAppearance()
             if firstAppear {
                 Task {
                     try await tvm.createClient()
@@ -82,18 +81,6 @@ struct MainView: View {
                 .environmentObject(svm)
         })
         .tint(.primary)
-    }
-    private func customizeAppearance() {
-        let tabAppearance = UITabBarAppearance()
-        tabAppearance.configureWithOpaqueBackground()
-        UITabBar.appearance().standardAppearance = tabAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabAppearance
-        
-        let navAppearance = UINavigationBarAppearance()
-        navAppearance.configureWithOpaqueBackground()
-        UINavigationBar.appearance().standardAppearance = navAppearance
-        UINavigationBar.appearance().compactAppearance = navAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
     }
 }
 
