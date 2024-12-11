@@ -14,7 +14,7 @@ struct FromMainView: View {
     
     var body: some View {
         VStack {
-            SearchBar(searchText: $searchText)
+            SearchBar(placeholderText: "Search Friends", searchText: $searchText)
             if !searchText.isEmpty {
                 List(svm.filteredFriends(query: searchText, returnEmptyIfNoQuery: true), id: \ .uid) { friend in
                     HStack {

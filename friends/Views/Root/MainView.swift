@@ -75,7 +75,7 @@ struct MainView: View {
                 .presentationDragIndicator(.visible)
         })
         .sheet(isPresented: $showAddFriendView, content: {
-            SearchBarView()
+            SearchForFriendsView()
                 .environmentObject(avm)
                 .environmentObject(tvm)
                 .environmentObject(svm)
