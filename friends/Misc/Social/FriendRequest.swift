@@ -1,5 +1,5 @@
 //
-//  Friend.swift
+//  FriendRequest.swift
 //  friends
 //
 //  Created by Bryan Hoang on 10/9/24.
