@@ -64,12 +64,7 @@ struct MainView: View {
                 Task {
                     try await tvm.createClient()
                     guard let uid = avm.user?.uid else {return}
-                    svm.listenForNotificationChanges(uid: uid)
-                    svm.listenForFriendsListChanges(uid: uid)
-                    svm.listenForPendingFriendRequests(uid: uid)
-                    try await svm.fetchNotifications(uid: uid)
-                    try await svm.fetchPendingFR(uid: uid)
-                    try await svm.fetchFriendsList(uid: uid)
+                    try await svm.loadData(uid: uid)
                     firstAppear = false
                 }
             }
