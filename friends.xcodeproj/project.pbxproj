@@ -422,7 +422,6 @@
 			packageReferences = (
 				D3D88C8E2C6582ED00DEBE14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				D3D88C972C6582FC00DEBE14 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-				D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */,
 				D315E5CA2C88F78F00E59A87 /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
 				D36B6C802C8A187300FF25CC /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D3C5FD252C9CD2190092B0F7 /* XCRemoteSwiftPackageReference "typesense-swift" */,
@@ -740,14 +739,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 7.12.0;
-			};
-		};
-		D37CC4902C828C57003015A9 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.0;
 			};
 		};
 		D3C5FD252C9CD2190092B0F7 /* XCRemoteSwiftPackageReference "typesense-swift" */ = {
