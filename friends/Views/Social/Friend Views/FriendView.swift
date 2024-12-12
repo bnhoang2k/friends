@@ -19,9 +19,8 @@ struct FriendView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Bruh")
-                Spacer()
+            ScrollView {
+                FriendStatisticsView(friendId: friend.uid, hangoutList: hangoutList)
                 NavigationLink {
                     HangoutListView(hangoutList: $hangoutList,
                                     searchText: $searchText)
@@ -37,8 +36,10 @@ struct FriendView: View {
                         // Show up to five most recent hangouts
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(hangoutList.prefix(5)) { hangout in
-                                    HangoutCardView(hangout: hangout)
+                                ForEach(hangoutList.indices, id: \.self) { index in
+                                    if index < 5 {
+                                        HangoutCardView(hangout: hangoutList[index])
+                                    }
                                 }
                             }
                         }
@@ -63,8 +64,7 @@ struct FriendView: View {
                 .environmentObject(svm)
         })
         .onAppear {
-//            hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
-            hangoutList.sort { $0.date > $1.date }
+            hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
         }
         .tint(.primary)
     }
