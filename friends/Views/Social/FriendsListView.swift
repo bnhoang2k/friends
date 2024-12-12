@@ -25,6 +25,7 @@ struct FriendsListView: View {
                     } label: {
                         UserCard(user: friend)
                     }
+                    .listRowSeparator(.hidden)
                 }
                 .listStyle(.plain)
             }

@@ -63,7 +63,7 @@ struct ConditionalButton: View {
     var isDisabled: Bool
     var buttonText: String
     var buttonAction: () -> Void
-
+    
     var body: some View {
         Button(action: buttonAction) {
             Text(buttonText)
@@ -181,6 +181,7 @@ struct UserCard: View {
                     .foregroundColor(.secondary)
             }
         }
+        .contentShape(Rectangle())
     }
 }
 
