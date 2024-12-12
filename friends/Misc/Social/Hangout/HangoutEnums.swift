@@ -37,6 +37,27 @@ enum HangoutVibe: String, Codable, CaseIterable {
             return "Exciting and physically demanding"
         }
     }
+    
+    var symbolName: String {
+            switch self {
+            case .calm:
+                return "leaf"
+            case .relaxing:
+                return "water.waves"
+            case .chill:
+                return "snowflake"
+            case .social:
+                return "bubbles.and.sparkles"
+            case .energetic:
+                return "bolt"
+            case .exciting:
+                return "party.popper"
+            case .adventurous:
+                return "mountain.2"
+            case .wild:
+                return "tornado"
+            }
+        }
 }
 
 enum HangoutStatus: String, Codable {
@@ -64,8 +85,4 @@ enum HangoutDuration: String, Codable, CaseIterable {
             return "Overnight"
         }
     }
-}
-
-struct FoodAndDrinkPreferences: Codable {
-    let diningOut: Bool
 }

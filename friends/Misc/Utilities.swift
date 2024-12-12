@@ -127,9 +127,7 @@ final class Utilities {
                 description: randomDescription,
                 tags: Array(randomTags),
                 budget: randomBudget,
-                isOutdoor: randomIsOutdoor,
-                foodAndDrinkPreferences: FoodAndDrinkPreferences(diningOut: Bool.random())
-            )
+                isOutdoor: randomIsOutdoor)
             
             randomHangouts.append(hangout)
         }

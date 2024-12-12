@@ -36,24 +36,20 @@ struct Hangout: Codable, Identifiable {
         case tags = "tags"
         case budget = "budget"
         case isOutdoor = "is_outdoor"
-        case foodAndDrinkPreferences = "food_and_drink_preferences"
         case createdAt = "created_at"
     }
     
     // Default initializer for UI binding
     static func defaultHangout() -> Hangout {
         return Hangout(
-            hangoutId: UUID().uuidString,
+            hangoutId: "",
             date: Date(),
             duration: .quick,
             vibe: .chill,
             status: .pending,
             participantIds: [],
             budget: 20.0,
-            isOutdoor: false,
-            foodAndDrinkPreferences: FoodAndDrinkPreferences(
-                diningOut: true
-            )
+            isOutdoor: false
         )
     }
     
@@ -63,16 +59,12 @@ struct Hangout: Codable, Identifiable {
          vibe: HangoutVibe,
          status: HangoutStatus,
          participantIds: [String],
-         groupId: String? = nil,
          location: String? = nil,
          title: String? = nil,
          description: String? = nil,
          tags: [String]? = nil,
          budget: Double,
-         isOutdoor: Bool,
-         foodAndDrinkPreferences: FoodAndDrinkPreferences,
-         createdAt: Date? = nil,
-         updatedAt: Date? = nil) {
+         isOutdoor: Bool) {
         self.id = UUID().uuidString
         self.hangoutId = hangoutId
         self.date = date
