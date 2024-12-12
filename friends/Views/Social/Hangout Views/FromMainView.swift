@@ -36,10 +36,10 @@ struct FromMainView: View {
                 }.listStyle(.plain)
                 SelectedFriendsView(participantIds: $hangout.participantIds)
                     .environmentObject(svm)
-                    .padding([.horizontal, .bottom])
             }
             Spacer()
         }
+        .padding()
     }
 }
 
@@ -65,7 +65,7 @@ struct SelectedFriendsView: View {
                                     .foregroundColor(.red)
                             }
                         }
-                        .padding(8)
+                        .padding(.horizontal)
                         .background(RoundedRectangle(cornerRadius: 10).fill(Color(.systemGray5)))
                     }
                 }
