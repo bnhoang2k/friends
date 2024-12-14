@@ -81,18 +81,19 @@ extension GenerateLocationsView {
             print("Failed to convert output to Data")
             return nil
         }
-        print("output \(output)")
         do {
-            // Decode the JSON array directly into [Location]
-            let locations = try JSONDecoder().decode([Location].self, from: data)
-            print("locations \(locations)")
-            return locations
-        } catch {
-            print("Failed to decode JSON: \(error)")
+            // Try decoding as an array of locations first
+            if let locations = try? JSONDecoder().decode([Location].self, from: data) {
+                for location in locations {
+                    vvm.previousSuggestions.insert(location.name)
+                }
+                return locations
+            }
+        
+            print("Failed to decode as array or object")
             return nil
         }
     }
-
     
 }
 

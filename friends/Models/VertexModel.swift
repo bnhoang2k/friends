@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import FirebaseVertexAI
 
 struct Location: Codable, Equatable {
@@ -67,28 +66,29 @@ class VertexViewModel: ObservableObject {
         
         // Response MIME Type:  Leaving this as nil defaults to plain text. For most tasks, this is ideal unless you’re working
         // with specific formats like JSON or Markdown.
-        let locationSchema = Schema.init(type: .object,
-                                         properties: [
-                                            "name": Schema(type: .string, description: "The name of the location."),
-                                            "location": Schema(type: .string, description: "The address of the location."),
-                                            "description": Schema(type: .string, description: "Details about the location."),
-                                            "imageURL": Schema(type: .string, format: "uri", description: "An optional URL for an image.", nullable: true)
-                                         ],
-                                         requiredProperties: [
-                                            "name",
-                                            "location",
-                                            "description"
-                                         ])
+        let locationSchema = Schema.object(properties: [
+            "name" : .string(),
+            "location" : .string(),
+            "description" : .string(),
+            "imageURL" : .string(nullable: true)
+        ],
+                                           optionalProperties: ["imageURL"],
+                                           description: nil,
+                                           nullable: false)
+        
+        let locationArraySchema = Schema.array(items: locationSchema, description: nil, nullable: false)
+        
         config = GenerationConfig(temperature: 0.9,
                                   topP: 0.95,
                                   topK: 40,
                                   candidateCount: 1,
                                   maxOutputTokens: 1024,
                                   stopSequences: nil,
-                                  responseMIMEType: "application/json")
+                                  responseMIMEType: "application/json",
+                                  responseSchema: locationArraySchema)
         systemInstruction = ModelContent(
             role: "You are a friendly and knowledgeable hangout planner.",
-            parts: "Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. Avoid repeating ideas from previous suggestions. The response **must only** include a markdown table with exactly two columns: Place Name and Why It's Good. Do not include any headers, titles, explanations, or commentary before or after the table."
+            parts: "Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. Avoid repeating ideas from previous suggestions. Do not include any headers, titles, explanations, or commentary."
         )
         // Can change models here https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
         // Look into tools and toolsConfig
@@ -131,21 +131,11 @@ class VertexViewModel: ObservableObject {
             
             // Prepare the prompt for the AI model.
             let prompt = """
-            Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", ")). 
-            The response must be in JSON format as an array of objects. Each object must follow this structure:
-            [
-                {
-                    "name": "string", 
-                    "location": "string", 
-                    "description": "string", 
-                    "imageURL": "string or null"
-                }
-            ]
-            Do not include any additional text or commentary outside the JSON array.
+            Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", ")).
             """
             
             // Use the model to generate a response based on the prompt and images.
-            let outputContentStream = model.generateContentStream(prompt)
+            let outputContentStream = try model.generateContentStream(prompt)
             
             // Stream the response from the model.
             for try await outputContent in outputContentStream {
