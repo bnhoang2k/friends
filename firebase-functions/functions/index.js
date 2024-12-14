@@ -235,7 +235,6 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
 
     // Extract information from the data object.
     const {
-      id,
       // hangout_id,
       date,
       duration,
@@ -275,7 +274,6 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
 
     // Create the main hangout data object
     const hangoutData = {
-      id: id,
       hangout_id: hangout_id,
       date: admin.firestore.Timestamp.fromMillis(date), // 'date' is sent as a timestamp in ms
       duration: duration,

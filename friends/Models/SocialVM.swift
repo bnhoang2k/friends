@@ -414,37 +414,24 @@ extension SocialVM {
 // MARK: Hangout Functions
 extension SocialVM {
     func createHangout(uid: String, hangout: Hangout) async throws {
-        // Temporary Bandaid:
-        var newHangout = Hangout(hangoutId: hangout.hangoutId,
-                                 date: hangout.date,
-                                 duration: hangout.duration,
-                                 vibe: hangout.vibe,
-                                 status: hangout.status,
-                                 participantIds: hangout.participantIds,
-                                 location: hangout.location,
-                                 title: hangout.title,
-                                 description: hangout.description,
-                                 tags: hangout.tags,
-                                 budget: hangout.budget,
-                                 isOutdoor: hangout.isOutdoor)
-        try await HangoutManager.shared.createHangout(uid: uid, hangout: newHangout)
+        try await HangoutManager.shared.createHangout(uid: uid, hangout: hangout)
     }
     func getFilteredHangoutsByFriend(friendId: String) -> [Hangout] {
-      // Filter hangouts where the friend ID is present in participantIds
-      var filteredHangouts = cachedHangoutsList.values.filter { hangout in
-        return hangout.participantIds.contains(friendId)
-      }
-      
-      // Sort the filtered hangouts by date with tiebreaker
-      filteredHangouts.sort { hangout1, hangout2 in
-        if hangout1.date != hangout2.date {
-          return hangout1.date > hangout2.date
-        } else {
-          return hangout1.id > hangout2.id // Use hangout ID as tiebreaker
+        // Filter hangouts where the friend ID is present in participantIds
+        var filteredHangouts = cachedHangoutsList.values.filter { hangout in
+            return hangout.participantIds.contains(friendId)
         }
-      }
-      
-      // Return the filtered and sorted list
-      return filteredHangouts
+        
+        // Sort the filtered hangouts by date with tiebreaker
+        filteredHangouts.sort { (hangout1: Hangout, hangout2: Hangout) in
+            if hangout1.date != hangout2.date {
+                return hangout1.date > hangout2.date // Sort by most recent date
+            } else {
+                return hangout1.hangoutId < hangout2.hangoutId // Use hangout ID as tiebreaker
+            }
+        }
+        
+        // Return the filtered and sorted list
+        return filteredHangouts
     }
 }

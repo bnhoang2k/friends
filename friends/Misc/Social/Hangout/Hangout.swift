@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct Hangout: Codable, Identifiable {
-    var id: String
+struct Hangout: Codable {
     var hangoutId: String
     var date: Date
     var duration: HangoutDuration
@@ -23,7 +22,6 @@ struct Hangout: Codable, Identifiable {
     var isOutdoor: Bool
     
     enum CodingKeys: String, CodingKey {
-        case id = "id" // needed for identifiable
         case hangoutId = "hangout_id"
         case date = "date"
         case duration = "duration"
@@ -65,7 +63,6 @@ struct Hangout: Codable, Identifiable {
          tags: [String]? = nil,
          budget: Double,
          isOutdoor: Bool) {
-        self.id = UUID().uuidString
         self.hangoutId = hangoutId
         self.date = date
         self.duration = duration
@@ -82,7 +79,6 @@ struct Hangout: Codable, Identifiable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(String.self, forKey: .id)
         self.hangoutId = try container.decode(String.self, forKey: .hangoutId)
         self.date = try container.decode(Date.self, forKey: .date)
         self.duration = try container.decode(HangoutDuration.self, forKey: .duration)
@@ -99,7 +95,6 @@ struct Hangout: Codable, Identifiable {
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
         try container.encode(hangoutId, forKey: .hangoutId)
         try container.encode(date, forKey: .date)
         try container.encode(duration, forKey: .duration)
@@ -116,28 +111,23 @@ struct Hangout: Codable, Identifiable {
 }
 
 struct HangoutReference: Codable {
-    var id : String
     var hangout_id : String
     
     enum CodingKeys: String, CodingKey {
-        case id
         case hangoutId = "hangout_id"
     }
     
-    init(id: String, hangoutId: String) {
-        self.id = id
+    init(hangoutId: String) {
         self.hangout_id = hangoutId
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
         hangout_id = try container.decode(String.self, forKey: .hangoutId)
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
         try container.encode(hangout_id, forKey: .hangoutId)
     }
 }

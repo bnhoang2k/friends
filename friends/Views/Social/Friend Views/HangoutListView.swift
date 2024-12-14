@@ -26,7 +26,7 @@ struct HangoutListView: View {
                 .padding([.bottom])
                 if !hangoutList.isEmpty {
                     ScrollView(showsIndicators: false) {
-                        ForEach(hangoutList) { hangout in
+                        ForEach(hangoutList, id: \.hangoutId) { hangout in
                             HangoutCardView(hangout: hangout)
                         }
                     }
