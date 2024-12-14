@@ -59,7 +59,7 @@ struct FriendView: View {
             }
         }
         .sheet(isPresented: $showAddHangout, content: {
-            AddHangoutView(accessType: .fromFriend)
+            AddHangoutView(accessType: .fromFriend, friendID: friend.uid)
                 .environmentObject(avm)
                 .environmentObject(svm)
         })

@@ -13,6 +13,7 @@ struct AddHangoutView: View {
     @EnvironmentObject private var svm: SocialVM
     
     let accessType: AccessType
+    var friendID: String? = nil
     
     @StateObject private var vvm: VertexViewModel = VertexViewModel()
     @State private var hangout: Hangout = Hangout.defaultHangout()
@@ -43,6 +44,9 @@ struct AddHangoutView: View {
                 if !hangout.participantIds.contains(user.uid) {
                     hangout.participantIds.append(user.uid)
                 }
+            }
+            if accessType == .fromFriend {
+                hangout.participantIds.append(friendID ?? "ERROR")
             }
         }
     }
