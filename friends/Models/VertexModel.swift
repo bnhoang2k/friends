@@ -132,6 +132,17 @@ class VertexViewModel: ObservableObject {
             // Prepare the prompt for the AI model.
             let prompt = """
             Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", ")).
+            The response must strictly be in JSON format as an array of at least four objects. 
+            Each object must follow this structure:
+            [
+                {
+                    "name": "string", 
+                    "location": "string", 
+                    "description": "string", 
+                    "imageURL": "string or null"
+                }
+            ]
+            Ensure the array contains at least four items. Do not include any text or commentary outside the JSON array.
             """
             
             // Use the model to generate a response based on the prompt and images.
