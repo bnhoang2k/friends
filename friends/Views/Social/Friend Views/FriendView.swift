@@ -20,7 +20,8 @@ struct FriendView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                FriendStatisticsView(friendId: friend.uid, hangoutList: hangoutList)
+                FriendStatisticsView(friendId: friend.uid,
+                                     hangoutList: $hangoutList)
                 NavigationLink {
                     HangoutListView(hangoutList: $hangoutList,
                                     searchText: $searchText)

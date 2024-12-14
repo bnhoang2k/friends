@@ -13,22 +13,23 @@ struct FriendStatisticsView: View {
     
     // Data passed into the view
     var friendId: String = ""
-    var hangoutList: [Hangout] = []
+    @Binding var hangoutList: [Hangout]
+    
+    // Store pre-computed statistics
+    @State private var friendStatistics: (personalityGradient: [String: Any], hardStats: [String: Any]) = (personalityGradient: [:], hardStats: [:])
     
     var body: some View {
         VStack (spacing: 20) {
             // Personality Gradient
-            PersonalityGradientView(personalityGradient: calculateFriendStatistics().personalityGradient)
+            PersonalityGradientView(personalityGradient: friendStatistics.personalityGradient)
             // Hard Stats
-            HardStatsView(hardStats: calculateFriendStatistics().hardStats)
+            HardStatsView(hardStats: friendStatistics.hardStats)
+        }
+        .onAppear {
+            friendStatistics = friendUtilities.calculateFriendStatistics(for: friendId, from: hangoutList)
         }
         .padding()
         .tint(.primary)
-    }
-    
-    // Function to calculate friend statistics based on friendId and hangoutList
-    func calculateFriendStatistics() -> (personalityGradient: [String: Any], hardStats: [String: Any]) {
-        return friendUtilities.calculateFriendStatistics(for: friendId, from: hangoutList)
     }
 }
 
@@ -46,8 +47,7 @@ struct PersonalityGradientView: View {
             HStack {
                 Text("Outdoor Preference:")
                 Spacer()
-                // Uncomment this line if you have the data available
-                // Text("\(Int((personalityGradient["indoorOutdoorRatio"] as? Double ?? 0) * 100))% outdoors")
+                Text("\(Int((personalityGradient["indoorOutdoorRatio"] as? Double ?? 0) * 100))% outdoors")
             }
             HStack {
                 Text("Hangout Duration:")
@@ -70,7 +70,7 @@ struct HardStatsView: View {
     
     @State private var isVibesExpanded: Bool = true // Tracks the expanded/collapsed state of "Vibes"
     @State private var isAnimating: Bool = false // Prevents spamming during animation
-
+    
     var body: some View {
         Section {
             VStack(spacing: 10) {
@@ -154,10 +154,14 @@ struct HardStatsView: View {
 #Preview {
     // Sample data generation (for preview only)
     let friendUtilities = FriendUtilities()
-    let dummyHangouts: [Hangout] = Utilities.shared.generateRandomHangouts(count: 100)
+    var dummyHangouts: [Hangout] = Utilities.shared.generateRandomHangouts(count: 100)
     
-    return FriendStatisticsView(
+    FriendStatisticsView(
         friendId: "1",
-        hangoutList: dummyHangouts
+        hangoutList: Binding(get: {
+            dummyHangouts
+        }, set: { newValue in
+            dummyHangouts = newValue
+        })
     )
 }
