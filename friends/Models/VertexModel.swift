@@ -10,12 +10,22 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseVertexAI
 
-struct Location: Identifiable, Equatable {
-    let id = UUID()
+struct Location: Codable, Equatable {
     let name: String
     let location: String
     let description: String
     var imageURL: String? = nil
+    
+    init(name: String, location: String, description: String, imageURL: String? = nil) {
+        self.name = name
+        self.location = location
+        self.description = description
+        self.imageURL = imageURL
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case name, location, description, imageURL
+    }
 }
 
 @MainActor
@@ -57,13 +67,25 @@ class VertexViewModel: ObservableObject {
         
         // Response MIME Type:  Leaving this as nil defaults to plain text. For most tasks, this is ideal unless you’re working
         // with specific formats like JSON or Markdown.
+        let locationSchema = Schema.init(type: .object,
+                                         properties: [
+                                            "name": Schema(type: .string, description: "The name of the location."),
+                                            "location": Schema(type: .string, description: "The address of the location."),
+                                            "description": Schema(type: .string, description: "Details about the location."),
+                                            "imageURL": Schema(type: .string, format: "uri", description: "An optional URL for an image.", nullable: true)
+                                         ],
+                                         requiredProperties: [
+                                            "name",
+                                            "location",
+                                            "description"
+                                         ])
         config = GenerationConfig(temperature: 0.9,
                                   topP: 0.95,
                                   topK: 40,
                                   candidateCount: 1,
-                                  maxOutputTokens: 256,
+                                  maxOutputTokens: 1024,
                                   stopSequences: nil,
-                                  responseMIMEType: nil)
+                                  responseMIMEType: "application/json")
         systemInstruction = ModelContent(
             role: "You are a friendly and knowledgeable hangout planner.",
             parts: "Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. Avoid repeating ideas from previous suggestions. The response **must only** include a markdown table with exactly two columns: Place Name and Why It's Good. Do not include any headers, titles, explanations, or commentary before or after the table."
@@ -73,14 +95,14 @@ class VertexViewModel: ObservableObject {
         model = VertexAI.vertexAI().generativeModel(modelName: "gemini-1.5-flash",
                                                     generationConfig: config,
                                                     safetySettings: [
-                                                        SafetySetting(harmCategory: .dangerousContent,
-                                                                      threshold: .blockNone),
-                                                        SafetySetting(harmCategory: .harassment,
-                                                                      threshold: .blockNone),
-                                                        SafetySetting(harmCategory: .hateSpeech,
-                                                                      threshold: .blockNone),
-                                                        SafetySetting(harmCategory: .sexuallyExplicit,
-                                                                      threshold: .blockNone),
+                                                        .init(harmCategory: .dangerousContent,
+                                                              threshold: .blockNone),
+                                                        .init(harmCategory: .harassment,
+                                                              threshold: .blockNone),
+                                                        .init(harmCategory: .hateSpeech,
+                                                              threshold: .blockNone),
+                                                        .init(harmCategory: .sexuallyExplicit,
+                                                              threshold: .blockNone),
                                                     ],
                                                     tools: nil,
                                                     toolConfig: nil,
@@ -108,7 +130,19 @@ class VertexViewModel: ObservableObject {
             outputText = ""
             
             // Prepare the prompt for the AI model.
-            let prompt = "Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", "))."
+            let prompt = """
+            Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", ")). 
+            The response must be in JSON format as an array of objects. Each object must follow this structure:
+            [
+                {
+                    "name": "string", 
+                    "location": "string", 
+                    "description": "string", 
+                    "imageURL": "string or null"
+                }
+            ]
+            Do not include any additional text or commentary outside the JSON array.
+            """
             
             // Use the model to generate a response based on the prompt and images.
             let outputContentStream = model.generateContentStream(prompt)

@@ -34,7 +34,7 @@ struct GenerateLocationsView: View {
                     .foregroundColor(.gray)
             } else {
                 ScrollView {
-                    ForEach(locations) { location in
+                    ForEach(locations, id: \.name) { location in
                         EquatableView(content: LocationCardView(location: location, isSelected: selectedLocation == location) {
                             selectedLocation = (selectedLocation == location) ? nil : location
                         })
@@ -63,68 +63,34 @@ extension GenerateLocationsView {
                                                   cachedFriendsList: svm.cachedFriendsList)
             await vvm.reason()
             
-            let parsedLocations = parseLocations(from: vvm.outputText)
-            DispatchQueue.main.async {
-                if parsedLocations.isEmpty {
-                    print("Error: No valid locations parsed.")
+            if let parsedLocations = parseStructuredOutput(vvm.outputText) {
+                DispatchQueue.main.async {
+                    self.locations = parsedLocations
+                }
+            } else {
+                DispatchQueue.main.async {
+                    print("Error: Failed to parse locations.")
                     // Optionally show an alert or error UI to the user
                 }
-                self.locations = parsedLocations
             }
         }
     }
     
-    func stripMarkdown(_ markdown: String) -> String {
-        // Remove Markdown formatting (basic)
-        var stripped = markdown.replacingOccurrences(of: "\\*+", with: "", options: .regularExpression)
-        stripped = stripped.replacingOccurrences(of: "_+", with: "", options: .regularExpression)
-        stripped = stripped.replacingOccurrences(of: "`+", with: "", options: .regularExpression)
-        stripped = stripped.replacingOccurrences(of: "\\[.*?\\]\\(.*?\\)", with: "", options: .regularExpression)
-        return stripped
-    }
-
-    func parseLocations(from markdown: String) -> [Location] {
-        var locations = [Location]()
-        print(markdown)
-        // Split the response into lines
-        let lines = markdown.split(separator: "\n")
-        
-        // Identify the lines that form the markdown table
-        let tableLines = lines.filter { $0.contains("|") && !$0.contains("---") }
-        
-        // Ensure table lines are present
-        guard !tableLines.isEmpty else {
-            print("Error: No valid markdown table found.")
-            return []
+    func parseStructuredOutput(_ output: String) -> [Location]? {
+        guard let data = output.data(using: .utf8) else {
+            print("Failed to convert output to Data")
+            return nil
         }
-        
-        // Skip the header row if it matches the expected format
-        for line in tableLines {
-            // Skip the header if it contains column titles
-            if line.lowercased().contains("place name") || line.lowercased().contains("why it's good") {
-                continue
-            }
-            
-            let columns = line.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }
-            
-            // Ensure at least two columns are present (Place Name and Why It's Good)
-            guard columns.count >= 2 else {
-                print("Error: Malformed table row: \(line)")
-                continue
-            }
-            
-            // Remove Markdown formatting
-            let placeName = stripMarkdown(columns[0])
-            let description = stripMarkdown(columns[1])
-            
-            vvm.previousSuggestions.insert(placeName)
-            
-            // Create a Location object from the parsed columns
-            let location = Location(name: placeName, location: "Unknown", description: description)
-            locations.append(location)
+        print("output \(output)")
+        do {
+            // Decode the JSON array directly into [Location]
+            let locations = try JSONDecoder().decode([Location].self, from: data)
+            print("locations \(locations)")
+            return locations
+        } catch {
+            print("Failed to decode JSON: \(error)")
+            return nil
         }
-        
-        return locations
     }
 
     
