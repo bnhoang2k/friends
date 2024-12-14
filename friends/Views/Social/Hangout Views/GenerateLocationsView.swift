@@ -75,6 +75,15 @@ extension GenerateLocationsView {
         }
     }
     
+    func stripMarkdown(_ markdown: String) -> String {
+        // Remove Markdown formatting (basic)
+        var stripped = markdown.replacingOccurrences(of: "\\*+", with: "", options: .regularExpression)
+        stripped = stripped.replacingOccurrences(of: "_+", with: "", options: .regularExpression)
+        stripped = stripped.replacingOccurrences(of: "`+", with: "", options: .regularExpression)
+        stripped = stripped.replacingOccurrences(of: "\\[.*?\\]\\(.*?\\)", with: "", options: .regularExpression)
+        return stripped
+    }
+
     func parseLocations(from markdown: String) -> [Location] {
         var locations = [Location]()
         
@@ -105,13 +114,18 @@ extension GenerateLocationsView {
                 continue
             }
             
+            // Remove Markdown formatting
+            let placeName = stripMarkdown(columns[0])
+            let description = stripMarkdown(columns[1])
+            
             // Create a Location object from the parsed columns
-            let location = Location(name: columns[0], location: "Unknown", description: columns[1])
+            let location = Location(name: placeName, location: "Unknown", description: description)
             locations.append(location)
         }
         
         return locations
     }
+
     
 }
 
