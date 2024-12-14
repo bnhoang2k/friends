@@ -85,7 +85,7 @@ extension GenerateLocationsView {
 
     func parseLocations(from markdown: String) -> [Location] {
         var locations = [Location]()
-        
+        print(markdown)
         // Split the response into lines
         let lines = markdown.split(separator: "\n")
         
@@ -116,6 +116,8 @@ extension GenerateLocationsView {
             // Remove Markdown formatting
             let placeName = stripMarkdown(columns[0])
             let description = stripMarkdown(columns[1])
+            
+            vvm.previousSuggestions.insert(placeName)
             
             // Create a Location object from the parsed columns
             let location = Location(name: placeName, location: "Unknown", description: description)

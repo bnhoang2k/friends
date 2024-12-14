@@ -26,11 +26,66 @@ class VertexViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var inProgress: Bool = false
     
+    @Published var previousSuggestions: Set<String> = []
+    
     private var model: GenerativeModel?
+    var config : GenerationConfig?
+    var systemInstruction: ModelContent?
     
     init() {
+        // Temperature: A temperature of 0.7 strikes a balance between creativity and reliability. It introduces enough
+        // randomness to avoid overly deterministic (predictable) responses while still maintaining coherence. This is
+        // great for brainstorming hangout ideas, where you want variety but also relevant suggestions.
+        
+        // Top-P: A top-P value of 0.9 allows the model to consider tokens that make up 90% of the total probability mass.
+        // This ensures it picks from a wide range of plausible options while still filtering out unlikely ones. It
+        // encourages creative responses by keeping slightly less probable but interesting choices.
+        
+        // Top-K: With top-K set to 40, the model considers up to the top 40 most likely options for each token. This provides
+        // a good balance of randomness without being too chaotic. It ensures the model has enough variety in token selection
+        // without becoming incoherent.
+        
+        // Candidate Count: Setting candidateCount to 1 means the model will only return the best result from the sampling process.
+        // This simplifies the output for the user. Higher Values: Increasing this (e.g., 3) could give you multiple alternative
+        // responses to pick from, but it adds complexity to the UI since you’ll need to handle multiple candidates.
+        
+        // Max Output Tokens: This sets the maximum length of the response. For hangout ideas or similar tasks, 256 tokens
+        // are sufficient to generate a few paragraphs or a well-detailed table of suggestions.
+        
+        // Stop Sequences: Not specifying stop sequences means the model will generate text until it reaches the maximum token
+        // limit or finishes the task naturally. This works well for open-ended generation like hangout ideas.
+        
+        // Response MIME Type:  Leaving this as nil defaults to plain text. For most tasks, this is ideal unless you’re working
+        // with specific formats like JSON or Markdown.
+        config = GenerationConfig(temperature: 0.9,
+                                  topP: 0.95,
+                                  topK: 40,
+                                  candidateCount: 1,
+                                  maxOutputTokens: 256,
+                                  stopSequences: nil,
+                                  responseMIMEType: nil)
+        systemInstruction = ModelContent(
+            role: "You are a friendly and knowledgeable hangout planner.",
+            parts: "Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. Avoid repeating ideas from previous suggestions. The response **must only** include a markdown table with exactly two columns: Place Name and Why It's Good. Do not include any headers, titles, explanations, or commentary before or after the table."
+        )
         // Can change models here https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
-        model = VertexAI.vertexAI().generativeModel(modelName: "gemini-1.5-flash")
+        // Look into tools and toolsConfig
+        model = VertexAI.vertexAI().generativeModel(modelName: "gemini-1.5-flash",
+                                                    generationConfig: config,
+                                                    safetySettings: [
+                                                        SafetySetting(harmCategory: .dangerousContent,
+                                                                      threshold: .blockNone),
+                                                        SafetySetting(harmCategory: .harassment,
+                                                                      threshold: .blockNone),
+                                                        SafetySetting(harmCategory: .hateSpeech,
+                                                                      threshold: .blockNone),
+                                                        SafetySetting(harmCategory: .sexuallyExplicit,
+                                                                      threshold: .blockNone),
+                                                    ],
+                                                    tools: nil,
+                                                    toolConfig: nil,
+                                                    systemInstruction: systemInstruction,
+                                                    requestOptions: RequestOptions(timeout: 0))
     }
     
     // Main function to perform reasoning based on user input and selected images.
@@ -53,7 +108,7 @@ class VertexViewModel: ObservableObject {
             outputText = ""
             
             // Prepare the prompt for the AI model.
-            let prompt = "Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Focus on 1) Vibe, 2) Hangout Duration, and 3) Budget, in that order of importance. If no specific participant information is available, recommend popular, interesting places based on today’s trends and location. The response **must only** include a markdown table with exactly two columns: Place Name and Why It's Good. Do not include any headers, titles, explanations, or commentary before or after the table."
+            let prompt = "Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", "))."
             
             // Use the model to generate a response based on the prompt and images.
             let outputContentStream = model.generateContentStream(prompt)
