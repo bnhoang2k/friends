@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D30033F72CE026D500E42415 /* FromMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30033F62CE026D500E42415 /* FromMainView.swift */; };
-		D30033F92CE026F600E42415 /* FromFriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30033F82CE026F600E42415 /* FromFriendView.swift */; };
 		D30033FB2CE0270900E42415 /* FormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30033FA2CE0270900E42415 /* FormView.swift */; };
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
 		D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BAE2CDD559A00C802BA /* Hangout.swift */; };
@@ -71,7 +70,6 @@
 
 /* Begin PBXFileReference section */
 		D30033F62CE026D500E42415 /* FromMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FromMainView.swift; sourceTree = "<group>"; };
-		D30033F82CE026F600E42415 /* FromFriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FromFriendView.swift; sourceTree = "<group>"; };
 		D30033FA2CE0270900E42415 /* FormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormView.swift; sourceTree = "<group>"; };
 		D3214BAE2CDD559A00C802BA /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
 		D3214BB02CDD55A900C802BA /* SocialNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNotification.swift; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 			children = (
 				D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */,
 				D30033F62CE026D500E42415 /* FromMainView.swift */,
-				D30033F82CE026F600E42415 /* FromFriendView.swift */,
 				D30033FA2CE0270900E42415 /* FormView.swift */,
 				D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */,
 			);
@@ -464,7 +461,6 @@
 				D3F4E03F2D0942AB000B6EE5 /* SNEnums.swift in Sources */,
 				D39EF7D72C6981C500040765 /* AuthenticationVM.swift in Sources */,
 				D36173262C657A240002CDED /* friendsApp.swift in Sources */,
-				D30033F92CE026F600E42415 /* FromFriendView.swift in Sources */,
 				D3FCD1072C6D5D8F002D4CEA /* Errors.swift in Sources */,
 				D39EF7D32C6981BD00040765 /* SignUpView.swift in Sources */,
 				D3C5FD292C9CD2580092B0F7 /* TypesenseManager.swift in Sources */,
