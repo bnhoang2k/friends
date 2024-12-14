@@ -47,7 +47,8 @@ struct PersonalityGradientView: View {
             HStack {
                 Text("Outdoor Preference:")
                 Spacer()
-                Text("\(Int((personalityGradient["indoorOutdoorRatio"] as? Double ?? 0) * 100))% outdoors")
+                Text("\((personalityGradient["indoorOutdoorRatio"] as? String == "Data Unavailable") ? "Data Unavailable" : "\(Int((Double(personalityGradient["indoorOutdoorRatio"] as? String ?? "0") ?? 0) * 100))% outdoors")")
+
             }
             HStack {
                 Text("Hangout Duration:")
