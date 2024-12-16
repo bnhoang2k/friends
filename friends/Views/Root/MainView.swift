@@ -61,7 +61,7 @@ struct MainView: View {
         .onAppear {
             if firstAppear {
                 Task {
-                    try await tvm.createClient()
+//                    try await tvm.createClient()
                     guard let uid = avm.user?.uid else {return}
                     try await svm.loadData(uid: uid)
                     firstAppear = false

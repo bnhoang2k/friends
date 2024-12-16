@@ -47,7 +47,7 @@ extension GetInformationView {
                     avm.showGetInformationView = false
                     try await avm.loadCurrentUser()
                     avm.getAuthProviders()
-                    try await tvm.createClient()
+//                    try await tvm.createClient()
                     guard let uid = avm.user?.uid else {
                         throw AuthError.noUserSignedIn
                     }
