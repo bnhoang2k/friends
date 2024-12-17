@@ -150,7 +150,7 @@ exports.unsendFriendRequest = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.updateNotificationStatus = functions.https.onCall(async (data, context) => {
+exports.upcreation_dateNotificationStatus = functions.https.onCall(async (data, context) => {
   const {to_uid, notification_id, status} = data.data;
   if (!to_uid || !notification_id || !status) {
     console.log(
@@ -175,15 +175,15 @@ exports.updateNotificationStatus = functions.https.onCall(async (data, context) 
 
       const currentData = currentSnapshot.data();
       if (currentData.status === status) {
-        console.log("No change in status; skipping update.");
+        console.log("No change in status; skipping upcreation_date.");
         return {success: true, message: "No change in status."};
       }
 
-      transaction.update(notificationRef, {status});
-      console.log(`Notification status updated to ${status}`);
+      transaction.upcreation_date(notificationRef, {status});
+      console.log(`Notification status upcreation_dated to ${status}`);
     });
 
-    return {success: true, message: `Notification status updated to ${status}`};
+    return {success: true, message: `Notification status upcreation_dated to ${status}`};
   } catch (error) {
     console.error("Error updating notification status:", error.message);
     throw new functions.https.HttpsError("internal", error.message);
@@ -236,7 +236,7 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
     // Extract information from the data object.
     const {
       // hangout_id,
-      date,
+      creation_date,
       duration,
       vibe,
       participant_ids,
@@ -253,7 +253,7 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
     const missingFields = [];
 
     // if (!hangout_id) missingFields.push("hangout_id");
-    if (!date) missingFields.push("date");
+    if (!creation_date) missingFields.push("creation_date");
     if (!duration) missingFields.push("duration");
     if (!vibe) missingFields.push("vibe");
     if (!participant_ids) missingFields.push("participant_ids");
@@ -275,7 +275,8 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
     // Create the main hangout data object
     const hangoutData = {
       hangout_id: hangout_id,
-      date: admin.firestore.Timestamp.fromMillis(date), // 'date' is sent as a timestamp in ms
+      // 'creation_date' is sent as a timestamp in ms
+      creation_date: admin.firestore.Timestamp.fromMillis(creation_date),
       duration: duration,
       vibe: vibe,
       participant_ids: participant_ids,

@@ -57,7 +57,7 @@ extension HangoutManager {
         // generate it from the firebase function.
         let requestData: [String : Any] = [
 //            "hangout_id": hangout.hangoutId,
-            "date": hangout.date.timeIntervalSince1970 * 1000, // Unix timestamp in ms
+            "creation_date": hangout.creationDate.timeIntervalSince1970 * 1000, // Unix timestamp in ms
             "duration": hangout.duration.rawValue,
             "vibe": hangout.vibe.rawValue,
 //            "status", hangout.status.rawValue,

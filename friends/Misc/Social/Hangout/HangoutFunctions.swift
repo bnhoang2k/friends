@@ -35,7 +35,7 @@ extension Hangout {
     func hangoutToText(userID: String, cachedFriendsList: [String: DBUser]) -> String {
         var textComponents: [String] = []
         
-        textComponents.append("On \(formattedDate(date)), a hangout is planned with a \(duration.description.lowercased()) duration, aiming for a \(vibe.description.lowercased()) vibe.")
+        textComponents.append("On \(formattedDate(creationDate)), a hangout is planned with a \(duration.description.lowercased()) duration, aiming for a \(vibe.description.lowercased()) vibe.")
         
         if let title = title {
             textComponents.append("The event is titled '\(title)'.")

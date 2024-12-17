@@ -9,7 +9,12 @@ import Foundation
 
 struct Hangout: Codable {
     var hangoutId: String
-    var date: Date
+    /// Variable that holds when the hangout was created from a coding perspective
+    /// user will not really interact with it.
+    var creationDate: Date
+    /// Date variables that the user WILL interact with
+    var startDate: Date?
+    var endDate: Date?
     var duration: HangoutDuration
     var vibe: HangoutVibe
     var status: HangoutStatus
@@ -23,7 +28,9 @@ struct Hangout: Codable {
     
     enum CodingKeys: String, CodingKey {
         case hangoutId = "hangout_id"
-        case date = "date"
+        case creationDate = "creation_date"
+        case startDate = "start_date"
+        case endDate = "end_date"
         case duration = "duration"
         case vibe = "vibe"
         case status = "status"
@@ -53,6 +60,8 @@ struct Hangout: Codable {
     
     init(hangoutId: String,
          date: Date,
+         startDate: Date? = nil,
+         endDate: Date? = nil,
          duration: HangoutDuration,
          vibe: HangoutVibe,
          status: HangoutStatus,
@@ -64,7 +73,9 @@ struct Hangout: Codable {
          budget: Double,
          isOutdoor: Bool) {
         self.hangoutId = hangoutId
-        self.date = date
+        self.creationDate = date
+        self.startDate = startDate
+        self.endDate = endDate
         self.duration = duration
         self.vibe = vibe
         self.status = status
@@ -80,7 +91,9 @@ struct Hangout: Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.hangoutId = try container.decode(String.self, forKey: .hangoutId)
-        self.date = try container.decode(Date.self, forKey: .date)
+        self.creationDate = try container.decode(Date.self, forKey: .creationDate)
+        self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
+        self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
         self.duration = try container.decode(HangoutDuration.self, forKey: .duration)
         self.vibe = try container.decode(HangoutVibe.self, forKey: .vibe)
         self.status = try container.decode(HangoutStatus.self, forKey: .status)
@@ -96,7 +109,9 @@ struct Hangout: Codable {
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(hangoutId, forKey: .hangoutId)
-        try container.encode(date, forKey: .date)
+        try container.encode(creationDate, forKey: .creationDate)
+        try container.encodeIfPresent(startDate, forKey: .startDate)
+        try container.encodeIfPresent(endDate, forKey: .endDate)
         try container.encode(duration, forKey: .duration)
         try container.encode(vibe, forKey: .vibe)
         try container.encode(status, forKey: .status)

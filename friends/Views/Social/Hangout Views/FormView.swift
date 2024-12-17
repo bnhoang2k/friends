@@ -19,7 +19,7 @@ struct FormView: View {
     
     var body: some View {
         Form {
-            BasicInformationSection(date: $hangout.date)
+            BasicInformationSection(date: $hangout.creationDate)
             VibesSection(vibe: $hangout.vibe)
             DetailsSection(hangout: $hangout, wordCount: wordCount)
         }

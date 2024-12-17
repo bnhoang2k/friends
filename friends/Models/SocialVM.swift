@@ -424,8 +424,8 @@ extension SocialVM {
         
         // Sort the filtered hangouts by date with tiebreaker
         filteredHangouts.sort { (hangout1: Hangout, hangout2: Hangout) in
-            if hangout1.date != hangout2.date {
-                return hangout1.date > hangout2.date // Sort by most recent date
+            if hangout1.creationDate != hangout2.creationDate {
+                return hangout1.creationDate > hangout2.creationDate // Sort by most recent date
             } else {
                 return hangout1.hangoutId < hangout2.hangoutId // Use hangout ID as tiebreaker
             }
