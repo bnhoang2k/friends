@@ -26,8 +26,12 @@ struct HangoutListView: View {
                 .padding([.bottom])
                 if !hangoutList.isEmpty {
                     ScrollView(showsIndicators: false) {
-                        ForEach(hangoutList, id: \.hangoutId) { hangout in
-                            HangoutCardView(hangout: hangout)
+                        ForEach(hangoutList.indices, id: \.self) { index in
+                            NavigationLink {
+                                HangoutInformationView(hangout: $hangoutList[index])
+                            } label: {
+                                HangoutCardView(hangout: hangoutList[index])
+                            }
                         }
                     }
                 }
@@ -52,7 +56,7 @@ struct HangoutCardView: View {
                 Text(hangout.location ?? "Unknown Location")
                     .font(.headline)
                 Spacer()
-                Text(hangout.date, style: .date)
+                Text(hangout.creationDate, style: .date)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
