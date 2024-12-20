@@ -6,17 +6,19 @@
 //
 
 import SwiftUI
+import MapKit
+import Kingfisher
 
 struct GenerateLocationsView: View {
-    
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
-    
-    @State private var locations: [Location] = []
-    @State private var selectedLocation: Location? // Track selected location
-    
+
+    @State private var mapItems: [MKMapItem] = []
+    @State private var selectedMapItem: MKMapItem? // Track selected map item
+    @State private var isFetching: Bool = false   // Track fetch state
+
     var body: some View {
         VStack {
             HStack {
@@ -26,23 +28,26 @@ struct GenerateLocationsView: View {
                     Text("Regenerate")
                 }
             }
-            if vvm.inProgress {
-                ProgressView()
-            } else if locations.isEmpty {
+            if isFetching {
+                ProgressView("Loading...")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            } else if mapItems.isEmpty {
                 Text("No locations available. Tap 'Regenerate' to try again.")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             } else {
                 ScrollView {
-                    ForEach(locations, id: \.name) { location in
-                        EquatableView(content: LocationCardView(location: location, isSelected: selectedLocation == location) {
-                            selectedLocation = (selectedLocation == location) ? nil : location
-                        })
+                    ForEach(mapItems, id: \.self) { mapItem in
+                        MapItemCardView(mapItem: mapItem,
+                                        isSelected: selectedMapItem == mapItem) {
+                            selectedMapItem = (selectedMapItem == mapItem) ? nil : mapItem
+                        }
                         .padding()
                     }
                 }
                 Button {
-                    hangout.location = selectedLocation?.name
+                    hangout.location = selectedMapItem?.name ?? ""
                     Task {
                         try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
                     }
@@ -59,86 +64,57 @@ struct GenerateLocationsView: View {
 extension GenerateLocationsView {
     func onGenerateTapped() {
         Task {
+            isFetching = true      // Start fetching
+            mapItems = []          // Clear current items to prevent UI flickering
+            selectedMapItem = nil  // Clear selection
+            
+            // Update the user input and start generating suggestions
             vvm.userInput = hangout.hangoutToText(userID: avm.user?.uid ?? "",
                                                   cachedFriendsList: svm.cachedFriendsList)
             await vvm.reason()
-            
-            if let parsedLocations = parseStructuredOutput(vvm.outputText) {
-                DispatchQueue.main.async {
-                    self.locations = parsedLocations
-                }
+
+            // Fetch the new map items from VertexViewModel's output
+            if let parsedMapItems = await vvm.parseStructuredOutput(vvm.outputText) {
+                mapItems = parsedMapItems
             } else {
-                DispatchQueue.main.async {
-                    print("Error: Failed to parse locations.")
-                    // Optionally show an alert or error UI to the user
-                }
+                print(vvm.outputText)
+                print("Error: Failed to parse locations.")
             }
-        }
-    }
-    
-    func parseStructuredOutput(_ output: String) -> [Location]? {
-        guard let data = output.data(using: .utf8) else {
-            print("Failed to convert output to Data")
-            return nil
-        }
-        do {
-            // Try decoding as an array of locations first
-            if let locations = try? JSONDecoder().decode([Location].self, from: data) {
-                for location in locations {
-                    vvm.previousSuggestions.insert(location.name)
-                }
-                return locations
-            }
-        
-            print("Failed to decode as array or object")
-            return nil
-        }
-    }
-    
-}
 
-private struct GenerateButtonSection: View {
-    @Binding var userInput: String
-    @Binding var hangout: Hangout
-    var avm: AuthenticationVM
-    var svm: SocialVM
-    @Binding var selectedTab: Int
-    
-    var body: some View {
-        Button {
-            userInput = hangout.hangoutToText(userID: avm.user?.uid ?? "",
-                                              cachedFriendsList: svm.cachedFriendsList)
-            selectedTab = 2
-        } label: {
-            Text("Generate")
-                .frame(maxWidth: .infinity)
-                .padding([.horizontal])
+            isFetching = false     // Done fetching
         }
-        .buttonStyle(.borderless)
     }
 }
 
-struct LocationCardView: View, Equatable {
-    let location: Location
+struct MapItemCardView: View, Equatable {
+    let mapItem: MKMapItem
     let isSelected: Bool
     var onTap: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(location.name)
+                Text(mapItem.name ?? "Unknown Place")
                     .font(.headline)
-                    .foregroundColor(.primary) // Adaptable text color
+                    .foregroundColor(.primary)
                 Spacer()
             }
-            Text(location.description)
-                .font(.subheadline)
-                .foregroundColor(.secondary) // Adaptable text color
+            if let address = mapItem.placemark.title {
+                Text(address)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            if let url = mapItem.url {
+                Text(url.absoluteString)
+                    .font(.footnote)
+                    .foregroundColor(.blue)
+                    .lineLimit(1)
+            }
         }
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground)) // Adaptable background
+                .fill(Color(.secondarySystemBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(isSelected ? Color.green : Color.clear, lineWidth: 2)
@@ -150,8 +126,8 @@ struct LocationCardView: View, Equatable {
         }
     }
 
-    static func == (lhs: LocationCardView, rhs: LocationCardView) -> Bool {
-        return lhs.location == rhs.location && lhs.isSelected == rhs.isSelected
+    static func == (lhs: MapItemCardView, rhs: MapItemCardView) -> Bool {
+        return lhs.mapItem == rhs.mapItem && lhs.isSelected == rhs.isSelected
     }
 }
 
