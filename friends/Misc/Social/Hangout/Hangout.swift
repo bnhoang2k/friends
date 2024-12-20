@@ -25,6 +25,7 @@ struct Hangout: Codable {
     var tags: [String]? // For quick categorization and recall
     var budget: Double
     var isOutdoor: Bool
+    var userPictures: [String]?
     
     enum CodingKeys: String, CodingKey {
         case hangoutId = "hangout_id"
@@ -41,7 +42,7 @@ struct Hangout: Codable {
         case tags = "tags"
         case budget = "budget"
         case isOutdoor = "is_outdoor"
-        case createdAt = "created_at"
+        case userPictures = "user_pictures"
     }
     
     // Default initializer for UI binding
@@ -71,7 +72,8 @@ struct Hangout: Codable {
          description: String? = nil,
          tags: [String]? = nil,
          budget: Double,
-         isOutdoor: Bool) {
+         isOutdoor: Bool,
+         userPictures: [String]? = nil) {
         self.hangoutId = hangoutId
         self.creationDate = date
         self.startDate = startDate
@@ -86,6 +88,7 @@ struct Hangout: Codable {
         self.tags = tags
         self.budget = budget
         self.isOutdoor = isOutdoor
+        self.userPictures = userPictures
     }
     
     init(from decoder: any Decoder) throws {
@@ -104,6 +107,7 @@ struct Hangout: Codable {
         self.tags = try container.decodeIfPresent([String].self, forKey: .tags)
         self.budget = try container.decode(Double.self, forKey: .budget)
         self.isOutdoor = try container.decode(Bool.self, forKey: .isOutdoor)
+        self.userPictures = try container.decodeIfPresent([String].self, forKey: .userPictures)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -122,6 +126,7 @@ struct Hangout: Codable {
         try container.encodeIfPresent(tags, forKey: .tags)
         try container.encode(budget, forKey: .budget)
         try container.encode(isOutdoor, forKey: .isOutdoor)
+        try container.encodeIfPresent(userPictures, forKey: .userPictures)
     }
 }
 
