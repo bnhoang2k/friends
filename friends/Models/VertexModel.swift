@@ -12,9 +12,9 @@ import MapKit
 
 struct Location: Codable, Equatable {
     let name: String
-    let description: String
+    let description: String?
     
-    init(name: String, location: String, description: String) {
+    init(name: String, location: String, description: String? = nil) {
         self.name = name
         self.description = description
     }
@@ -121,14 +121,7 @@ class VertexViewModel: ObservableObject {
             let prompt = """
             Provide a list of at least four places that users would enjoy based on the input: \(self.userInput). Try to avoid the previously suggested places: \(previousSuggestions.joined(separator: ", ")).
             The response must strictly be in JSON format as an array of at least four objects.
-            Each object must follow this structure:
-            [
-                {
-                    "name": "string",
-                    "description": "string"
-                }
-            ]
-            Ensure the array contains at least four items. Do not include any text or commentary outside the JSON array.
+            Do not include any text or commentary outside the JSON array.
             """
 
             let outputContentStream = try model.generateContentStream(prompt)
@@ -139,14 +132,6 @@ class VertexViewModel: ObservableObject {
                 }
                 outputText += line
             }
-
-            // Parse the output and fetch MKMapItems
-//            if let mapItems = await parseStructuredOutput(outputText) {
-//                DispatchQueue.main.async {
-//                    // Handle the MKMapItems in your UI (e.g., pass them to your view)
-//                    print("Retrieved Map Items: \(mapItems)")
-//                }
-//            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -155,7 +140,7 @@ class VertexViewModel: ObservableObject {
 }
 
 extension VertexViewModel {
-    func parseStructuredOutput(_ output: String) async -> [MKMapItem]? {
+    func parseStructuredOutput(_ output: String) async -> [(MKMapItem, String)]? {
         guard let data = output.data(using: .utf8) else {
             print("Failed to convert output to Data")
             return nil
@@ -165,29 +150,46 @@ extension VertexViewModel {
             let locations = try JSONDecoder().decode([Location].self, from: data)
             
             // Perform MKLocalSearch for each place name and retrieve MKMapItems
-            var mapItems: [MKMapItem] = []
+            var mapItems: [(MKMapItem, String)] = []
             for location in locations {
                 let mapItem = try await searchForPlace(named: location.name)
                 if let item = mapItem {
-                    mapItems.append(item)
+                    let description = location.description ?? "No description available."
+                    mapItems.append((item, description))
                     previousSuggestions.insert(location.name)
                 }
             }
             return mapItems
+        } catch DecodingError.keyNotFound(let key, let context) {
+            print("Key '\(key)' not found: \(context.debugDescription)")
+        } catch DecodingError.typeMismatch(let type, let context) {
+            print("Type mismatch for type '\(type)': \(context.debugDescription)")
+        } catch DecodingError.valueNotFound(let value, let context) {
+            print("Value '\(value)' not found: \(context.debugDescription)")
+        } catch DecodingError.dataCorrupted(let context) {
+            print("Data corrupted: \(context.debugDescription)")
         } catch {
-            print("Failed to decode JSON or fetch map items: \(error.localizedDescription)")
-            return nil
+            print("Unexpected decoding error: \(error)")
         }
+        return nil
     }
     
     private func searchForPlace(named placeName: String) async throws -> MKMapItem? {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = placeName
+        request.region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 39.7392, longitude: -104.9903), // Denver, CO
+            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        )
 
         let search = MKLocalSearch(request: request)
         let response = try await search.start()
 
-        // Return the first map item (most relevant result)
-        return response.mapItems.first
+        if let mapItem = response.mapItems.first {
+            return mapItem
+        } else {
+            print("No results for \(placeName)")
+            return nil
+        }
     }
 }
