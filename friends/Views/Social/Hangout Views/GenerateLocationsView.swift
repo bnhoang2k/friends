@@ -18,6 +18,7 @@ struct GenerateLocationsView: View {
     @State private var mapItems: [(MKMapItem, String)] = []
     @State private var selectedMapItem: MKMapItem? // Track selected map item
     @State private var isFetching: Bool = false   // Track fetch state
+    @State private var isDetailPresented: Bool = false // Control sheet presentation
     
     var body: some View {
         VStack {
@@ -43,6 +44,7 @@ struct GenerateLocationsView: View {
                                         description: description,
                                         isSelected: selectedMapItem == mapItem) {
                             selectedMapItem = (selectedMapItem == mapItem) ? nil : mapItem
+                            isDetailPresented.toggle()
                         }
                                         .padding()
                     }
@@ -59,7 +61,11 @@ struct GenerateLocationsView: View {
         }
         .onTapGesture { dismissKeyboard() }
         .padding()
-        .mapItemDetailSheet(item: $selectedMapItem)
+        .sheet(isPresented: $isDetailPresented) {
+            if let mapItem = selectedMapItem {
+                MapItemDetailView(mapItem: mapItem)
+            }
+        }
     }
 }
 
@@ -139,13 +145,15 @@ struct MapItemCardView: View, Equatable {
     }
 }
 
+
+
 #Preview {
-    var hangout = Hangout.defaultHangout()
-    GenerateLocationsView(vvm: VertexViewModel(), hangout: Binding(get: {
-        hangout
-    }, set: { newValue in
-        hangout = newValue
-    }))
-    .environmentObject(AuthenticationVM())
-    .environmentObject(SocialVM())
+        var hangout = Hangout.defaultHangout()
+        GenerateLocationsView(vvm: VertexViewModel(), hangout: Binding(get: {
+            hangout
+        }, set: { newValue in
+            hangout = newValue
+        }))
+        .environmentObject(AuthenticationVM())
+        .environmentObject(SocialVM())
 }
