@@ -63,6 +63,8 @@ struct GenerateLocationsView: View {
         .onTapGesture { dismissKeyboard() }
         .padding()
         .sheet(isPresented: $isDetailPresented) {
+            selectedPlace = nil
+        } content: {
             if let selectedPlace = selectedPlace {
                 PlaceSheetView(place: selectedPlace)
             }
