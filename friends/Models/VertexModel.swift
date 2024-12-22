@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseVertexAI
-import MapKit
+import GooglePlacesSwift
 
 struct Location: Codable, Equatable {
     let name: String
@@ -140,26 +140,25 @@ class VertexViewModel: ObservableObject {
 }
 
 extension VertexViewModel {
-    func parseStructuredOutput(_ output: String) async -> [(MKMapItem, String)]? {
+    func parseStructuredOutput(_ output: String) async -> [Place]? {
         guard let data = output.data(using: .utf8) else {
             print("Failed to convert output to Data")
             return nil
         }
+        print(output)
         do {
             // Decode JSON into an array of `Location` objects
             let locations = try JSONDecoder().decode([Location].self, from: data)
             
-            // Perform MKLocalSearch for each place name and retrieve MKMapItems
-            var mapItems: [(MKMapItem, String)] = []
+            var res: [Place] = []
             for location in locations {
-                let mapItem = try await searchForPlace(named: location.name)
-                if let item = mapItem {
-                    let description = location.description ?? "No description available."
-                    mapItems.append((item, description))
-                    previousSuggestions.insert(location.name)
+                let places = try await PlacesManager.shared.fetchPlaceDetails(name: location.name)
+                for place in places {
+                    res.append(place)
                 }
+                previousSuggestions.insert(location.name)
             }
-            return mapItems
+            return res
         } catch DecodingError.keyNotFound(let key, let context) {
             print("Key '\(key)' not found: \(context.debugDescription)")
         } catch DecodingError.typeMismatch(let type, let context) {
@@ -172,24 +171,5 @@ extension VertexViewModel {
             print("Unexpected decoding error: \(error)")
         }
         return nil
-    }
-    
-    private func searchForPlace(named placeName: String) async throws -> MKMapItem? {
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = placeName
-        request.region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 39.7392, longitude: -104.9903), // Denver, CO
-            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-        )
-
-        let search = MKLocalSearch(request: request)
-        let response = try await search.start()
-
-        if let mapItem = response.mapItems.first {
-            return mapItem
-        } else {
-            print("No results for \(placeName)")
-            return nil
-        }
     }
 }

@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
+import GooglePlacesSwift
 import MapKit
-import Kingfisher
 
 struct GenerateLocationsView: View {
     @EnvironmentObject private var avm: AuthenticationVM
@@ -15,8 +15,8 @@ struct GenerateLocationsView: View {
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
     
-    @State private var mapItems: [(MKMapItem, String)] = []
-    @State private var selectedMapItem: MKMapItem? // Track selected map item
+    @State private var parsed: [Place] = []
+    @State private var selectedPlace: Place? // Track selected map item
     @State private var isFetching: Bool = false   // Track fetch state
     @State private var isDetailPresented: Bool = false // Control sheet presentation
     
@@ -33,26 +33,27 @@ struct GenerateLocationsView: View {
                 ProgressView("Loading...")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-            } else if mapItems.isEmpty {
+            } else if parsed.isEmpty {
                 Text("No locations available. Tap 'Regenerate' to try again.")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             } else {
                 ScrollView {
-                    ForEach(mapItems, id: \.0) { (mapItem, description) in
-                        MapItemCardView(mapItem: mapItem,
-                                        description: description,
-                                        isSelected: selectedMapItem == mapItem) {
-                            selectedMapItem = (selectedMapItem == mapItem) ? nil : mapItem
+                    ForEach(parsed, id: \.self) { place in
+                        PlaceCardView(place: place,
+                                      description: "test test test",
+                                      isSelected: selectedPlace == place) {
+                            selectedPlace = (selectedPlace == place) ? nil : place
                             isDetailPresented.toggle()
                         }
-                                        .padding()
                     }
                 }
                 Button {
-                    hangout.location = selectedMapItem?.name ?? ""
-                    Task {
-                        try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                    if let placeName = selectedPlace?.displayName {
+                        Task {
+                            hangout.location = placeName
+                            try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                        }
                     }
                 } label: {
                     Text("Finish")
@@ -62,8 +63,8 @@ struct GenerateLocationsView: View {
         .onTapGesture { dismissKeyboard() }
         .padding()
         .sheet(isPresented: $isDetailPresented) {
-            if let mapItem = selectedMapItem {
-                MapItemDetailView(mapItem: mapItem)
+            if let selectedPlace = selectedPlace {
+                PlaceSheetView(place: selectedPlace)
             }
         }
     }
@@ -73,8 +74,8 @@ extension GenerateLocationsView {
     func onGenerateTapped() {
         Task {
             isFetching = true      // Start fetching
-            mapItems = []          // Clear current items to prevent UI flickering
-            selectedMapItem = nil  // Clear selection
+            parsed = []          // Clear current items to prevent UI flickering
+            selectedPlace = nil  // Clear selection
             
             // Update the user input and start generating suggestions
             vvm.userInput = hangout.hangoutToText(userID: avm.user?.uid ?? "",
@@ -83,7 +84,7 @@ extension GenerateLocationsView {
             
             // Fetch the new map items from VertexViewModel's output
             if let parsedMapItems = await vvm.parseStructuredOutput(vvm.outputText) {
-                mapItems = parsedMapItems
+                parsed = parsedMapItems
             } else {
                 print(vvm.outputText)
                 print("Error: Failed to parse locations.")
@@ -94,8 +95,8 @@ extension GenerateLocationsView {
     }
 }
 
-struct MapItemCardView: View, Equatable {
-    let mapItem: MKMapItem
+struct PlaceCardView: View, Equatable {
+    let place: Place
     let description: String?
     let isSelected: Bool
     var onTap: () -> Void
@@ -103,25 +104,18 @@ struct MapItemCardView: View, Equatable {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(mapItem.name ?? "Unknown Place")
+                Text(place.displayName ?? "Unknown Place")
+                    .font(.headline)
+                    .foregroundColor(.primary)
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()
             }
-            if let address = mapItem.placemark.title {
-                Text(address)
+            HStack {
+                Text(place.formattedAddress ?? "Unknown Address")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-            }
-            if let url = mapItem.url?.absoluteString {
-                Text(url)
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
-            }
-            if let description = description {
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                Spacer()
             }
         }
         .padding()
@@ -140,8 +134,8 @@ struct MapItemCardView: View, Equatable {
         }
     }
     
-    static func == (lhs: MapItemCardView, rhs: MapItemCardView) -> Bool {
-        return lhs.mapItem == rhs.mapItem && lhs.isSelected == rhs.isSelected
+    static func == (lhs: PlaceCardView, rhs: PlaceCardView) -> Bool {
+        return lhs.place == rhs.place && lhs.isSelected == rhs.isSelected
     }
 }
 
