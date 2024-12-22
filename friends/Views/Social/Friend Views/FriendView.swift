@@ -23,7 +23,6 @@ struct FriendView: View {
     @State private var friendStatistics: (personalityGradient: [String: Any],
                                           hardStats: [String: Any]) = (personalityGradient: [:],
                                                                        hardStats: [:])
-    var test = false
     
     var body: some View {
         NavigationStack {
@@ -81,18 +80,7 @@ struct FriendView: View {
                 .environmentObject(svm)
         })
         .onAppear {
-            if !test {
                 hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
-            }
-            else {
-                hangoutList.sort { (hangout1: Hangout, hangout2: Hangout) in
-                    if hangout1.creationDate != hangout2.creationDate {
-                        return hangout1.creationDate > hangout2.creationDate // Sort by most recent date
-                    } else {
-                        return hangout1.hangoutId < hangout2.hangoutId // Use hangout ID as tiebreaker
-                    }
-                }
-            }
             friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: hangoutList)
         }
         .tint(.primary)
@@ -223,7 +211,7 @@ struct HardStatsView: View {
     var hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
     NavigationStack {
         FriendView(friend: DBUser(uid: "1"),
-                   hangoutList: hangoutList, test: true)
+                   hangoutList: hangoutList)
             .environmentObject(AuthenticationVM())
             .environmentObject(SocialVM())
     }
