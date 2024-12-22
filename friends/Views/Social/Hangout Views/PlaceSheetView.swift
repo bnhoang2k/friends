@@ -123,6 +123,7 @@ struct PlaceSheetView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 }
 

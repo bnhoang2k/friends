@@ -50,6 +50,7 @@ struct GenerateLocationsView: View {
                         }
                     }
                 }
+                .scrollIndicators(.hidden)
             }
         }
         .onTapGesture { dismissKeyboard() }
@@ -132,12 +133,6 @@ struct PlaceCardView: View, Equatable {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemBackground))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isSelected ? Color.green : Color.clear,
-                                lineWidth: 2)
-                )
-                .shadow(radius: 4)
         )
         .onTapGesture {
             onTap()
