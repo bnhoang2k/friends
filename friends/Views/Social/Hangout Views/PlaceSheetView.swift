@@ -9,11 +9,16 @@ import MapKit
 import SwiftUI
 
 struct PlaceSheetView: View {
+    
+    @Environment(\.dismiss) var dismiss
+    
     let place: Place
     
     @State private var placePhotos: [UIImage]?
     
     @State private var hoursExpanded: Bool = true
+    
+    var onAdd: (Place) -> Void
     
     var body: some View {
         List {
@@ -23,6 +28,13 @@ struct PlaceSheetView: View {
                         .font(.title)
                         .bold()
                     Spacer()
+                    Button {
+                        onAdd(place)
+                        dismiss()
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title)
+                    }
                 }
                 SecondaryDetailView(types: place.types,
                                     priceLevel: place.priceLevel,

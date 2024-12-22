@@ -48,16 +48,6 @@ struct GenerateLocationsView: View {
                         }
                     }
                 }
-                Button {
-                    if let placeName = selectedPlace?.displayName {
-                        Task {
-                            hangout.location = placeName
-                            try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
-                        }
-                    }
-                } label: {
-                    Text("Finish")
-                }
             }
         }
         .onTapGesture { dismissKeyboard() }
@@ -66,7 +56,12 @@ struct GenerateLocationsView: View {
             selectedPlace = nil
         } content: {
             if let selectedPlace = selectedPlace {
-                PlaceSheetView(place: selectedPlace)
+                PlaceSheetView(place: selectedPlace) { place in
+                    Task {
+                        hangout.location = place.displayName
+                        try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                    }
+                }
             }
         }
     }
