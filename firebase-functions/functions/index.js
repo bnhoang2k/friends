@@ -66,6 +66,22 @@ exports.getTypesenseAPIKey = functions.https.onCall(async (data, context) => {
   }
 });
 
+exports.getGooglePlacesAPIKey = functions.https.onCall(async (data, context) => {
+  // Optionally check if the user is authenticated
+//   console.log("context: ", context);
+//   if (!context.auth) {
+//     throw new functions.https.HttpsError("unauthenticated",
+//         "The function must be called while authenticated.");
+//   }
+  try {
+    const placesKey = await getSecret("GOOGLE_PLACES_API_KEY");
+    return {apiKey: placesKey};
+  } catch (error) {
+    throw new functions.https.HttpsError("internal 3",
+        "Failed to retrieve the Places API key");
+  }
+});
+
 exports.sendFriendRequest = functions.https.onCall(async (data, context) => {
   try {
     // Extract and log incoming data for debugging

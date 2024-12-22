@@ -51,6 +51,7 @@ extension GetInformationView {
                     guard let uid = avm.user?.uid else {
                         throw AuthError.noUserSignedIn
                     }
+                    try await PlacesManager.shared.fetchAPIKey()
                     try await svm.loadData(uid: uid)
                 }
             }

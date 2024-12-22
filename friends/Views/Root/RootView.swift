@@ -31,7 +31,7 @@ struct RootView: View {
                                 guard let uid = avm.user?.uid else {return}
                                 try await svm.loadData(uid: uid)
                             }
-                            
+                            try await PlacesManager.shared.fetchAPIKey()
                             // Load screen after everything is done and complete
                             avm.showSignInView = (avm.user == nil)
                         } catch {

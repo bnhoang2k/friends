@@ -64,6 +64,7 @@ struct MainView: View {
 //                    try await tvm.createClient()
                     guard let uid = avm.user?.uid else {return}
                     try await svm.loadData(uid: uid)
+//                    try await PlacesManager.shared.fetchAPIKey()
                     firstAppear = false
                 }
             }
