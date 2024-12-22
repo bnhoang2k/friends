@@ -23,9 +23,10 @@ extension PlacesManager {
                               code: -1,
                               userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred"])
             }
-            PlacesClient.provideAPIKey(fetchedKey)
-            apikey = fetchedKey
-            googlePlacesClient = PlacesClient.shared
+            if PlacesClient.provideAPIKey(fetchedKey) {
+                apikey = fetchedKey
+                googlePlacesClient = PlacesClient.shared
+            }
         } catch {
             print("Error fetching API key: \(error.localizedDescription)")
             throw error
@@ -99,7 +100,6 @@ extension PlacesManager {
                 throw placesError
             }
         }
-        print("\(res.count)")
         return res
     }
 }
