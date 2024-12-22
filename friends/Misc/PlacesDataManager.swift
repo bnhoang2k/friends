@@ -3,6 +3,7 @@ import MapKit
 import FirebaseFunctions
 import GooglePlacesSwift
 
+@MainActor
 final class PlacesManager {
     static let shared = PlacesManager()
     let functions = Functions.functions(region: "us-central1")
@@ -24,7 +25,7 @@ extension PlacesManager {
             }
             PlacesClient.provideAPIKey(fetchedKey)
             apikey = fetchedKey
-            googlePlacesClient = await PlacesClient.shared
+            googlePlacesClient = PlacesClient.shared
         } catch {
             print("Error fetching API key: \(error.localizedDescription)")
             throw error
