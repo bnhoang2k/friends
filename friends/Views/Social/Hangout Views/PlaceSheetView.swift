@@ -73,36 +73,41 @@ struct PlaceSheetView: View {
                     }
                 }
             }
-            Group {
-                VStack(alignment: .leading) {
-                    if let phoneNumber = place.internationalPhoneNumber {
-                        Section {
-                            Link(phoneNumber, destination: URL(string: "tel://\(phoneNumber)")!)
-                                .foregroundColor(.blue)
-                        } header: {
-                            Text("Phone Number")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+            Section {
+                // PHONE
+                if let phoneNumber = place.internationalPhoneNumber {
+                    HStack {
+                        Text("Phone")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Link(phoneNumber, destination: URL(string: "tel://\(phoneNumber)")!)
+                            .foregroundColor(.blue)
                     }
-                    if let website = place.websiteURL {
-                        Section {
-                            Link(website.absoluteString, destination: website)
-                                .foregroundColor(.blue)
-                        } header: {
-                            Text("Website")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+                }
+
+                // WEBSITE
+                if let website = place.websiteURL {
+                    HStack {
+                        Text("Website")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Link(website.absoluteString, destination: website)
+                            .foregroundColor(.blue)
                     }
-                    if let address = place.formattedAddress {
-                        Section {
-                            Text(address)
-                        } header: {
-                            Text("Address")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+                }
+
+                // ADDRESS
+                if let address = place.formattedAddress {
+                    HStack(alignment: .top) {
+                        Text("Address")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text(address)
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.trailing)
                     }
                 }
             }
