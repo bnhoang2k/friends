@@ -70,7 +70,7 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $showAddHangoutView, content: {
-            AddHangoutView(accessType: .fromMain)
+            AddHangoutView(accessType: .fromMain, showAddHangout: $showAddHangoutView)
                 .environmentObject(avm)
                 .environmentObject(svm)
                 .presentationDragIndicator(.visible)

@@ -14,6 +14,7 @@ struct AddHangoutView: View {
     
     let accessType: AccessType
     var friendID: String? = nil
+    @Binding var showAddHangout: Bool
     
     @StateObject private var vvm: VertexViewModel = VertexViewModel()
     @State private var hangout: Hangout = Hangout.defaultHangout()
@@ -32,7 +33,7 @@ struct AddHangoutView: View {
                 .environmentObject(avm)
                 .environmentObject(svm)
                 .tag(1)
-            GenerateLocationsView(vvm: vvm, hangout: $hangout)
+            GenerateLocationsView(vvm: vvm, hangout: $hangout, showAddHangout: $showAddHangout)
                 .tag(2)
         }
         .padding(.top)
@@ -60,7 +61,7 @@ extension AddHangoutView {
 }
 
 #Preview {
-    AddHangoutView(accessType: .fromFriend)
+    AddHangoutView(accessType: .fromFriend, showAddHangout: .constant(true))
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
 }

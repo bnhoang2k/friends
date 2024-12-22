@@ -15,6 +15,7 @@ struct GenerateLocationsView: View {
     @EnvironmentObject private var svm: SocialVM
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
+    @Binding var showAddHangout: Bool
     
     @State private var parsed: [Place:[UIImage]] = [:]
     @State private var selectedPlace: Place? // Track selected map item
@@ -60,7 +61,8 @@ struct GenerateLocationsView: View {
         } content: {
             if let selectedPlace = selectedPlace {
                 PlaceSheetView(place: selectedPlace,
-                               photos: parsed[selectedPlace] ?? []) { place in
+                               photos: parsed[selectedPlace] ?? [],
+                               showAddHangout: $showAddHangout) { place in
                     Task {
                         hangout.location = place.displayName
                         try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
@@ -152,7 +154,7 @@ struct PlaceCardView: View, Equatable {
             hangout
         }, set: { newValue in
             hangout = newValue
-        }))
+        }), showAddHangout: .constant(true))
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
 }
