@@ -145,7 +145,6 @@ extension VertexViewModel {
             print("Failed to convert output to Data")
             return nil
         }
-        print(output)
         
         do {
             // Decode JSON into an array of Location objects
