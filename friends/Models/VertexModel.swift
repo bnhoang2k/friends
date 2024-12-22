@@ -140,23 +140,30 @@ class VertexViewModel: ObservableObject {
 }
 
 extension VertexViewModel {
-    func parseStructuredOutput(_ output: String) async -> [Place]? {
+    func parseStructuredOutput(_ output: String) async -> [Place: [UIImage]]? {
         guard let data = output.data(using: .utf8) else {
             print("Failed to convert output to Data")
             return nil
         }
         print(output)
+        
         do {
-            // Decode JSON into an array of `Location` objects
+            // Decode JSON into an array of Location objects
             let locations = try JSONDecoder().decode([Location].self, from: data)
             
-            var res: [Place] = []
+            var res: [Place: [UIImage]] = [:]
             for location in locations {
                 let places = try await PlacesManager.shared.fetchPlaceDetails(name: location.name)
                 for place in places {
-                    res.append(place)
+                    // Fetch photos for the place
+                    let placePhotos = try await PlacesManager.shared.fetchPlacePhotos(place: place)
+                    
+                    // Append the photos to the dictionary for the place
+                    res[place] = placePhotos
+                    
+                    // Track previous suggestions
+                    previousSuggestions.insert(location.name)
                 }
-                previousSuggestions.insert(location.name)
             }
             return res
         } catch DecodingError.keyNotFound(let key, let context) {

@@ -8,6 +8,7 @@
 import SwiftUI
 import GooglePlacesSwift
 import MapKit
+import Kingfisher
 
 struct GenerateLocationsView: View {
     @EnvironmentObject private var avm: AuthenticationVM
@@ -15,7 +16,7 @@ struct GenerateLocationsView: View {
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
     
-    @State private var parsed: [Place] = []
+    @State private var parsed: [Place:[UIImage]] = [:]
     @State private var selectedPlace: Place? // Track selected map item
     @State private var isFetching: Bool = false   // Track fetch state
     @State private var isDetailPresented: Bool = false // Control sheet presentation
@@ -39,10 +40,11 @@ struct GenerateLocationsView: View {
                     .foregroundColor(.gray)
             } else {
                 ScrollView {
-                    ForEach(parsed, id: \.self) { place in
+                    ForEach(Array(parsed), id: \.key) { place, photos in
                         PlaceCardView(place: place,
                                       description: "test test test",
-                                      isSelected: selectedPlace == place) {
+                                      isSelected: selectedPlace == place,
+                                      photos: photos) {
                             selectedPlace = (selectedPlace == place) ? nil : place
                             isDetailPresented.toggle()
                         }
@@ -56,7 +58,8 @@ struct GenerateLocationsView: View {
             selectedPlace = nil
         } content: {
             if let selectedPlace = selectedPlace {
-                PlaceSheetView(place: selectedPlace) { place in
+                PlaceSheetView(place: selectedPlace,
+                               photos: parsed[selectedPlace] ?? []) { place in
                     Task {
                         hangout.location = place.displayName
                         try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
@@ -71,7 +74,7 @@ extension GenerateLocationsView {
     func onGenerateTapped() {
         Task {
             isFetching = true      // Start fetching
-            parsed = []          // Clear current items to prevent UI flickering
+            parsed = [:]          // Clear current items to prevent UI flickering
             selectedPlace = nil  // Clear selection
             
             // Update the user input and start generating suggestions
@@ -96,6 +99,7 @@ struct PlaceCardView: View, Equatable {
     let place: Place
     let description: String?
     let isSelected: Bool
+    let photos: [UIImage]
     var onTap: () -> Void
     
     var body: some View {
@@ -113,6 +117,15 @@ struct PlaceCardView: View, Equatable {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 Spacer()
+            }
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(photos, id: \.self) {photo in
+                        Image(uiImage: photo)
+                            .resizable()
+                            .frame(width: 200, height: 200)
+                    }
+                }
             }
         }
         .padding()

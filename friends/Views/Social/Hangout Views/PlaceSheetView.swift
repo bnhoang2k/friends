@@ -13,8 +13,7 @@ struct PlaceSheetView: View {
     @Environment(\.dismiss) var dismiss
     
     let place: Place
-    
-    @State private var placePhotos: [UIImage]?
+    let photos: [UIImage]
     
     @State private var hoursExpanded: Bool = true
     
@@ -35,6 +34,7 @@ struct PlaceSheetView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.title)
                     }
+                    .buttonStyle(.plain)
                 }
                 SecondaryDetailView(types: place.types,
                                     priceLevel: place.priceLevel,
@@ -85,7 +85,7 @@ struct PlaceSheetView: View {
                             .foregroundColor(.blue)
                     }
                 }
-
+                
                 // WEBSITE
                 if let website = place.websiteURL {
                     HStack {
@@ -97,7 +97,7 @@ struct PlaceSheetView: View {
                             .foregroundColor(.blue)
                     }
                 }
-
+                
                 // ADDRESS
                 if let address = place.formattedAddress {
                     HStack(alignment: .top) {
@@ -111,24 +111,17 @@ struct PlaceSheetView: View {
                     }
                 }
             }
-            if let placePhotos = placePhotos {
-                Section {
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(placePhotos, id: \.self) { uiImage in
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .frame(width: 200, height: 200)
-                            }
+            Section {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(photos, id: \.self) { photo in
+                            Image(uiImage: photo)
+                                .resizable()
+                                .frame(width: 200, height: 200)
                         }
                     }
                 }
             }
-        }
-        .task {
-            do {
-                placePhotos = try await PlacesManager.shared.fetchPlacePhotos(place: place)
-            } catch {}
         }
     }
 }
