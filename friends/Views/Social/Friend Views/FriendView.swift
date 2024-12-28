@@ -32,33 +32,9 @@ struct FriendView: View {
                     PersonalityGradientView(personalityGradient: friendStatistics.personalityGradient)
                     // Hard Stats
                     HardStatsView(hardStats: friendStatistics.hardStats)
-                    
-                    NavigationLink {
-                        HangoutListView(hangoutList: $hangoutList,
-                                        searchText: $searchText)
-                    } label: {
-                        HStack {
-                            Text("Your most recent hangouts")
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    // Show up to five most recent hangouts
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(hangoutList.indices, id: \.self) { index in
-                                if index < 5 {
-                                    NavigationLink {
-                                        HangoutInformationView(hangout: $hangoutList[index])
-                                    } label: {
-                                        HangoutCardView(hangout: hangoutList[index])
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Hangouts
+                    RecentHangoutView(hangoutList: $hangoutList,
+                                      searchText: $searchText)
                 }
             }
             .scrollIndicators(.hidden)
@@ -66,23 +42,22 @@ struct FriendView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showAddHangout.toggle()
+                NavigationLink {
+                    AddHangoutView(friendID: friend.uid,
+                                   showAddHangout: $showAddHangout)
+                        .environmentObject(avm)
+                        .environmentObject(svm)
                 } label: {
                     Image(systemName: "plus")
                 }
-                
             }
         }
-        .sheet(isPresented: $showAddHangout, content: {
-            AddHangoutView(accessType: .fromFriend, friendID: friend.uid, showAddHangout: $showAddHangout)
-                .environmentObject(avm)
-                .environmentObject(svm)
-        })
         .onAppear {
                 hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
             friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: hangoutList)
         }
+        .font(.custom(GlobalVariables.shared.APP_FONT,
+                      size: GlobalVariables.shared.textBody))
         .tint(.primary)
     }
 }
@@ -206,9 +181,43 @@ struct HardStatsView: View {
     }
 }
 
+struct RecentHangoutView: View {
+    
+    @Binding var hangoutList: [Hangout]
+    @Binding var searchText: String
+    
+    var body: some View {
+        NavigationLink {
+            HangoutListView(hangoutList: $hangoutList,
+                            searchText: $searchText)
+        } label: {
+            HStack {
+                Text("Your most recent hangouts")
+                    .font(.headline)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+        }
+        // Show up to five most recent hangouts
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(hangoutList.indices, id: \.self) { index in
+                    if index < 5 {
+                        NavigationLink {
+                            HangoutInformationView(hangout: $hangoutList[index])
+                        } label: {
+                            HangoutCardView(hangout: hangoutList[index])
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 #Preview {
-    var hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
+    let hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
     NavigationStack {
         FriendView(friend: DBUser(uid: "1"),
                    hangoutList: hangoutList)
