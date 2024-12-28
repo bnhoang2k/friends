@@ -54,7 +54,8 @@ struct GenerateLocationsView: View {
                                photos: placeVM.photos,
                                showAddHangout: $showAddHangout) { place in
                     Task {
-                        hangout.location = place.displayName
+                        let hangoutLocation = Location(name: place.displayName ?? "PLACE NAME ERROR", coordinate: place.location)
+                        hangout.location = hangoutLocation
                         try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
                     }
                 }

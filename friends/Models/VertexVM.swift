@@ -10,20 +10,6 @@ import FirebaseFirestore
 import FirebaseVertexAI
 import GooglePlacesSwift
 
-struct Location: Codable, Equatable {
-    let name: String
-    let description: String?
-    
-    init(name: String, location: String, description: String? = nil) {
-        self.name = name
-        self.description = description
-    }
-    
-    private enum CodingKeys: String, CodingKey {
-        case name, description
-    }
-}
-
 @MainActor
 class VertexViewModel: ObservableObject {
     

@@ -33,7 +33,7 @@ struct HangoutInformationView: View {
                     
                     // Location Section
                     HStack {
-                        Text(hangout.location ?? "Location Name Error")
+                        Text(hangout.location?.name ?? "Location Name Error")
                             .font(.title2)
                             .bold()
                         Spacer()

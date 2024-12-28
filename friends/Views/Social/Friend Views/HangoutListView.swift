@@ -53,7 +53,7 @@ struct HangoutCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(hangout.location ?? "Unknown Location")
+                Text(hangout.location?.name ?? "Unknown Location")
                     .font(.headline)
                 Spacer()
                 Text(hangout.creationDate, style: .date)

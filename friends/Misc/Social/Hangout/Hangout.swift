@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MapKit
 
 struct Hangout: Codable {
     var hangoutId: String
@@ -19,7 +20,7 @@ struct Hangout: Codable {
     var vibe: HangoutVibe
     var status: HangoutStatus
     var participantIds: [String]
-    var location: String?
+    var location: Location?
     var title: String?
     var description: String?
     var tags: [String]? // For quick categorization and recall
@@ -67,7 +68,7 @@ struct Hangout: Codable {
          vibe: HangoutVibe,
          status: HangoutStatus,
          participantIds: [String],
-         location: String? = nil,
+         location: Location? = nil,
          title: String? = nil,
          description: String? = nil,
          tags: [String]? = nil,
@@ -101,7 +102,7 @@ struct Hangout: Codable {
         self.vibe = try container.decode(HangoutVibe.self, forKey: .vibe)
         self.status = try container.decode(HangoutStatus.self, forKey: .status)
         self.participantIds = try container.decode([String].self, forKey: .participantIds)
-        self.location = try container.decodeIfPresent(String.self, forKey: .location)
+        self.location = try container.decodeIfPresent(Location.self, forKey: .location)
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
         self.tags = try container.decodeIfPresent([String].self, forKey: .tags)
@@ -149,5 +150,36 @@ struct HangoutReference: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(hangout_id, forKey: .hangoutId)
+    }
+}
+
+struct Location: Codable, Equatable {
+    var name: String
+    var longitude: String
+    var latitude: String
+    
+    init(name: String,
+         coordinate: CLLocationCoordinate2D) {
+        self.name = name
+        self.longitude = coordinate.longitude.description
+        self.latitude = coordinate.latitude.description
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case name, longitude, latitude
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.longitude = try container.decode(String.self, forKey: .longitude)
+        self.latitude = try container.decode(String.self, forKey: .latitude)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(longitude, forKey: .longitude)
+        try container.encode(latitude, forKey: .latitude)
     }
 }
