@@ -53,8 +53,8 @@ struct PlaceSheetView: View {
                         guard let displayName = place.displayName else {
                             return
                         }
-                        openBusinessInAppleMaps(
-                            name: displayName, near: place.location)
+                        Utilities.shared.openBusinessInAppleMaps(name: displayName,
+                                                                 near: place.location)
                     }
             }
             .listRowInsets(EdgeInsets())  // Remove list insets
@@ -126,40 +126,6 @@ struct PlaceSheetView: View {
             }
         }
         .scrollIndicators(.hidden)
-    }
-}
-
-extension PlaceSheetView {
-    func openBusinessInAppleMaps(
-        name: String, near coordinate: CLLocationCoordinate2D
-    ) {
-        // 1. Create an MKLocalSearch request
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = name  // e.g., "Joe's Coffee"
-        
-        // 2. Define a region around the coordinate
-        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-        request.region = MKCoordinateRegion(center: coordinate, span: span)
-        
-        // 3. Start the local search
-        let search = MKLocalSearch(request: request)
-        search.start { response, error in
-            guard let response = response, !response.mapItems.isEmpty else {
-                print(
-                    "No map items found or error: \(error?.localizedDescription ?? "none")"
-                )
-                return
-            }
-            
-            // 4. Pick the first (or best) match
-            let mapItem = response.mapItems[0]
-            
-            // 5. Open it in Apple Maps
-            mapItem.openInMaps(launchOptions: [
-                MKLaunchOptionsDirectionsModeKey:
-                    MKLaunchOptionsDirectionsModeDriving
-            ])
-        }
     }
 }
 
