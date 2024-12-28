@@ -140,42 +140,30 @@ class VertexViewModel: ObservableObject {
 }
 
 extension VertexViewModel {
-    func parseStructuredOutput(_ output: String) async -> [Place: [UIImage]]? {
+    func parseStructuredOutput(_ output: String) async -> [PlaceViewModel] {
         guard let data = output.data(using: .utf8) else {
             print("Failed to convert output to Data")
-            return nil
+            return []
         }
         
         do {
-            // Decode JSON into an array of Location objects
             let locations = try JSONDecoder().decode([Location].self, from: data)
+            var placeVMs: [PlaceViewModel] = []
             
-            var res: [Place: [UIImage]] = [:]
             for location in locations {
                 let places = try await PlacesManager.shared.fetchPlaceDetails(name: location.name)
                 for place in places {
-                    // Fetch photos for the place
-                    let placePhotos = try await PlacesManager.shared.fetchPlacePhotos(place: place)
+                    let vm = PlaceViewModel(place: place)
+                    placeVMs.append(vm)
                     
-                    // Append the photos to the dictionary for the place
-                    res[place] = placePhotos
-                    
-                    // Track previous suggestions
-                    previousSuggestions.insert(location.name)
+                    // Keep track of previous suggestions
+                    self.previousSuggestions.insert(location.name)
                 }
             }
-            return res
-        } catch DecodingError.keyNotFound(let key, let context) {
-            print("Key '\(key)' not found: \(context.debugDescription)")
-        } catch DecodingError.typeMismatch(let type, let context) {
-            print("Type mismatch for type '\(type)': \(context.debugDescription)")
-        } catch DecodingError.valueNotFound(let value, let context) {
-            print("Value '\(value)' not found: \(context.debugDescription)")
-        } catch DecodingError.dataCorrupted(let context) {
-            print("Data corrupted: \(context.debugDescription)")
+            return placeVMs
         } catch {
-            print("Unexpected decoding error: \(error)")
+            print("Error decoding:", error)
+            return []
         }
-        return nil
     }
 }

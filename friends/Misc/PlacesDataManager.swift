@@ -1,3 +1,10 @@
+//
+//  PlacesDataManager.swift
+//  friends
+//
+//  Created by Bryan Hoang on 12/20/24.
+//
+
 import Foundation
 import MapKit
 import FirebaseFunctions

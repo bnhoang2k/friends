@@ -12,7 +12,7 @@
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
 		D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BAE2CDD559A00C802BA /* Hangout.swift */; };
 		D3214BB12CDD55A900C802BA /* SocialNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BB02CDD55A900C802BA /* SocialNotification.swift */; };
-		D32D700E2D03C9C800AE38B0 /* VertexModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D700D2D03C9C800AE38B0 /* VertexModel.swift */; };
+		D32D700E2D03C9C800AE38B0 /* VertexVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D700D2D03C9C800AE38B0 /* VertexVM.swift */; };
 		D32D70102D03CBF300AE38B0 /* GenerateLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */; };
 		D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */; };
 		D33C44312CC4527A005A7062 /* FriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33C44302CC4527A005A7062 /* FriendView.swift */; };
@@ -56,6 +56,7 @@
 		D3C5FD272C9CD2190092B0F7 /* Typesense in Frameworks */ = {isa = PBXBuildFile; productRef = D3C5FD262C9CD2190092B0F7 /* Typesense */; };
 		D3C5FD292C9CD2580092B0F7 /* TypesenseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */; };
 		D3D459CA2CB4D195005B6B51 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D459C92CB4D195005B6B51 /* NotificationsView.swift */; };
+		D3D6DB542D20A8DF00DA2210 /* PlaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C952C6582ED00DEBE14 /* FirebaseAuthCombine-Community */; };
 		D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C982C6582FC00DEBE14 /* GoogleSignIn */; };
@@ -77,7 +78,7 @@
 		D30033FA2CE0270900E42415 /* FormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormView.swift; sourceTree = "<group>"; };
 		D3214BAE2CDD559A00C802BA /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
 		D3214BB02CDD55A900C802BA /* SocialNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNotification.swift; sourceTree = "<group>"; };
-		D32D700D2D03C9C800AE38B0 /* VertexModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexModel.swift; sourceTree = "<group>"; };
+		D32D700D2D03C9C800AE38B0 /* VertexVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexVM.swift; sourceTree = "<group>"; };
 		D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateLocationsView.swift; sourceTree = "<group>"; };
 		D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHangoutView.swift; sourceTree = "<group>"; };
 		D33C44302CC4527A005A7062 /* FriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendView.swift; sourceTree = "<group>"; };
@@ -115,6 +116,7 @@
 		D3AA6D1C2D1770A70005879E /* PlacesDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesDataManager.swift; sourceTree = "<group>"; };
 		D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseManager.swift; sourceTree = "<group>"; };
 		D3D459C92CB4D195005B6B51 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
+		D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceViewModel.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseVM.swift; sourceTree = "<group>"; };
 		D3DA02582CB4582900F271E7 /* SearchForFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchForFriendsView.swift; sourceTree = "<group>"; };
@@ -289,7 +291,8 @@
 				D39EF7D52C6981C400040765 /* AuthenticationVM.swift */,
 				D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */,
 				D39136CA2CBC76B4009C1C2E /* SocialVM.swift */,
-				D32D700D2D03C9C800AE38B0 /* VertexModel.swift */,
+				D32D700D2D03C9C800AE38B0 /* VertexVM.swift */,
+				D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -450,9 +453,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3AA6D1B2D1745EB0005879E /* PlaceSheetView.swift in Sources */,
+				D3D6DB542D20A8DF00DA2210 /* PlaceViewModel.swift in Sources */,
 				D36B6C862C8A41C400FF25CC /* AccessCameraView.swift in Sources */,
 				D30033F72CE026D500E42415 /* FromMainView.swift in Sources */,
-				D32D700E2D03C9C800AE38B0 /* VertexModel.swift in Sources */,
+				D32D700E2D03C9C800AE38B0 /* VertexVM.swift in Sources */,
 				D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */,
 				D39EF7C22C69819700040765 /* Utilities.swift in Sources */,
 				D3750ADA2CB9D94A00FF69F2 /* FriendsListView.swift in Sources */,
