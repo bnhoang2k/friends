@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D30033F72CE026D500E42415 /* FromMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30033F62CE026D500E42415 /* FromMainView.swift */; };
 		D30033FB2CE0270900E42415 /* FormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30033FA2CE0270900E42415 /* FormView.swift */; };
 		D315E5CC2C88F78F00E59A87 /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = D315E5CB2C88F78F00E59A87 /* SwiftyCrop */; };
 		D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3214BAE2CDD559A00C802BA /* Hangout.swift */; };
@@ -74,7 +73,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D30033F62CE026D500E42415 /* FromMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FromMainView.swift; sourceTree = "<group>"; };
 		D30033FA2CE0270900E42415 /* FormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormView.swift; sourceTree = "<group>"; };
 		D3214BAE2CDD559A00C802BA /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
 		D3214BB02CDD55A900C802BA /* SocialNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNotification.swift; sourceTree = "<group>"; };
@@ -158,7 +156,6 @@
 			isa = PBXGroup;
 			children = (
 				D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */,
-				D30033F62CE026D500E42415 /* FromMainView.swift */,
 				D30033FA2CE0270900E42415 /* FormView.swift */,
 				D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */,
 				D3AA6D1A2D1745EB0005879E /* PlaceSheetView.swift */,
@@ -455,7 +452,6 @@
 				D3AA6D1B2D1745EB0005879E /* PlaceSheetView.swift in Sources */,
 				D3D6DB542D20A8DF00DA2210 /* PlaceViewModel.swift in Sources */,
 				D36B6C862C8A41C400FF25CC /* AccessCameraView.swift in Sources */,
-				D30033F72CE026D500E42415 /* FromMainView.swift in Sources */,
 				D32D700E2D03C9C800AE38B0 /* VertexVM.swift in Sources */,
 				D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */,
 				D39EF7C22C69819700040765 /* Utilities.swift in Sources */,

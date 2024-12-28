@@ -12,7 +12,6 @@ struct AddHangoutView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     
-    let accessType: AccessType
     var friendID: String? = nil
     @Binding var showAddHangout: Bool
     
@@ -23,45 +22,27 @@ struct AddHangoutView: View {
     @State var selectedTab: Int = 0
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            if accessType == .fromMain {
-                FromMainView(searchText: $searchText, hangout: $hangout)
-                    .environmentObject(svm)
-                    .tag(0)
-            }
-            FormView(hangout: $hangout, selectedTab: $selectedTab)
-                .environmentObject(avm)
-                .environmentObject(svm)
-                .tag(1)
-            GenerateLocationsView(vvm: vvm, hangout: $hangout, showAddHangout: $showAddHangout)
-                .tag(2)
-        }
-        .padding(.top)
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .tint(.primary)
-        .onAppear {
-            // Add yourself to the hangout
-            if let user = avm.user {
-                if !hangout.participantIds.contains(user.uid) {
-                    hangout.participantIds.append(user.uid)
+        NavigationStack {
+            FormView(hangout: $hangout)
+                .navigationTitle("Add Hangout")
+                .navigationBarTitleDisplayMode(.inline)
+                .padding(.top)
+                .tint(.primary)
+                .onAppear {
+                    // Add yourself and friend to the hangout
+                    if let user = avm.user {
+                        if !hangout.participantIds.contains(user.uid) {
+                            hangout.participantIds.append(user.uid)
+                        }
+                    }
+                    hangout.participantIds.append(friendID ?? "ERROR")
                 }
-            }
-            if accessType == .fromFriend {
-                hangout.participantIds.append(friendID ?? "ERROR")
-            }
         }
-    }
-}
-
-extension AddHangoutView {
-    enum AccessType {
-        case fromMain
-        case fromFriend
     }
 }
 
 #Preview {
-    AddHangoutView(accessType: .fromFriend, showAddHangout: .constant(true))
+    AddHangoutView(showAddHangout: .constant(true))
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
 }

@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct FormView: View {
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     @Binding var hangout: Hangout
-    @Binding var selectedTab: Int
     
     private var wordCount: Int {
         return hangout.description?.split { $0.isWhitespace }.count ?? 0
@@ -103,11 +103,10 @@ private struct DetailsSection: View {
 
 #Preview {
     var hangout = Hangout.defaultHangout()
-    var userInput = ""
     FormView( hangout: Binding(get: { hangout
     }, set: { newValue in
         hangout = newValue
-    }), selectedTab: .constant(0))
+    }))
     .environmentObject(AuthenticationVM())
     .environmentObject(SocialVM())
 }

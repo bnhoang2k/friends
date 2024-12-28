@@ -16,7 +16,6 @@ struct MainView: View {
     @State private var selectedTab: Int = 0
     @State private var firstAppear: Bool = true
     @State private var showAddFriendView: Bool = false
-    @State private var showAddHangoutView: Bool = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -42,20 +41,12 @@ struct MainView: View {
                                   size: GlobalVariables.shared.textHeader))
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button(action: {
-                        showAddHangoutView.toggle()
-                    }) {
-                        Label("Add Hangout", systemImage: "person.3.fill")
-                    }
-                    Button(action: {
-                        showAddFriendView.toggle()
-                    }) {
-                        Label("Add Friend", systemImage: "person.crop.circle.badge.plus")
-                    }
+                Button {
+                    showAddFriendView.toggle()
                 } label: {
                     Image(systemName: "plus")
                 }
+
             }
         }
         .onAppear {
@@ -69,12 +60,6 @@ struct MainView: View {
                 }
             }
         }
-        .sheet(isPresented: $showAddHangoutView, content: {
-            AddHangoutView(accessType: .fromMain, showAddHangout: $showAddHangoutView)
-                .environmentObject(avm)
-                .environmentObject(svm)
-                .presentationDragIndicator(.visible)
-        })
         .sheet(isPresented: $showAddFriendView, content: {
             SearchForFriendsView()
                 .environmentObject(avm)
