@@ -23,9 +23,7 @@ struct FriendView: View {
                                                                        hardStats: [:])
     
     
-    private var filteredHangoutList: [Hangout] {
-        svm.getFilteredHangoutsByFriend(friendId: friend.uid)
-    }
+    @State private var filteredHangoutList: [Hangout] = []
     
     var body: some View {
         NavigationStack {
@@ -36,7 +34,7 @@ struct FriendView: View {
                     // Hard Stats
                     HardStatsView(hardStats: friendStatistics.hardStats)
                     // Hangouts
-                    RecentHangoutView(hangoutList: .constant(filteredHangoutList),
+                    RecentHangoutView(hangoutList: $filteredHangoutList,
                                       searchText: $searchText)
                 }
             }
@@ -49,12 +47,16 @@ struct FriendView: View {
                     AddHangoutView(friendID: friend.uid)
                         .environmentObject(avm)
                         .environmentObject(svm)
+                        .onDisappear {
+                            filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+                        }
                 } label: {
                     Image(systemName: "plus")
                 }
             }
         }
         .onAppear {
+            filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
             friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
         }
         .font(.custom(GlobalVariables.shared.APP_FONT,

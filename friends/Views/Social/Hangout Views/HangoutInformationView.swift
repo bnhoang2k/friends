@@ -89,6 +89,7 @@ struct ExpandableDatePicker: View {
     @Binding var isInvalid: Bool
     
     @State private var isExpanded: Bool = false
+    @State private var tempDate: Date = Date()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -110,18 +111,16 @@ struct ExpandableDatePicker: View {
             if isExpanded {
                 DatePicker(
                     "Select \(title)",
-                    selection: Binding(
-                        get: { date ?? Date() }, // Provide a default value
-                        set: { newValue in
-                            date = newValue // Propagate changes back
-                        }
-                    ),
+                    selection: $tempDate,
                     displayedComponents: [.date, .hourAndMinute]
                 )
                 .datePickerStyle(.graphical)
                 .tint(isInvalid ? .red : .primary)
                 .transition(Self.datePickerTransition)
             }
+        }
+        .onChange(of: tempDate) { newValue in
+            date = newValue
         }
     }
     
