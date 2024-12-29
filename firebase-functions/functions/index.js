@@ -297,7 +297,11 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
       vibe: vibe,
       participant_ids: participant_ids,
       budget: budget,
-      location: location || "",
+      location: {
+        name: location.name,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
       title: title || "",
       description: description || "",
       tags: tags || [],

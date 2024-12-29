@@ -62,7 +62,11 @@ extension HangoutManager {
             "vibe": hangout.vibe.rawValue,
 //            "status", hangout.status.rawValue,
             "participant_ids": hangout.participantIds,
-            "location": hangout.location ?? "",
+            "location": hangout.location != nil ? [
+                "name" : hangout.location!.name,
+                "latitude" : hangout.location!.latitude,
+                "longitude" : hangout.location!.longitude
+            ] : NSNull(),
             "title": hangout.title ?? "",
             "description": hangout.description ?? "",
             "tags": hangout.tags ?? [],

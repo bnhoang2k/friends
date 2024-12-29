@@ -155,8 +155,8 @@ struct HangoutReference: Codable {
 
 struct Location: Codable, Equatable {
     var name: String
-    var longitude: String
-    var latitude: String
+    var longitude: String?
+    var latitude: String?
     
     init(name: String,
          coordinate: CLLocationCoordinate2D) {
@@ -172,8 +172,8 @@ struct Location: Codable, Equatable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try container.decode(String.self, forKey: .name)
-        self.longitude = try container.decode(String.self, forKey: .longitude)
-        self.latitude = try container.decode(String.self, forKey: .latitude)
+        self.longitude = try container.decodeIfPresent(String.self, forKey: .longitude)
+        self.latitude = try container.decodeIfPresent(String.self, forKey: .latitude)
     }
     
     func encode(to encoder: any Encoder) throws {
