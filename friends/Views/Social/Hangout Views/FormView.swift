@@ -39,8 +39,10 @@ struct FormView: View {
                         }
                     }
                 } label: {
-                    Text("Add Hangout!")
+                    Text("Add Hangout")
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.bordered)
             }
         }
         .padding()
