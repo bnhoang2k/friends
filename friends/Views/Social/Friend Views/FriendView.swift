@@ -13,7 +13,6 @@ struct FriendView: View {
     @EnvironmentObject private var svm: SocialVM
     
     let friend: DBUser
-    @State var hangoutList: [Hangout] = []
     @State private var searchText: String = ""
     
     // Dependency to calculate statistics
@@ -22,6 +21,11 @@ struct FriendView: View {
     @State private var friendStatistics: (personalityGradient: [String: Any],
                                           hardStats: [String: Any]) = (personalityGradient: [:],
                                                                        hardStats: [:])
+    
+    
+    private var filteredHangoutList: [Hangout] {
+        svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+    }
     
     var body: some View {
         NavigationStack {
@@ -32,7 +36,7 @@ struct FriendView: View {
                     // Hard Stats
                     HardStatsView(hardStats: friendStatistics.hardStats)
                     // Hangouts
-                    RecentHangoutView(hangoutList: $hangoutList,
+                    RecentHangoutView(hangoutList: .constant(filteredHangoutList),
                                       searchText: $searchText)
                 }
             }
@@ -51,8 +55,7 @@ struct FriendView: View {
             }
         }
         .onAppear {
-                hangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
-            friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: hangoutList)
+            friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
         }
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
@@ -75,7 +78,7 @@ struct PersonalityGradientView: View {
                 Text("Outdoor Preference:")
                 Spacer()
                 Text("\((personalityGradient["indoorOutdoorRatio"] as? String == "Data Unavailable") ? "Data Unavailable" : "\(Int((Double(personalityGradient["indoorOutdoorRatio"] as? String ?? "0") ?? 0) * 100))% outdoors")")
-
+                
             }
             HStack {
                 Text("Hangout Duration:")
@@ -217,9 +220,8 @@ struct RecentHangoutView: View {
 #Preview {
     let hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
     NavigationStack {
-        FriendView(friend: DBUser(uid: "1"),
-                   hangoutList: hangoutList)
-            .environmentObject(AuthenticationVM())
-            .environmentObject(SocialVM())
+        FriendView(friend: DBUser(uid: "1"))
+        .environmentObject(AuthenticationVM())
+        .environmentObject(SocialVM())
     }
 }
