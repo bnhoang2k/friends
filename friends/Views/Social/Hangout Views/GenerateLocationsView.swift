@@ -143,6 +143,7 @@ struct PlaceCardView: View, Equatable {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemBackground))
         )
+        .frame(maxWidth: .infinity)
         .onTapGesture {
             onTap()
         }
