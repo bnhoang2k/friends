@@ -56,6 +56,7 @@
 		D3C5FD292C9CD2580092B0F7 /* TypesenseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */; };
 		D3D459CA2CB4D195005B6B51 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D459C92CB4D195005B6B51 /* NotificationsView.swift */; };
 		D3D6DB542D20A8DF00DA2210 /* PlaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */; };
+		D3D6DB562D20E81200DA2210 /* FormViewExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D6DB552D20E81200DA2210 /* FormViewExtras.swift */; };
 		D3D88C902C6582ED00DEBE14 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C8F2C6582ED00DEBE14 /* FirebaseAnalytics */; };
 		D3D88C962C6582ED00DEBE14 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C952C6582ED00DEBE14 /* FirebaseAuthCombine-Community */; };
 		D3D88C992C6582FC00DEBE14 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3D88C982C6582FC00DEBE14 /* GoogleSignIn */; };
@@ -115,6 +116,7 @@
 		D3C5FD282C9CD2580092B0F7 /* TypesenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseManager.swift; sourceTree = "<group>"; };
 		D3D459C92CB4D195005B6B51 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceViewModel.swift; sourceTree = "<group>"; };
+		D3D6DB552D20E81200DA2210 /* FormViewExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormViewExtras.swift; sourceTree = "<group>"; };
 		D3D88D092C65863900DEBE14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesenseVM.swift; sourceTree = "<group>"; };
 		D3DA02582CB4582900F271E7 /* SearchForFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchForFriendsView.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 			children = (
 				D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */,
 				D30033FA2CE0270900E42415 /* FormView.swift */,
+				D3D6DB552D20E81200DA2210 /* FormViewExtras.swift */,
 				D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */,
 				D3AA6D1A2D1745EB0005879E /* PlaceSheetView.swift */,
 				D37376522D10CE9C00284C55 /* HangoutInformationView.swift */,
@@ -449,6 +452,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3D6DB562D20E81200DA2210 /* FormViewExtras.swift in Sources */,
 				D3AA6D1B2D1745EB0005879E /* PlaceSheetView.swift in Sources */,
 				D3D6DB542D20A8DF00DA2210 /* PlaceViewModel.swift in Sources */,
 				D36B6C862C8A41C400FF25CC /* AccessCameraView.swift in Sources */,

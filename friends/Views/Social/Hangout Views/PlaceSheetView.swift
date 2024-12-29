@@ -14,7 +14,6 @@ struct PlaceSheetView: View {
     
     let place: Place
     let photos: [UIImage]
-    @Binding var showAddHangout: Bool
     
     @State private var hoursExpanded: Bool = true
     
@@ -31,7 +30,6 @@ struct PlaceSheetView: View {
                     Button {
                         onAdd(place)
                         dismiss()
-                        showAddHangout = false
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title)

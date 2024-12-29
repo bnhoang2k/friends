@@ -11,11 +11,13 @@ import MapKit
 import Kingfisher
 
 struct GenerateLocationsView: View {
+    
+    @Environment(\.dismiss) private var dismissNavStack
+    
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
-    @Binding var showAddHangout: Bool
     
     @State private var placeViewModels: [PlaceViewModel] = []
     @State private var selectedPlace: PlaceViewModel?
@@ -51,12 +53,10 @@ struct GenerateLocationsView: View {
         } content: {
             if let placeVM = selectedPlace {
                 PlaceSheetView(place: placeVM.place,
-                               photos: placeVM.photos,
-                               showAddHangout: $showAddHangout) { place in
+                               photos: placeVM.photos) { place in
                     Task {
-                        let hangoutLocation = Location(name: place.displayName ?? "PLACE NAME ERROR", coordinate: place.location)
-                        hangout.location = hangoutLocation
-                        try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                        hangout.location = Location(name: place.displayName ?? "PLACE NAME ERROR", coordinate: place.location)
+                        dismissNavStack()
                     }
                 }
             }
@@ -160,7 +160,7 @@ struct PlaceCardView: View, Equatable {
             hangout
         }, set: { newValue in
             hangout = newValue
-        }), showAddHangout: .constant(true))
+        }))
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
 }

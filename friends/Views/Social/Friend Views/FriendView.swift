@@ -11,7 +11,6 @@ struct FriendView: View {
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
-    @State private var showAddHangout: Bool = false
     
     let friend: DBUser
     @State var hangoutList: [Hangout] = []
@@ -43,8 +42,7 @@ struct FriendView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    AddHangoutView(friendID: friend.uid,
-                                   showAddHangout: $showAddHangout)
+                    AddHangoutView(friendID: friend.uid)
                         .environmentObject(avm)
                         .environmentObject(svm)
                 } label: {

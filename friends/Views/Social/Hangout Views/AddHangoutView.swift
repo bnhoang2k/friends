@@ -13,7 +13,6 @@ struct AddHangoutView: View {
     @EnvironmentObject private var svm: SocialVM
     
     var friendID: String? = nil
-    @Binding var showAddHangout: Bool
     
     @StateObject private var vvm: VertexViewModel = VertexViewModel()
     @State private var hangout: Hangout = Hangout.defaultHangout()
@@ -24,6 +23,7 @@ struct AddHangoutView: View {
     var body: some View {
         NavigationStack {
             FormView(hangout: $hangout)
+                .environmentObject(vvm)
                 .navigationTitle("Add Hangout")
                 .navigationBarTitleDisplayMode(.inline)
                 .padding(.top)
@@ -42,7 +42,7 @@ struct AddHangoutView: View {
 }
 
 #Preview {
-    AddHangoutView(showAddHangout: .constant(true))
+    AddHangoutView()
         .environmentObject(AuthenticationVM())
         .environmentObject(SocialVM())
 }
