@@ -19,9 +19,9 @@ struct FriendView: View {
     let friendUtilities = FriendUtilities()
     // Store pre-computed statistics
     private var friendStatistics: (personalityGradient: [String: Any],
-                    hardStats: [String: Any]) {
-                    friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
-                }
+                                   hardStats: [String: Any]) {
+        friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
+    }
     
     @State private var filteredHangoutList: [Hangout] = []
     
@@ -102,7 +102,6 @@ struct HardStatsView: View {
     var hardStats: [String: Any] = [:]
     
     @State private var isVibesExpanded: Bool = true // Tracks the expanded/collapsed state of "Vibes"
-    @State private var isAnimating: Bool = false // Prevents spamming during animation
     
     var body: some View {
         Section {
@@ -122,56 +121,46 @@ struct HardStatsView: View {
                 }
                 
                 // Vibes Section
-                VStack(spacing: 0) {
-                    // Header for "Vibes"
-                    Button(action: {
-                        guard !isAnimating else { return } // Prevent spamming
-                        isAnimating = true
-                        withAnimation(Animation.easeInOut(duration: 0.3)) {
-                            isVibesExpanded.toggle()
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            isAnimating = false
-                        }
-                    }) {
-                        HStack {
-                            Text("Vibes")
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "sparkles")
-                        }
-                        .contentShape(Rectangle()) // Makes the entire header tappable
-                    }
-                    
-                    // Collapsible Content for "Vibes"
-                    if isVibesExpanded {
-                        if let vibesCount = hardStats["vibesCounts"] as? [HangoutVibe: Int] {
-                            
-                            let maxCount = vibesCount.values.max() ?? 1
-                            
-                            Group {
-                                ForEach(vibesCount.sorted(by: { $0.value > $1.value }), id: \ .key) { key, value in
-                                    VStack {
-                                        HStack {
-                                            Label(key.rawValue.capitalized, systemImage: key.symbolName)
-                                            Spacer()
-                                            Text("\(value)") // Display the count
-                                        }
-                                        GeometryReader { geo in
-                                            Capsule()
-                                                .fill(Color.primary) // Customize bar color
-                                                .frame(width: geo.size.width * CGFloat(value) / CGFloat(maxCount), height: 10)
-                                                .animation(.easeInOut, value: value)
-                                        }
-                                        .frame(height: 10)
+                DisclosureGroup(isExpanded: $isVibesExpanded) {
+                    if let vibesCount = hardStats["vibesCounts"] as? [HangoutVibe: Int] {
+                        let maxCount = vibesCount.values.max() ?? 1
+                        let sortedVibes = Array(vibesCount.sorted(by: { $0.value > $1.value }))
+                        
+                        VStack {
+                            ForEach(sortedVibes.indices, id: \.self) { index in
+                                let key = sortedVibes[index].key
+                                let value = sortedVibes[index].value
+                                
+                                VStack {
+                                    HStack {
+                                        Label(key.rawValue.capitalized, systemImage: key.symbolName)
+                                        Spacer()
+                                        Text("\(value)") // Display the count
                                     }
+                                    GeometryReader { geo in
+                                        Capsule()
+                                            .fill(Color.primary) // Customize bar color
+                                            .frame(width: geo.size.width * CGFloat(value) / CGFloat(maxCount), height: 10)
+                                            .animation(.easeInOut(duration: 0.4), value: isVibesExpanded)
+                                    }
+                                    .frame(height: 10)
                                 }
+                                .opacity(isVibesExpanded ? 1 : 0) // Fade out
+                                .offset(y: isVibesExpanded ? 0 : CGFloat(-20 * index)) // Pull up blinds effect
+                                .animation(.easeInOut(duration: 0.2).delay(0.01 * Double(index)), value: isVibesExpanded)
                             }
-                            .padding(.top)
-                            .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .top)), removal: .opacity)) // Control animation direction
                         }
+                        .padding(.top)
+                    }
+                } label: {
+                    HStack {
+                        Text("Vibes")
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "sparkles")
                     }
                 }
+
             }
         }
         header: {
@@ -195,6 +184,7 @@ struct RecentHangoutView: View {
         NavigationLink {
             HangoutListView(hangoutList: $hangoutList,
                             searchText: $searchText)
+            .environmentObject(avm)
             .environmentObject(svm)
         } label: {
             HStack {
@@ -228,7 +218,7 @@ struct RecentHangoutView: View {
     let hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
     NavigationStack {
         FriendView(friend: DBUser(uid: "1"))
-        .environmentObject(AuthenticationVM())
-        .environmentObject(SocialVM())
+            .environmentObject(AuthenticationVM())
+            .environmentObject(SocialVM())
     }
 }
