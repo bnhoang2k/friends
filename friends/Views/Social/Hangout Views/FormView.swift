@@ -29,7 +29,7 @@ struct FormView: View {
             VStack(alignment: .leading, spacing: 20) {
                 BasicInformationSection(date: $hangout.creationDate)
                 LocationInformationSection(hangout: $hangout, showLocationOptionsView: $showLocationOptionsView)
-                VibesSection(vibe: $hangout.vibe)
+                SmoothSnappingSliderWithState(hangout: $hangout)
                 DetailsSection(hangout: $hangout, wordCount: wordCount)
                 Button {
                     Task {
@@ -154,29 +154,6 @@ private struct LocationOptionsView: View {
                       size: GlobalVariables.shared.textBody))
         .padding(.horizontal)
         .presentationDetents([.fraction(0.15)])
-    }
-}
-
-private struct VibesSection: View {
-    @Binding var vibe: HangoutVibe
-    
-    var body: some View {
-        Section {
-            Slider(value: Binding(
-                get: { Double(HangoutVibe.allCases.firstIndex(of: vibe) ?? 0) },
-                set: { newValue in vibe = HangoutVibe.allCases[Int(newValue)] }
-            ), in: 0...Double(HangoutVibe.allCases.count - 1))
-            .contentShape(Rectangle())
-            Text("\(vibe.description)")
-                .frame(maxWidth: .infinity, alignment: .center)
-        } header: {
-            HStack {
-                Text("Vibe")
-                    .font(.headline)
-                Spacer()
-            }
-        }
-        
     }
 }
 
