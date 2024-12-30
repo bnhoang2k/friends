@@ -69,6 +69,7 @@ struct HangoutCardView: View {
                 Text(description)
                     .font(.body)
                     .foregroundColor(.secondary)
+                    .multilineTextAlignment(.leading)
                     .lineLimit(2)
             }
         }
