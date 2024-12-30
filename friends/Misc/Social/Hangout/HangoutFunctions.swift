@@ -28,6 +28,47 @@ extension Hangout {
             return .calm
         }
     }
+    func getInitialSliderValue(for vibe: HangoutVibe) -> Double {
+        switch vibe {
+        case .wild:
+            return 0.9375
+        case .adventurous:
+            return 0.8125
+        case .exciting:
+            return 0.6875
+        case .energetic:
+            return 0.5625
+        case .social:
+            return 0.4375
+        case .chill:
+            return 0.3125
+        case .relaxing:
+            return 0.1875
+        case .calm:
+            return 0.0625
+        }
+    }
+    
+    func getSnapValue(for value: Double) -> Double {
+        switch value {
+        case 0.875...1.0:
+            return 0.9375
+        case 0.75..<0.875:
+            return 0.8125
+        case 0.625..<0.75:
+            return 0.6875
+        case 0.5..<0.625:
+            return 0.5625
+        case 0.375..<0.5:
+            return 0.4375
+        case 0.25..<0.375:
+            return 0.3125
+        case 0.125..<0.25:
+            return 0.1875
+        default:
+            return 0.0625
+        }
+    }
 }
 
 extension Hangout {

@@ -27,6 +27,7 @@
 		D3750ADA2CB9D94A00FF69F2 /* FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */; };
 		D3847E372C89437200694EF8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E362C89437200694EF8 /* FirebaseStorage */; };
 		D3847E392C89437200694EF8 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = D3847E382C89437200694EF8 /* FirebaseStorageCombine-Community */; };
+		D38653A52D23420D00F071DA /* HangoutInformationEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38653A42D23420D00F071DA /* HangoutInformationEditView.swift */; };
 		D39136CB2CBC76B4009C1C2E /* SocialVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39136CA2CBC76B4009C1C2E /* SocialVM.swift */; };
 		D39960DB2C82667800A641E6 /* TestFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39960DA2C82667800A641E6 /* TestFunctions.swift */; };
 		D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39EF7BC2C69819700040765 /* GoogleSignInHelper.swift */; };
@@ -91,6 +92,7 @@
 		D36B6C852C8A41C400FF25CC /* AccessCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessCameraView.swift; sourceTree = "<group>"; };
 		D37376522D10CE9C00284C55 /* HangoutInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutInformationView.swift; sourceTree = "<group>"; };
 		D3750AD92CB9D94A00FF69F2 /* FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsListView.swift; sourceTree = "<group>"; };
+		D38653A42D23420D00F071DA /* HangoutInformationEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutInformationEditView.swift; sourceTree = "<group>"; };
 		D390C6132C66EFB7008BC14B /* friends.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = friends.entitlements; sourceTree = "<group>"; };
 		D39136CA2CBC76B4009C1C2E /* SocialVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialVM.swift; sourceTree = "<group>"; };
 		D39960DA2C82667800A641E6 /* TestFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFunctions.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */,
 				D3AA6D1A2D1745EB0005879E /* PlaceSheetView.swift */,
 				D37376522D10CE9C00284C55 /* HangoutInformationView.swift */,
+				D38653A42D23420D00F071DA /* HangoutInformationEditView.swift */,
 			);
 			path = "Hangout Views";
 			sourceTree = "<group>";
@@ -480,6 +483,7 @@
 				D39EF7C52C69819700040765 /* GlobalVariables.swift in Sources */,
 				D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */,
 				D36B6C842C8A3B3800FF25CC /* SettingsViewExtras.swift in Sources */,
+				D38653A52D23420D00F071DA /* HangoutInformationEditView.swift in Sources */,
 				D3F4E03C2D093EC0000B6EE5 /* HangoutManager.swift in Sources */,
 				D3DA02572CB43FFC00F271E7 /* TypesenseVM.swift in Sources */,
 				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,

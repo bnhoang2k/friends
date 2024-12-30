@@ -60,7 +60,7 @@ enum HangoutVibe: String, Codable, CaseIterable {
         }
 }
 
-enum HangoutStatus: String, Codable {
+enum HangoutStatus: String, Codable, CaseIterable {
     case pending = "pending"
     case confirmed = "confirmed"
     case completed = "completed"

@@ -27,47 +27,11 @@ struct HangoutInformationView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 15) {
-                HangoutLocationSection(hangout: $hangout,
-                                       isEditing: $isEditing)
-                
+                HangoutLocationSection(hangout: $hangout)
                 FriendSection(hangout: $hangout)
-                
-                Group {
-                    HStack {
-                        Text("Start Time:")
-                        Spacer()
-                        Text("\(hangout.startDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
-                    }
-                    HStack {
-                        Text("End Time:")
-                        Spacer()
-                        Text("\(hangout.endDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
-                    }
-                }
-                .foregroundColor(isInvalid ? .red : .primary)
-                
-                HStack {
-                    Text("Hangout Vibe:")
-                    Spacer()
-                    Label("\(hangout.vibe.rawValue)", systemImage: hangout.vibe.symbolName)
-                }
-                
-                HStack {
-                    Text("Hangout Status:")
-                    Spacer()
-                    Text("\(hangout.status.rawValue)")
-                }
-                
-                HStack {
-                    Text("Money Spent:")
-                    Spacer()
-                    Text("\(hangout.budget, specifier: "%.2f")")
-                }
-                
-                if let description = hangout.description, !description.isEmpty {
-                    NotesSection(notes: description)
-                }
-                
+                TimeSection(hangout: $hangout,
+                            isInvalid: .constant(isInvalid))
+                DetailSection(hangout: $hangout)
                 UserPhotoSection(hangout: $hangout)
             }
         }
@@ -75,52 +39,20 @@ struct HangoutInformationView: View {
         .scrollIndicators(.hidden)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isEditing.toggle()
-                } label: {
-                    Text("Edit")
-                }
-                
+                Button { isEditing.toggle() } label: { Text("Edit") }
             }
         }
+        .tint(.primary)
         .sheet(isPresented: $isEditing) {
-            EditForm(hangout: $hangout,
-                     isEditing: $isEditing,
-                     isInvalid: .constant(isInvalid))
+            HangoutInformationEditView(hangout: $hangout,
+                                       isInvalid: .constant(isInvalid))
         }
-    }
-}
-
-private struct EditForm: View {
-    
-    @Binding var hangout: Hangout
-    @Binding var isEditing: Bool
-    @Binding var isInvalid: Bool
-    
-    var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 15) {
-                HangoutLocationSection(hangout: $hangout,
-                                       isEditing: $isEditing)
-                ExpandableDatePicker(title: "Start Time",
-                                     date: $hangout.startDate,
-                                     isInvalid: $isInvalid)
-                ExpandableDatePicker(title: "End Time",
-                                     date: $hangout.endDate,
-                                     isInvalid: $isInvalid)
-                
-            }
-        }
-        .padding()
-        .scrollContentBackground(.hidden)
-        .scrollIndicators(.hidden)
     }
 }
 
 private struct HangoutLocationSection: View {
     
     @Binding var hangout: Hangout
-    @Binding var isEditing: Bool
     
     @State private var isExpanded: Bool = true
     @State private var showManualMap: Bool = false
@@ -140,16 +72,11 @@ private struct HangoutLocationSection: View {
                                 .animation(.easeInOut(duration: 0.4), value: isExpanded) // Smooth animation
                         )
                         .onTapGesture {
-                            if isEditing == false {
-                                guard let displayName = hangout.location?.name else {
-                                    return
-                                }
-                                Utilities.shared.openBusinessInAppleMaps(name: displayName,
-                                                                         near: CLLocationCoordinate2D(latitude: lat, longitude: lng))
+                            guard let displayName = hangout.location?.name else {
+                                return
                             }
-                            else {
-                                showManualMap.toggle()
-                            }
+                            Utilities.shared.openBusinessInAppleMaps(name: displayName,
+                                                                     near: CLLocationCoordinate2D(latitude: lat, longitude: lng))
                         }
                 }
             } label: {
@@ -168,15 +95,15 @@ private struct HangoutLocationSection: View {
             }
         }
     }
+}
+
+struct AnimatedMapView: View {
+    let coordinate: CLLocationCoordinate2D
     
-    private struct AnimatedMapView: View {
-        let coordinate: CLLocationCoordinate2D
-        
-        var body: some View {
-            GeometryReader { geometry in
-                MapView(coordinate: coordinate)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-            }
+    var body: some View {
+        GeometryReader { geometry in
+            MapView(coordinate: coordinate)
+                .frame(width: geometry.size.width, height: geometry.size.height)
         }
     }
 }
@@ -208,75 +135,50 @@ private struct FriendSection: View {
     }
 }
 
-struct ExpandableDatePicker: View {
-    let title: String
-    @Binding var date: Date? // Binding to parent date
+private struct TimeSection: View {
+    
+    @Binding var hangout: Hangout
     @Binding var isInvalid: Bool
     
-    @State private var isExpanded: Bool = false
-    @State private var tempDate: Date = Date()
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Button {
-                withAnimation {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack {
-                    Text("\(title):")
-                    Spacer()
-                    Text("\(date?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
-                }
-                .foregroundColor(isInvalid ? .red : .primary)
-                .contentShape(Rectangle())
+        Group {
+            HStack {
+                Text("Start Time:")
+                Spacer()
+                Text("\(hangout.startDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
             }
-            
-            if isExpanded {
-                DatePicker(
-                    "Select \(title)",
-                    selection: $tempDate,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-                .datePickerStyle(.graphical)
-                .tint(isInvalid ? .red : .primary)
-                .transition(Self.datePickerTransition)
+            HStack {
+                Text("End Time:")
+                Spacer()
+                Text("\(hangout.endDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
             }
         }
-        .onChange(of: tempDate) { newValue in
-            date = newValue
-        }
-    }
-    
-    static var datePickerTransition: AnyTransition {
-        .asymmetric(
-            insertion: .opacity
-                .combined(with: .scale(scale: 0.95, anchor: .top))
-                .animation(.easeInOut(duration: 0.3)),
-            removal: .opacity
-                .combined(with: .scale(scale: 0.95, anchor: .top))
-                .animation(.easeOut(duration: 0.3))
-        )
+        .foregroundColor(isInvalid ? .red : .primary)
     }
 }
 
-private struct NotesSection: View {
-    var notes: String
-
+private struct DetailSection: View {
+    
+    @Binding var hangout: Hangout
+    
     var body: some View {
-        VStack(spacing: 15) {
-            // Notes Display
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Notes")
-                    .font(.headline)
-
-                Text(notes.isEmpty ? "No notes available." : notes)
-                    .frame(maxWidth: .infinity, minHeight: 200)
-                    .padding(5)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.5))
-                    )
+        Group {
+            HStack {
+                Text("Hangout Vibe:")
+                Spacer()
+                Label("\(hangout.vibe.rawValue)", systemImage: hangout.vibe.symbolName)
+            }
+            
+            HStack {
+                Text("Hangout Status:")
+                Spacer()
+                Text("\(hangout.status.rawValue)")
+            }
+            
+            HStack {
+                Text("Money Spent:")
+                Spacer()
+                Text("\(hangout.budget, specifier: "%.2f")")
             }
         }
     }
