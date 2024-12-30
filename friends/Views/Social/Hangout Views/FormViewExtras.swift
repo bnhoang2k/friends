@@ -57,7 +57,7 @@ final class MapSearchViewModel: NSObject, ObservableObject {
 
 // MARK: - MKLocalSearchCompleterDelegate
 extension MapSearchViewModel: MKLocalSearchCompleterDelegate {
-
+    
     nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         // Because this method is nonisolated, we can’t directly touch
         // actor‐isolated properties like `completions`.
@@ -77,28 +77,60 @@ extension MapSearchViewModel: MKLocalSearchCompleterDelegate {
 }
 
 struct MapSearchView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    /// Callback to return the user’s chosen place name & coordinate.
-    let onTap: (String, CLLocationCoordinate2D) -> Void
-    
+
     /// State for pinned location on the map
     @State private var pinnedCoordinate = CLLocationCoordinate2D()
     @State private var placeName: String = ""
-    
+
     /// ViewModel that manages the search
     @StateObject private var viewModel = MapSearchViewModel()
-    
+
     /// For the initial map region
-    private let initialCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+    var initialCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
     private let regionSpan = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+
+    /// Callback to return the user’s chosen place name & coordinate.
+    let onTap: (String, CLLocationCoordinate2D) -> Void
     
+    var body: some View {
+        VStack {
+            // The map
+            InteractiveMapView(
+                pinnedCoordinate: $pinnedCoordinate,
+                initialCoordinate: initialCoordinate,
+                regionSpan: regionSpan
+            )
+        }
+        .onAppear {
+            // Set pinned location to initial when the view appears
+            pinnedCoordinate = initialCoordinate
+        }
+        .sheet(isPresented: .constant(true)) {
+            // Pass the bindings and onTap closure to SearchBarDetent
+            SearchBarDetent(viewModel: viewModel,
+                            placeName: $placeName,
+                            pinnedCoordinate: $pinnedCoordinate) { name, coordinate in
+                // Pass the result to the parent `onTap`
+                onTap(name, coordinate)
+            }
+        }
+    }
+}
+
+private struct SearchBarDetent: View {
+    @Environment(\.dismiss) private var dismiss
+
+    @ObservedObject var viewModel: MapSearchViewModel
+    @Binding var placeName: String
+    @Binding var pinnedCoordinate: CLLocationCoordinate2D
+    /// Callback to return the user’s chosen place name & coordinate.
+    let onTap: (String, CLLocationCoordinate2D) -> Void
+
     var body: some View {
         VStack {
             HStack {
                 TextField("Search for a place", text: $viewModel.searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
                 
                 Spacer()
                 
@@ -107,9 +139,7 @@ struct MapSearchView: View {
                     onTap(placeName, pinnedCoordinate)
                     dismiss()
                 }
-                .padding(.trailing, 16)
             }
-            
             // Show completions if non-empty
             if !viewModel.completions.isEmpty {
                 List(viewModel.completions, id: \.hashValue) { completion in
@@ -144,32 +174,21 @@ struct MapSearchView: View {
                 .scrollContentBackground(.hidden)
                 .listRowInsets(EdgeInsets())
             }
-            
-            // The map
-            InteractiveMapView(
-                pinnedCoordinate: $pinnedCoordinate,
-                initialCoordinate: initialCoordinate,
-                regionSpan: regionSpan
-            )
+            Spacer()
         }
-        .onAppear {
-            // Set pinned location to initial when the view appears
-            pinnedCoordinate = initialCoordinate
-        }
+        .padding()
+        .presentationDetents([.fraction(0.15), .medium, .large])
+        .presentationBackgroundInteraction(.enabled)
     }
 }
 
-struct InteractiveMapView: UIViewRepresentable {
+private struct InteractiveMapView: UIViewRepresentable {
     /// A binding to track a pinned coordinate.
     @Binding var pinnedCoordinate: CLLocationCoordinate2D
     
     /// Initial region or center location
     let initialCoordinate: CLLocationCoordinate2D
     let regionSpan: MKCoordinateSpan
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
@@ -180,9 +199,6 @@ struct InteractiveMapView: UIViewRepresentable {
             span: regionSpan
         )
         mapView.setRegion(region, animated: false)
-        
-        // Set the delegate
-        mapView.delegate = context.coordinator
         
         return mapView
     }
@@ -204,12 +220,4 @@ struct InteractiveMapView: UIViewRepresentable {
         mapView.setRegion(region, animated: true)
     }
     
-    // MARK: - Coordinator
-    class Coordinator: NSObject, MKMapViewDelegate {
-        var parent: InteractiveMapView
-        
-        init(_ parent: InteractiveMapView) {
-            self.parent = parent
-        }
-    }
 }
