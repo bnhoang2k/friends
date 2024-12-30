@@ -77,30 +77,28 @@ extension MapSearchViewModel: MKLocalSearchCompleterDelegate {
 }
 
 struct MapSearchView: View {
-
+    
     /// State for pinned location on the map
     @State private var pinnedCoordinate = CLLocationCoordinate2D()
     @State private var placeName: String = ""
-
+    
     /// ViewModel that manages the search
     @StateObject private var viewModel = MapSearchViewModel()
-
+    
     /// For the initial map region
     var initialCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
     private let regionSpan = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-
+    
     /// Callback to return the user’s chosen place name & coordinate.
     let onTap: (String, CLLocationCoordinate2D) -> Void
     
     var body: some View {
-        VStack {
-            // The map
-            InteractiveMapView(
-                pinnedCoordinate: $pinnedCoordinate,
-                initialCoordinate: initialCoordinate,
-                regionSpan: regionSpan
-            )
-        }
+        // The map
+        InteractiveMapView(
+            pinnedCoordinate: $pinnedCoordinate,
+            initialCoordinate: initialCoordinate,
+            regionSpan: regionSpan
+        )
         .onAppear {
             // Set pinned location to initial when the view appears
             pinnedCoordinate = initialCoordinate
@@ -119,15 +117,15 @@ struct MapSearchView: View {
 
 private struct SearchBarDetent: View {
     @Environment(\.dismiss) private var dismiss
-
+    
     @ObservedObject var viewModel: MapSearchViewModel
     @Binding var placeName: String
     @Binding var pinnedCoordinate: CLLocationCoordinate2D
     /// Callback to return the user’s chosen place name & coordinate.
     let onTap: (String, CLLocationCoordinate2D) -> Void
-
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             HStack {
                 TextField("Search for a place", text: $viewModel.searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -140,6 +138,7 @@ private struct SearchBarDetent: View {
                     dismiss()
                 }
             }
+            .padding([.horizontal, .top])
             // Show completions if non-empty
             if !viewModel.completions.isEmpty {
                 List(viewModel.completions, id: \.hashValue) { completion in
@@ -173,10 +172,10 @@ private struct SearchBarDetent: View {
                 .scrollIndicators(.hidden)
                 .scrollContentBackground(.hidden)
                 .listRowInsets(EdgeInsets())
+                .scrollContentBackground(.hidden)
             }
             Spacer()
         }
-        .padding()
         .presentationDetents([.fraction(0.15), .medium, .large])
         .presentationBackgroundInteraction(.enabled)
     }
