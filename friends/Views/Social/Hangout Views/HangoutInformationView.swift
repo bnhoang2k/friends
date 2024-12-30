@@ -6,79 +6,204 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct HangoutInformationView: View {
+    
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var svm: SocialVM
+    
     @Binding var hangout: Hangout
+    @State private var isEditing: Bool = false
     
-    @State private var startInvalid: Bool = false
-    @State private var endInvalid: Bool = false
-    @State private var descriptionExpanded: Bool = true
-    @State private var budgetExpanded: Bool = true
-    
-    // Dynamically check the validity of the interval
-    func updateInvalidStates() {
+    private var isInvalid: Bool {
         if let startDate = hangout.startDate, let endDate = hangout.endDate {
-            startInvalid = startDate > endDate
-            endInvalid = startDate > endDate
+            return startDate >= endDate
         } else {
-            startInvalid = false
-            endInvalid = false
+            return false
         }
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 20) {
-                    
-                    // Location Section
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 15) {
+                HangoutLocationSection(hangout: $hangout,
+                                       isEditing: $isEditing)
+                
+                FriendSection(hangout: $hangout)
+                
+                Group {
                     HStack {
-                        Text(hangout.location?.name ?? "Location Name Error")
-                            .font(.title2)
-                            .bold()
+                        Text("Start Time:")
                         Spacer()
-                        Text("Actual Location Coordinates")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        Text("\(hangout.startDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
                     }
-                    
-                    // Start Date Section
-                    ExpandableDatePicker(
-                        title: "Start Time",
-                        date: $hangout.startDate,
-                        isInvalid: $startInvalid
-                    )
-                    
-                    // End Date Section
-                    ExpandableDatePicker(
-                        title: "End Time",
-                        date: $hangout.endDate,
-                        isInvalid: $endInvalid
-                    )
-                    
-                    // Description Section
-                    if ((hangout.description?.isEmpty) == nil) {
-                        DisclosureGroup("Description", isExpanded: $descriptionExpanded) {
-                            Text(hangout.description ?? """
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
-                            """)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                        }
+                    HStack {
+                        Text("End Time:")
+                        Spacer()
+                        Text("\(hangout.endDate?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
                     }
                 }
-                .padding()
+                .foregroundColor(isInvalid ? .red : .primary)
+                
+                HStack {
+                    Text("Hangout Vibe:")
+                    Spacer()
+                    Label("\(hangout.vibe.rawValue)", systemImage: hangout.vibe.symbolName)
+                }
+                
+                HStack {
+                    Text("Hangout Status:")
+                    Spacer()
+                    Text("\(hangout.status.rawValue)")
+                }
+                
+                HStack {
+                    Text("Money Spent:")
+                    Spacer()
+                    Text("\(hangout.budget, specifier: "%.2f")")
+                }
+                
+                if let description = hangout.description, !description.isEmpty {
+                    NotesSection(notes: description)
+                }
+                
+                UserPhotoSection(hangout: $hangout)
             }
-            .onChange(of: hangout.startDate) { newValue in
-                print("Start Date updated to: \(newValue?.description ?? "nil")")
-                updateInvalidStates()
+        }
+        .padding()
+        .scrollIndicators(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isEditing.toggle()
+                } label: {
+                    Text("Edit")
+                }
+                
             }
-            .onChange(of: hangout.endDate) { newValue in
-                print("End Date updated to: \(newValue?.description ?? "nil")")
-                updateInvalidStates()
+        }
+        .sheet(isPresented: $isEditing) {
+            EditForm(hangout: $hangout,
+                     isEditing: $isEditing,
+                     isInvalid: .constant(isInvalid))
+        }
+    }
+}
+
+private struct EditForm: View {
+    
+    @Binding var hangout: Hangout
+    @Binding var isEditing: Bool
+    @Binding var isInvalid: Bool
+    
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 15) {
+                HangoutLocationSection(hangout: $hangout,
+                                       isEditing: $isEditing)
+                ExpandableDatePicker(title: "Start Time",
+                                     date: $hangout.startDate,
+                                     isInvalid: $isInvalid)
+                ExpandableDatePicker(title: "End Time",
+                                     date: $hangout.endDate,
+                                     isInvalid: $isInvalid)
+                
             }
-            .navigationTitle(hangout.title ?? "No Title")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .padding()
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+    }
+}
+
+private struct HangoutLocationSection: View {
+    
+    @Binding var hangout: Hangout
+    @Binding var isEditing: Bool
+    
+    @State private var isExpanded: Bool = true
+    @State private var showManualMap: Bool = false
+    
+    var body: some View {
+        Group {
+            DisclosureGroup(isExpanded: $isExpanded) {
+                if let lat = hangout.location?.latitude, let lng = hangout.location?.longitude {
+                    AnimatedMapView(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lng))
+                        .padding(.top)
+                        .frame(height: 200) // Fixed height
+                        .cornerRadius(12)
+                        .mask(
+                            Rectangle()
+                                .frame(height: isExpanded ? 200 : 0) // Control visibility
+                                .offset(y: isExpanded ? 0 : -200) // Animate upwards on collapse
+                                .animation(.easeInOut(duration: 0.4), value: isExpanded) // Smooth animation
+                        )
+                        .onTapGesture {
+                            if isEditing == false {
+                                guard let displayName = hangout.location?.name else {
+                                    return
+                                }
+                                Utilities.shared.openBusinessInAppleMaps(name: displayName,
+                                                                         near: CLLocationCoordinate2D(latitude: lat, longitude: lng))
+                            }
+                            else {
+                                showManualMap.toggle()
+                            }
+                        }
+                }
+            } label: {
+                HStack {
+                    Text(hangout.location?.name ?? "Location Name Error")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+            }
+        }
+        .sheet(isPresented: $showManualMap) {
+            MapSearchView(initialCoordinate: CLLocationCoordinate2D(latitude: hangout.location?.latitude ?? 0,
+                                                                    longitude: hangout.location?.longitude ?? 0)) { name, coordinate in
+                hangout.location = Location(name: name, coordinate: coordinate)
+            }
+        }
+    }
+    
+    private struct AnimatedMapView: View {
+        let coordinate: CLLocationCoordinate2D
+        
+        var body: some View {
+            GeometryReader { geometry in
+                MapView(coordinate: coordinate)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+    }
+}
+
+private struct FriendSection: View {
+    
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var svm: SocialVM
+    @Binding var hangout: Hangout
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 8) {
+                ForEach(hangout.participantIds.filter{ $0 != avm.user?.uid ?? "" }, id: \.self) { participantId in
+                    if let friend = svm.getFriendFromID(participantId) {
+                        HStack {
+                            ImageView(urlString: friend.photoURL, pictureWidth: 10)
+                            Text(friend.fullName ?? "Name ERROR")
+                        }
+                        .font(.caption)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                    }
+                }
+            }
         }
     }
 }
@@ -99,10 +224,9 @@ struct ExpandableDatePicker: View {
                 }
             } label: {
                 HStack {
-                    Text("\(title): \(date?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
-                        .bold()
+                    Text("\(title):")
                     Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    Text("\(date?.formatted(date: .abbreviated, time: .shortened) ?? "Not Set")")
                 }
                 .foregroundColor(isInvalid ? .red : .primary)
                 .contentShape(Rectangle())
@@ -133,6 +257,45 @@ struct ExpandableDatePicker: View {
                 .combined(with: .scale(scale: 0.95, anchor: .top))
                 .animation(.easeOut(duration: 0.3))
         )
+    }
+}
+
+private struct NotesSection: View {
+    var notes: String
+
+    var body: some View {
+        VStack(spacing: 15) {
+            // Notes Display
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Notes")
+                    .font(.headline)
+
+                Text(notes.isEmpty ? "No notes available." : notes)
+                    .frame(maxWidth: .infinity, minHeight: 200)
+                    .padding(5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.5))
+                    )
+            }
+        }
+    }
+}
+
+private struct UserPhotoSection: View {
+    
+    @Binding var hangout: Hangout
+    
+    var body: some View {
+        if let hangoutPhotos = hangout.userPictures {
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 8) {
+                    ForEach(hangoutPhotos, id: \.self) { photoURL in
+                        ImageView(urlString: photoURL, pictureWidth: 500)
+                    }
+                }
+            }
+        }
     }
 }
 

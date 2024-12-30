@@ -112,6 +112,7 @@ struct MapSearchView: View {
                 onTap(name, coordinate)
             }
         }
+        .presentationDragIndicator(.visible)
     }
 }
 
@@ -172,12 +173,12 @@ private struct SearchBarDetent: View {
                 .scrollIndicators(.hidden)
                 .scrollContentBackground(.hidden)
                 .listRowInsets(EdgeInsets())
-                .scrollContentBackground(.hidden)
             }
             Spacer()
         }
         .presentationDetents([.fraction(0.15), .medium, .large])
         .presentationBackgroundInteraction(.enabled)
+        .presentationDragIndicator(.visible)
     }
 }
 

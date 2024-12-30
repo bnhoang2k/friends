@@ -36,6 +36,7 @@ struct FriendView: View {
                     // Hangouts
                     RecentHangoutView(hangoutList: $filteredHangoutList,
                                       searchText: $searchText)
+                    .environmentObject(svm)
                 }
             }
             .scrollIndicators(.hidden)
@@ -186,6 +187,8 @@ struct HardStatsView: View {
 
 struct RecentHangoutView: View {
     
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var svm: SocialVM
     @Binding var hangoutList: [Hangout]
     @Binding var searchText: String
     
@@ -193,6 +196,7 @@ struct RecentHangoutView: View {
         NavigationLink {
             HangoutListView(hangoutList: $hangoutList,
                             searchText: $searchText)
+            .environmentObject(svm)
         } label: {
             HStack {
                 Text("Your most recent hangouts")
@@ -209,6 +213,8 @@ struct RecentHangoutView: View {
                     if index < 5 {
                         NavigationLink {
                             HangoutInformationView(hangout: $hangoutList[index])
+                                .environmentObject(avm)
+                                .environmentObject(svm)
                         } label: {
                             HangoutCardView(hangout: hangoutList[index])
                         }
