@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HangoutListView: View {
     
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var svm : SocialVM
     @Binding var hangoutList: [Hangout]
     @Binding var searchText: String
     
@@ -26,8 +28,14 @@ struct HangoutListView: View {
                 .padding([.bottom])
                 if !hangoutList.isEmpty {
                     ScrollView(showsIndicators: false) {
-                        ForEach(hangoutList, id: \.hangoutId) { hangout in
-                            HangoutCardView(hangout: hangout)
+                        ForEach(hangoutList.indices, id: \.self) { index in
+                            NavigationLink {
+                                HangoutInformationView(hangout: $hangoutList[index])
+                                    .environmentObject(avm)
+                                    .environmentObject(svm)
+                            } label: {
+                                HangoutCardView(hangout: hangoutList[index])
+                            }
                         }
                     }
                 }
@@ -49,10 +57,10 @@ struct HangoutCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(hangout.location ?? "Unknown Location")
+                Text(hangout.location?.name ?? "Unknown Location")
                     .font(.headline)
                 Spacer()
-                Text(hangout.date, style: .date)
+                Text(hangout.creationDate, style: .date)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

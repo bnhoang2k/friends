@@ -153,7 +153,7 @@ extension SignInAppleHelper {
     func getAppleCredential() async throws -> (AuthCredential, String) {
         let signInAppleResult = try await signInApple()
         
-        let credential = OAuthProvider.credential(withProviderID: authProviderOption.apple.rawValue,
+        let credential = OAuthProvider.credential(providerID: AuthProviderID.apple,
                                                   idToken: signInAppleResult.token,
                                                   rawNonce: signInAppleResult.nonce)
         guard let authorizationCodeString: String = signInAppleResult.authorizationCodeString else {

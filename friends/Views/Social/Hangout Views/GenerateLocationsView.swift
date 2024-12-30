@@ -6,162 +6,162 @@
 //
 
 import SwiftUI
+import GooglePlacesSwift
+import MapKit
+import Kingfisher
 
 struct GenerateLocationsView: View {
+    
+    @Environment(\.dismiss) private var dismissNavStack
     
     @EnvironmentObject private var avm: AuthenticationVM
     @EnvironmentObject private var svm: SocialVM
     @ObservedObject var vvm: VertexViewModel
     @Binding var hangout: Hangout
     
-    @State private var locations: [Location] = []
-    @State private var selectedLocation: Location? // Track selected location
+    @State private var placeViewModels: [PlaceViewModel] = []
+    @State private var selectedPlace: PlaceViewModel?
+    @State private var isFetching: Bool = false
+    @State private var isDetailPresented: Bool = false
     
     var body: some View {
         VStack {
-            HStack {
-                Button {
-                    onGenerateTapped()
-                } label: {
-                    Text("Regenerate")
-                }
+            Button("Regenerate") {
+                onGenerateTapped()
             }
-            if vvm.inProgress {
+            if isFetching {
                 ProgressView()
-            } else if locations.isEmpty {
-                Text("No locations available. Tap 'Regenerate' to try again.")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            } else {
+            }
+            else {
                 ScrollView {
-                    ForEach(locations, id: \.name) { location in
-                        EquatableView(content: LocationCardView(location: location, isSelected: selectedLocation == location) {
-                            selectedLocation = (selectedLocation == location) ? nil : location
-                        })
-                        .padding()
+                    ForEach(placeViewModels, id: \.id) { placeVM in
+                        PlaceCardView(
+                            placeVM: placeVM,
+                            isSelected: selectedPlace?.id == placeVM.id
+                        ) {
+                            selectedPlace = (selectedPlace?.id == placeVM.id) ? nil : placeVM
+                            isDetailPresented.toggle()
+                        }
                     }
                 }
-                Button {
-                    hangout.location = selectedLocation?.name
+                .scrollIndicators(.hidden)
+            }
+        }
+        .padding()
+        .sheet(isPresented: $isDetailPresented) {
+            selectedPlace = nil
+        } content: {
+            if let placeVM = selectedPlace {
+                PlaceSheetView(place: placeVM.place,
+                               photos: placeVM.photos) { place in
                     Task {
-                        try await svm.createHangout(uid: avm.user?.uid ?? "", hangout: hangout)
+                        hangout.location = Location(name: place.displayName ?? "PLACE NAME ERROR", coordinate: place.location)
+                        dismissNavStack()
                     }
-                } label: {
-                    Text("Finish")
                 }
             }
         }
-        .onTapGesture { dismissKeyboard() }
-        .padding()
     }
 }
 
+// MARK: - Generate
 extension GenerateLocationsView {
     func onGenerateTapped() {
         Task {
-            vvm.userInput = hangout.hangoutToText(userID: avm.user?.uid ?? "",
-                                                  cachedFriendsList: svm.cachedFriendsList)
+            isFetching = true
+            placeViewModels = []
+            selectedPlace = nil
+            
+            // 1. Build user prompt
+            vvm.userInput = hangout.hangoutToText(
+                userID: avm.user?.uid ?? "",
+                cachedFriendsList: svm.cachedFriendsList
+            )
+            
+            // 2. Generate AI response
             await vvm.reason()
             
-            if let parsedLocations = parseStructuredOutput(vvm.outputText) {
-                DispatchQueue.main.async {
-                    self.locations = parsedLocations
-                }
-            } else {
-                DispatchQueue.main.async {
-                    print("Error: Failed to parse locations.")
-                    // Optionally show an alert or error UI to the user
+            // 3. Parse the JSON output -> [PlaceViewModel]
+            let placeVMs = await vvm.parseStructuredOutput(vvm.outputText)
+            placeViewModels = placeVMs
+            
+            // 4. Fetch photos in parallel for each place
+            for vm in placeViewModels {
+                Task {
+                    await vm.fetchPhotos()
                 }
             }
+            
+            isFetching = false
         }
-    }
-    
-    func parseStructuredOutput(_ output: String) -> [Location]? {
-        guard let data = output.data(using: .utf8) else {
-            print("Failed to convert output to Data")
-            return nil
-        }
-        do {
-            // Try decoding as an array of locations first
-            if let locations = try? JSONDecoder().decode([Location].self, from: data) {
-                for location in locations {
-                    vvm.previousSuggestions.insert(location.name)
-                }
-                return locations
-            }
-        
-            print("Failed to decode as array or object")
-            return nil
-        }
-    }
-    
-}
-
-private struct GenerateButtonSection: View {
-    @Binding var userInput: String
-    @Binding var hangout: Hangout
-    var avm: AuthenticationVM
-    var svm: SocialVM
-    @Binding var selectedTab: Int
-    
-    var body: some View {
-        Button {
-            userInput = hangout.hangoutToText(userID: avm.user?.uid ?? "",
-                                              cachedFriendsList: svm.cachedFriendsList)
-            selectedTab = 2
-        } label: {
-            Text("Generate")
-                .frame(maxWidth: .infinity)
-                .padding([.horizontal])
-        }
-        .buttonStyle(.borderless)
     }
 }
 
-struct LocationCardView: View, Equatable {
-    let location: Location
+struct PlaceCardView: View, Equatable {
+    @ObservedObject var placeVM: PlaceViewModel
     let isSelected: Bool
     var onTap: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(location.name)
-                    .font(.headline)
-                    .foregroundColor(.primary) // Adaptable text color
-                Spacer()
-            }
-            Text(location.description)
+        VStack(alignment: .leading) {
+            // Place name & address
+            Text(placeVM.place.displayName ?? "Unknown Place")
+                .font(.headline)
+            Text(placeVM.place.formattedAddress ?? "Unknown Address")
                 .font(.subheadline)
-                .foregroundColor(.secondary) // Adaptable text color
+                .foregroundColor(.secondary)
+            
+            // Photo area
+            if placeVM.isLoadingPhotos {
+                VStack {
+                    Spacer()
+                    ProgressView("Loading photos...")
+                    Spacer()
+                }
+                .frame(height: 200)              // Reserve some vertical space
+                .frame(maxWidth: .infinity)     // Fill the horizontal width
+            } else if placeVM.photos.isEmpty {
+                Text("No photos found")
+                    .frame(height: 200)
+                    .foregroundColor(.secondary)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(placeVM.photos, id: \.self) { image in
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 200, height: 200)
+                                .clipped()
+                        }
+                    }
+                }
+            }
         }
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground)) // Adaptable background
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isSelected ? Color.green : Color.clear, lineWidth: 2)
-                )
-                .shadow(radius: 4)
+                .fill(Color(.secondarySystemBackground))
         )
+        .frame(maxWidth: .infinity)
         .onTapGesture {
             onTap()
         }
     }
-
-    static func == (lhs: LocationCardView, rhs: LocationCardView) -> Bool {
-        return lhs.location == rhs.location && lhs.isSelected == rhs.isSelected
+    
+    static func == (lhs: PlaceCardView, rhs: PlaceCardView) -> Bool {
+        // You might refine this if you want more fine-grained control
+        return lhs.placeVM.id == rhs.placeVM.id && lhs.isSelected == rhs.isSelected
     }
 }
 
 #Preview {
-    var hangout = Hangout.defaultHangout()
-    GenerateLocationsView(vvm: VertexViewModel(), hangout: Binding(get: {
-        hangout
-    }, set: { newValue in
-        hangout = newValue
-    }))
-    .environmentObject(AuthenticationVM())
-    .environmentObject(SocialVM())
+        var hangout = Hangout.defaultHangout()
+        GenerateLocationsView(vvm: VertexViewModel(), hangout: Binding(get: {
+            hangout
+        }, set: { newValue in
+            hangout = newValue
+        }))
+        .environmentObject(AuthenticationVM())
+        .environmentObject(SocialVM())
 }
