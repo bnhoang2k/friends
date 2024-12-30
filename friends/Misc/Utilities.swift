@@ -136,6 +136,107 @@ final class Utilities {
         return randomHangouts
     }
     
+    func createRandomHangout(uid: String, friendId: String) async throws -> Hangout {
+        let sampleTitles = [
+            "Beach Bonanza", "Movie Marathon", "Game Night", "Mountain Hiking", "Kayaking Adventure",
+            "Board Game Bash", "Cooking Class", "Art Workshop", "Music Jam Session", "Theater Play",
+            "Bowling Night", "Amusement Park", "Zoo Trip", "Science Museum", "History Walk",
+            "Wine Tasting", "Brewery Tour", "Gardening Workshop", "DIY Crafting", "Coding Hackathon",
+            "Photography Walk", "Fishing Expedition", "Yoga Retreat", "Book Club Discussion", "Comedy Show"
+        ]
+
+        let sampleDescriptions = [
+            "Enjoy a sunny day at the beach with games and snacks.",
+            "Watch back-to-back blockbuster movies with friends.",
+            "Play a variety of board games and card games.",
+            "Explore scenic mountain trails and enjoy the view.",
+            "Paddle through calm waters in a kayak adventure.",
+            "Compete in classic board games for bragging rights.",
+            "Learn to cook delicious meals in a group class.",
+            "Unleash your creativity at an art workshop.",
+            "Jam together with musical instruments and songs.",
+            "Attend a theater play and experience live acting.",
+            "Knock down pins at the local bowling alley.",
+            "Enjoy thrilling rides at the amusement park.",
+            "Meet exotic animals at the city zoo.",
+            "Learn about science at an interactive museum.",
+            "Walk through historic landmarks and hear their stories.",
+            "Sample a variety of wines at a local vineyard.",
+            "Tour a brewery and learn how craft beer is made.",
+            "Get your hands dirty with a gardening workshop.",
+            "Create DIY crafts and take home your creations.",
+            "Collaborate on coding projects in a hackathon.",
+            "Take stunning photos on a guided photography walk.",
+            "Cast a line and relax on a fishing trip.",
+            "Find inner peace at a weekend yoga retreat.",
+            "Discuss your favorite books with fellow readers.",
+            "Laugh out loud at a live comedy performance."
+        ]
+
+        let sampleTags = [
+            "fun", "outdoor", "group", "adventurous", "relaxing",
+            "educational", "creative", "musical", "competitive", "artistic",
+            "social", "casual", "nature", "sports", "food",
+            "travel", "history", "science", "technology", "fitness",
+            "photography", "writing", "crafts", "family", "budget-friendly"
+        ]
+
+        let sampleLocations = [
+            "Sunny Beach", "Local Cinema", "Friend's House", "Hiking Trail", "Riverbank",
+            "Bowling Alley", "Amusement Park", "City Zoo", "Science Museum", "Historic District",
+            "Winery", "Craft Brewery", "Community Garden", "Art Studio", "Tech Hub",
+            "Concert Hall", "Comedy Club", "Library", "Fishing Dock", "Yoga Studio",
+            "Park Pavilion", "Cafe Downtown", "Mountain Cabin", "Bookstore", "Lakeside Campground"
+        ]
+
+        let sampleDurations: [HangoutDuration] = [
+            .quick, .halfDay, .fullDay, .overnight
+        ]
+
+        let sampleVibes: [HangoutVibe] = [
+            .adventurous, .calm, .chill, .energetic, .exciting, .relaxing, .social, .wild
+        ]
+
+        let sampleStatuses: [HangoutStatus] = [
+            .pending, .confirmed, .cancelled, .completed
+        ]
+
+        let randomTitle = sampleTitles.randomElement()
+        let randomDescription = sampleDescriptions.randomElement()
+        let randomTags = sampleTags.shuffled().prefix(Int.random(in: 1...5))
+        let randomLocation = sampleLocations.randomElement()
+        let randomDuration = sampleDurations.randomElement() ?? .quick
+        let randomVibe = sampleVibes.randomElement() ?? .chill
+        let randomStatus = sampleStatuses.randomElement() ?? .pending
+        let randomBudget = Double.random(in: 10.0...1000.0)
+        let randomIsOutdoor = Bool.random()
+        let randomDate = Date().addingTimeInterval(Double.random(in: -31536000...31536000))
+
+        // Randomizing coordinates: Latitude (-90 to 90), Longitude (-180 to 180)
+        let randomLatitude = Double.random(in: -90.0...90.0)
+        let randomLongitude = Double.random(in: -180.0...180.0)
+
+        let hangout = Hangout(
+            hangoutId: UUID().uuidString,
+            date: randomDate,
+            duration: randomDuration,
+            vibe: randomVibe,
+            status: randomStatus,
+            participantIds: [uid, friendId],
+            location: Location(
+                name: randomLocation ?? "Unknown Location",
+                coordinate: CLLocationCoordinate2D(latitude: randomLatitude, longitude: randomLongitude)
+            ),
+            title: randomTitle,
+            description: randomDescription,
+            tags: Array(randomTags),
+            budget: randomBudget,
+            isOutdoor: randomIsOutdoor
+        )
+
+        return hangout
+    }
+    
     func openBusinessInAppleMaps(
         name: String, near coordinate: CLLocationCoordinate2D
     ) {

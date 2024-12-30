@@ -55,6 +55,20 @@ struct FriendView: View {
                     Image(systemName: "plus")
                 }
             }
+            
+//            ToolbarItem(placement: .topBarTrailing) {
+//                Button {
+//                    Task {
+//                        for i in 0...100 {
+//                            try await svm.createHangout(uid: avm.user?.uid ?? "",
+//                                                        hangout: Utilities.shared.createRandomHangout(uid: avm.user?.uid ?? "",
+//                                                                                                      friendId: friend.uid))
+//                        }
+//                    }
+//                } label: {
+//                    Image(systemName: "testtube.2")
+//                }
+//            }
         }
         .onAppear {
             filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
