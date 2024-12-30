@@ -55,7 +55,6 @@ struct FriendView: View {
                     Image(systemName: "plus")
                 }
             }
-            
 //            ToolbarItem(placement: .topBarTrailing) {
 //                Button {
 //                    Task {
@@ -129,7 +128,7 @@ struct HardStatsView: View {
                 
                 // Average Budget
                 HStack {
-                    Text("Average Budget:")
+                    Text("Average Money Spent:")
                     Spacer()
                     Text("$\(String(format: "%.2f", hardStats["averageBudget"] as? Double ?? 0))")
                 }
