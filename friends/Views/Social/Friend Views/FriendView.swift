@@ -58,7 +58,7 @@ struct FriendView: View {
 //            ToolbarItem(placement: .topBarTrailing) {
 //                Button {
 //                    Task {
-//                        for i in 0...100 {
+//                        for i in 0...25 {
 //                            try await svm.createHangout(uid: avm.user?.uid ?? "",
 //                                                        hangout: Utilities.shared.createRandomHangout(uid: avm.user?.uid ?? "",
 //                                                                                                      friendId: friend.uid))
