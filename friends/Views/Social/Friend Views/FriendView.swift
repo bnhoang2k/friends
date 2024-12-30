@@ -18,10 +18,10 @@ struct FriendView: View {
     // Dependency to calculate statistics
     let friendUtilities = FriendUtilities()
     // Store pre-computed statistics
-    @State private var friendStatistics: (personalityGradient: [String: Any],
-                                          hardStats: [String: Any]) = (personalityGradient: [:],
-                                                                       hardStats: [:])
-    
+    private var friendStatistics: (personalityGradient: [String: Any],
+                    hardStats: [String: Any]) {
+                    friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
+                }
     
     @State private var filteredHangoutList: [Hangout] = []
     
@@ -58,7 +58,6 @@ struct FriendView: View {
         }
         .onAppear {
             filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
-            friendStatistics = friendUtilities.calculateFriendStatistics(for: friend.uid, from: filteredHangoutList)
         }
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
