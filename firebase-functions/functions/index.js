@@ -306,16 +306,16 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
       description: description || "",
       tags: tags || [],
       is_outdoor: is_outdoor || false,
-      created_at: admin.firestore.FieldValue.serverTimestamp(),
       status: "pending", // Assigned a default status
     };
 
     // Create meta user-facing doc referencing the main hangout data
     const userHangoutData = {
       hangout_id: hangout_id,
+      hangout_path: hangoutRef.path,
+      creation_date: admin.firestore.FieldValue.serverTimestamp(),
       title: title || "",
-      hangoutRef: hangoutRef.path,
-      created_at: admin.firestore.FieldValue.serverTimestamp(),
+      participant_ids: participant_ids,
     };
 
     // Use a transaction to ensure atomicity
