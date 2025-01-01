@@ -15,18 +15,23 @@ class SocialVM: ObservableObject {
     // Dictionary to store Friend UID and corresponding DBUser data
     @Published var cachedFriendsList: [String: DBUser] = [:]
     @Published var cachedFriendRequests: [friendRequest] = []
-    @Published var cachedHangoutsList: [String: Hangout] = [:]
+    @Published var cachedHangoutsList: [HangoutReference: Hangout] = [:]
     private var listeners: [ListenerRegistration] = []
+    
+    private var currentHangoutListener: ListenerRegistration?
+    @Published var selectedFriendId: String?
     
     func loadData(uid: String) async throws {
         listenForNotificationChanges(uid: uid)
         listenForFriendsListChanges(uid: uid)
         listenForPendingFriendRequests(uid: uid)
-        listenForHangouts(uid: uid)
+//        listenForHangouts(for: selectedFriendId ?? "", uid: uid)
         try await fetchNotifications(uid: uid)
         try await fetchFriendsList(uid: uid)
         try await fetchPendingFR(uid: uid)
-        try await fetchHangouts(uid: uid)
+        /// MARK: We're not going to fetch hangouts on load. We're going to try
+        /// to fetch it on demand; i.e., when the user clicks on a friend.
+//        try await fetchHangouts(uid: uid)
     }
     
 }
@@ -130,35 +135,60 @@ extension SocialVM {
         self.listeners.append(listener)
     }
     
-    func listenForHangouts(uid: String) {
+    func listenForHangouts(for friendId: String, uid: String) {
+        // Stop the current listener if it's already active
+        if currentHangoutListener != nil {
+            stopCurrentHangoutListener()
+        }
+        
+        // Update the selected friend ID
+        self.selectedFriendId = friendId
+        
+        // Start a new listener for the selected friend
         let hangoutsCollection = HangoutManager.shared.userHangoutCollection(uid: uid)
-        let listener = hangoutsCollection.addSnapshotListener { [weak self] snapshot, error in
+            .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
+            .limit(to: 25)
+            .order(by: "creation_date", descending: true)
+        
+        currentHangoutListener = hangoutsCollection.addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
             guard let snapshot = snapshot else {
-                print("Error fetching hangouts: \(error?.localizedDescription ?? "Unknown error")")
+                print("Error fetching hangouts for \(friendId): \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
+            
             snapshot.documentChanges.forEach { diff in
                 switch diff.type {
                 case .added:
-                    let hangoutId = diff.document.documentID
-                    Task {await self.fetchHangoutDetails(hangoutId: hangoutId)}
+                    if let hangoutRef = try? diff.document.data(as: HangoutReference.self) {
+                        Task { await self.fetchHangoutDetails(hangoutReference: hangoutRef) }
+                    }
                 case .modified:
-                    let hangoutId = diff.document.documentID
-                    Task {await self.fetchHangoutDetails(hangoutId: hangoutId, forceUpdate: true)}
+                    if let hangoutRef = try? diff.document.data(as: HangoutReference.self) {
+                        Task { await self.fetchHangoutDetails(hangoutReference: hangoutRef, forceUpdate: true) }
+                    }
                 case .removed:
-                    let hangoutId = diff.document.documentID
-                    self.cachedHangoutsList.removeValue(forKey: hangoutId)
+                    if let hangoutRef = try? diff.document.data(as: HangoutReference.self) {
+                        self.cachedHangoutsList.removeValue(forKey: hangoutRef)
+                    }
                 }
             }
         }
-        self.listeners.append(listener)
+    }
+
+    func stopCurrentHangoutListener() {
+        // Stop the currently active listener if it exists
+        currentHangoutListener?.remove()
+        currentHangoutListener = nil
+        self.selectedFriendId = nil
+        print("Current hangout listener stopped.")
     }
     
     // Stop all listeners when not needed
     func stopAllListeners() {
         listeners.forEach { $0.remove() }
         listeners.removeAll()
+        currentHangoutListener?.remove()
     }
 }
 
@@ -216,24 +246,30 @@ extension SocialVM {
             return request
         })
     }
-    func fetchHangouts(uid: String) async throws {
+    func fetchHangouts(uid: String, friendId: String) async throws {
         let hangoutList = HangoutManager.shared.userHangoutCollection(uid: uid)
-        let snapshot = try await hangoutList.getDocuments()
+        
+        let query = hangoutList
+            .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
+            .limit(to: 25)
+            .order(by: "creation_date", descending: true)
+        
+        let snapshot = try await query.getDocuments()
         for doc in snapshot.documents {
-            let hangoutId = doc.documentID
-            await fetchHangoutDetails(hangoutId: hangoutId)
+            guard let request = try? doc.data(as: HangoutReference.self) else { continue }
+            await fetchHangoutDetails(hangoutReference: request)
         }
     }
-    func fetchHangoutDetails(hangoutId: String, forceUpdate: Bool = false) async {
+    func fetchHangoutDetails(hangoutReference: HangoutReference, forceUpdate: Bool = false) async {
         // Check if hangout details are already cached
-        if let _ = cachedHangoutsList[hangoutId], !forceUpdate {
+        if let _ = cachedHangoutsList[hangoutReference], !forceUpdate {
             return
         }
-        let hangoutRef = HangoutManager.shared.hangoutDocument(hangoutId: hangoutId)
+        let hangoutRef = HangoutManager.shared.hangoutDocument(hangoutId: hangoutReference.hangoutId)
         do {
             let document = try await hangoutRef.getDocument()
             if let hangout = try? document.data(as: Hangout.self) {
-                self.cachedHangoutsList[hangoutId] = hangout
+                self.cachedHangoutsList[hangoutReference] = hangout
             }
         } catch {
             print("Error fetching hangout details: \(error.localizedDescription)")
@@ -417,13 +453,11 @@ extension SocialVM {
         try await HangoutManager.shared.createHangout(uid: uid, hangout: hangout)
     }
     func getFilteredHangoutsByFriend(friendId: String) -> [Hangout] {
-        // Filter hangouts where the friend ID is present in participantIds
-        var filteredHangouts = cachedHangoutsList.values.filter { hangout in
-            return hangout.participantIds.contains(friendId)
-        }
+        // Extract hangouts from the cachedHangoutsList dictionary
+        var filteredHangouts = Array(cachedHangoutsList.values)
         
-        // Sort the filtered hangouts by date with tiebreaker
-        filteredHangouts.sort { (hangout1: Hangout, hangout2: Hangout) in
+        // Sort the hangouts by creation date, with a tiebreaker using hangout ID
+        filteredHangouts.sort { (hangout1, hangout2) in
             if hangout1.creationDate != hangout2.creationDate {
                 return hangout1.creationDate > hangout2.creationDate // Sort by most recent date
             } else {
@@ -431,7 +465,7 @@ extension SocialVM {
             }
         }
         
-        // Return the filtered and sorted list
+        // Return the sorted list
         return filteredHangouts
     }
 }
