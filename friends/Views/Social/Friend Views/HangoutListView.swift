@@ -13,7 +13,7 @@ struct HangoutListView: View {
     @EnvironmentObject private var svm : SocialVM
     @Binding var hangoutList: [Hangout]
     @Binding var searchText: String
-
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -26,7 +26,7 @@ struct HangoutListView: View {
                     }
                 }
                 .padding([.bottom])
-
+                
                 if !hangoutList.isEmpty {
                     List {
                         ForEach(hangoutList.indices, id: \.self) { index in
@@ -39,15 +39,20 @@ struct HangoutListView: View {
                             }
                             .listRowSeparator(.hidden)
                             if index == hangoutList.count - 1 {
-                                ProgressView()
-                                    .onAppear {
-                                        Task {
-                                            try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
-                                                                            friendId: svm.hvm.selectedFriendId ?? "")
-                                            hangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: svm.hvm.selectedFriendId ?? "")
-                                            print(svm.hvm.cachedHangoutsList.count)
-                                        }
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                    Spacer()
+                                }
+                                .listRowSeparator(.hidden)
+                                .onAppear {
+                                    Task {
+                                        try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
+                                                                        friendId: svm.hvm.selectedFriendId ?? "")
+                                        hangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: svm.hvm.selectedFriendId ?? "")
+                                        print(svm.hvm.cachedHangoutsList.count)
                                     }
+                                }
                             }
                         }
                     }

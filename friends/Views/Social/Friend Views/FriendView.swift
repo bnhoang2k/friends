@@ -80,8 +80,10 @@ struct FriendView: View {
         .task {
             do {
                 svm.hvm.listenForHangouts(for: friend.uid, uid: avm.user?.uid ?? "")
-                try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
-                                                friendId: friend.uid)
+                if loadingHangouts {
+                    try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
+                                                    friendId: friend.uid)
+                }
                 filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                 loadingHangouts = false
             }

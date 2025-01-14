@@ -16,12 +16,16 @@ class HangoutVM: ObservableObject {
     private var currentHangoutListener: ListenerRegistration?
     @Published var selectedFriendId: String?
     
+    @Published var isFetching: Bool = false
     private var lastDocument: DocumentSnapshot? = nil
 }
 
 /// Initial Fetch Functions
 extension HangoutVM {
     func fetchHangouts(uid: String, friendId: String) async throws {
+        guard !isFetching else { return }
+        isFetching.toggle()
+        print("xdd")
         let hangoutList = HangoutManager.shared.userHangoutCollection(uid: uid)
         
         let query = hangoutList
@@ -36,6 +40,7 @@ extension HangoutVM {
             await fetchHangoutDetails(hangoutReference: request)
         }
         lastDocument = snapshot.documents.last
+        isFetching.toggle()
     }
     func fetchHangoutDetails(hangoutReference: HangoutReference, forceUpdate: Bool = false) async {
         // Check if hangout details are already cached
