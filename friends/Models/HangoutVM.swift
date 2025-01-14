@@ -15,6 +15,8 @@ class HangoutVM: ObservableObject {
     private var listeners: [ListenerRegistration] = []
     private var currentHangoutListener: ListenerRegistration?
     @Published var selectedFriendId: String?
+    
+    private var lastDocument: DocumentSnapshot? = nil
 }
 
 /// Initial Fetch Functions
@@ -24,14 +26,16 @@ extension HangoutVM {
         
         let query = hangoutList
             .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
-            .limit(to: 10)
             .order(by: "creation_date", descending: true)
+            .limit(to: 10)
+            .start(afterDocument: lastDocument)
         
         let snapshot = try await query.getDocuments()
         for doc in snapshot.documents {
             guard let request = try? doc.data(as: HangoutReference.self) else { continue }
             await fetchHangoutDetails(hangoutReference: request)
         }
+        lastDocument = snapshot.documents.last
     }
     func fetchHangoutDetails(hangoutReference: HangoutReference, forceUpdate: Bool = false) async {
         // Check if hangout details are already cached
@@ -87,8 +91,8 @@ extension HangoutVM {
         // Start a new listener for the selected friend
         let hangoutsCollection = HangoutManager.shared.userHangoutCollection(uid: uid)
             .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
-            .limit(to: 10)
             .order(by: "creation_date", descending: true)
+            .limit(to: 10)
         
         currentHangoutListener = hangoutsCollection.addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
@@ -119,7 +123,7 @@ extension HangoutVM {
         // Stop the currently active listener if it exists
         currentHangoutListener?.remove()
         currentHangoutListener = nil
-        self.selectedFriendId = nil
+//        self.selectedFriendId = nil
         print("Current hangout listener stopped.")
     }
     
@@ -127,5 +131,22 @@ extension HangoutVM {
         listeners.forEach { $0.remove() }
         listeners.removeAll()
         currentHangoutListener?.remove()
+    }
+}
+
+extension Query {
+    func getDocuments<T>(as type: T.Type) async throws -> [T] where T: Decodable {
+        return try await getDocumentsWithSnapshot(as: type).result
+    }
+    func getDocumentsWithSnapshot<T>(as type: T.Type) async throws -> (result: [T], lastDocument: DocumentSnapshot?) where T: Decodable {
+        let snapshot = try await self.getDocuments()
+        let result = try snapshot.documents.map { document in
+            try document.data(as: T.self)
+        }
+        return (result, snapshot.documents.last)
+    }
+    func start(afterDocument lastDocument: DocumentSnapshot?) -> Query {
+        guard let lastDocument else { return self }
+        return self.start(afterDocument: lastDocument)
     }
 }

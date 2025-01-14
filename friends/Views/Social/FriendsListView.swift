@@ -31,6 +31,9 @@ struct FriendsListView: View {
             }
             .padding()
         }
+        .onAppear {
+            svm.hvm.stopCurrentHangoutListener()
+        }
         .navigationTitle("Friends List")
         .navigationBarTitleDisplayMode(.inline)
     }

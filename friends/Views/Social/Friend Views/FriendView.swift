@@ -80,7 +80,8 @@ struct FriendView: View {
         .task {
             do {
                 svm.hvm.listenForHangouts(for: friend.uid, uid: avm.user?.uid ?? "")
-                try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "", friendId: friend.uid)
+                try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
+                                                friendId: friend.uid)
                 filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                 loadingHangouts = false
             }
@@ -88,9 +89,7 @@ struct FriendView: View {
                 print("Error: \(error.localizedDescription)")
             }
         }
-        .onDisappear {
-            svm.hvm.stopCurrentHangoutListener()
-        }
+
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
         .tint(.primary)
