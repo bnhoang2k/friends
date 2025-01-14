@@ -75,7 +75,7 @@ extension GenerateLocationsView {
             // 1. Build user prompt
             vvm.userInput = hangout.hangoutToText(
                 userID: avm.user?.uid ?? "",
-                cachedFriendsList: svm.cachedFriendsList
+                cachedFriendsList: svm.fvm.cachedFriendsList
             )
             
             // 2. Generate AI response

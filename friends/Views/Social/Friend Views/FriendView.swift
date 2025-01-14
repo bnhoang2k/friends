@@ -57,7 +57,7 @@ struct FriendView: View {
                         .environmentObject(avm)
                         .environmentObject(svm)
                         .onDisappear {
-                            filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+                            filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                         }
                 } label: {
                     Image(systemName: "plus")
@@ -79,9 +79,9 @@ struct FriendView: View {
         }
         .task {
             do {
-                svm.listenForHangouts(for: friend.uid, uid: avm.user?.uid ?? "")
-                try await svm.fetchHangouts(uid: avm.user?.uid ?? "", friendId: friend.uid)
-                filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+                svm.hvm.listenForHangouts(for: friend.uid, uid: avm.user?.uid ?? "")
+                try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "", friendId: friend.uid)
+                filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                 loadingHangouts = false
             }
             catch {
@@ -89,7 +89,7 @@ struct FriendView: View {
             }
         }
         .onDisappear {
-            svm.stopCurrentHangoutListener()
+            svm.hvm.stopCurrentHangoutListener()
         }
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
