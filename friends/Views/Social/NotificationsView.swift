@@ -11,7 +11,7 @@ struct NotificationsView: View {
     @EnvironmentObject private var svm: SocialVM
     var body: some View {
         NavigationStack {
-            List(svm.cachedNotifications, id: \.notificationId) {notification in
+            List(svm.nvm.cachedNotifications, id: \.notificationId) {notification in
                 NotificationRow(notification: notification)
                     .environmentObject(svm)
             }
@@ -48,8 +48,8 @@ struct NotificationRow: View {
                         Button {
                             // Action for accepting
                             Task {
-                                try await svm.updateNotificationStatus(notification: notification,
-                                                                       status: .accepted)
+                                try await svm.nvm.updateNotificationStatus(notification: notification,
+                                                                           status: .accepted)
                                 try await svm.handleFriendRequest(notification: notification, status: .accepted)
                             }
                         } label: {
@@ -61,8 +61,8 @@ struct NotificationRow: View {
                         .buttonStyle(PlainButtonStyle())
                         Button {
                             Task {
-                                try await svm.updateNotificationStatus(notification: notification,
-                                                                       status: .rejected)
+                                try await svm.nvm.updateNotificationStatus(notification: notification,
+                                                                           status: .rejected)
                                 try await svm.handleFriendRequest(notification: notification, status: .rejected)
                             }
                         } label: {
@@ -78,7 +78,7 @@ struct NotificationRow: View {
                     Text("Accepted")
                         .bold()
                         .foregroundColor(.green)
-                } 
+                }
                 else if notification.status == .rejected {
                     Text("Rejected")
                         .bold()

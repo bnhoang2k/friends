@@ -26,8 +26,9 @@ struct HangoutListView: View {
                     }
                 }
                 .padding([.bottom])
+                
                 if !hangoutList.isEmpty {
-                    ScrollView(showsIndicators: false) {
+                    List {
                         ForEach(hangoutList.indices, id: \.self) { index in
                             NavigationLink {
                                 HangoutInformationView(hangout: $hangoutList[index])
@@ -36,8 +37,28 @@ struct HangoutListView: View {
                             } label: {
                                 HangoutCardView(hangout: hangoutList[index])
                             }
+                            .listRowSeparator(.hidden)
+                            if index == hangoutList.count - 1 {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                    Spacer()
+                                }
+                                .listRowSeparator(.hidden)
+                                .onAppear {
+                                    Task {
+                                        try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
+                                                                        friendId: svm.hvm.selectedFriendId ?? "")
+                                        hangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: svm.hvm.selectedFriendId ?? "")
+                                        print(svm.hvm.cachedHangoutsList.count)
+                                    }
+                                }
+                            }
                         }
                     }
+                    .listStyle(.plain)
+                    .scrollIndicators(.hidden)
+                    .listRowInsets(EdgeInsets())
                 }
                 else {
                     Spacer()

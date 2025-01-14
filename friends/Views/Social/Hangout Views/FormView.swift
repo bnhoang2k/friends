@@ -34,7 +34,7 @@ struct FormView: View {
                 Button {
                     Task {
                         if let uid = avm.user?.uid {
-                            try await svm.createHangout(uid: uid, hangout: hangout)
+                            try await svm.hvm.createHangout(uid: uid, hangout: hangout)
                             dismiss()
                         }
                     }

@@ -15,6 +15,9 @@
 		D32D70102D03CBF300AE38B0 /* GenerateLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */; };
 		D33A53E02CC06DF2003605B6 /* AddHangoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */; };
 		D33C44312CC4527A005A7062 /* FriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33C44302CC4527A005A7062 /* FriendView.swift */; };
+		D3573E112D37066400E5B204 /* FriendsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3573E102D37066400E5B204 /* FriendsVM.swift */; };
+		D3573E132D370A5300E5B204 /* NotificationsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3573E122D370A5300E5B204 /* NotificationsVM.swift */; };
+		D3573E152D370BDA00E5B204 /* HangoutVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3573E142D370BDA00E5B204 /* HangoutVM.swift */; };
 		D35AD3BE2CB7014A00CC7B58 /* FriendRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35AD3BD2CB7014A00CC7B58 /* FriendRequest.swift */; };
 		D36173262C657A240002CDED /* friendsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36173252C657A240002CDED /* friendsApp.swift */; };
 		D361732A2C657A240002CDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36173292C657A240002CDED /* Assets.xcassets */; };
@@ -82,6 +85,9 @@
 		D32D700F2D03CBF300AE38B0 /* GenerateLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateLocationsView.swift; sourceTree = "<group>"; };
 		D33A53DF2CC06DF2003605B6 /* AddHangoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHangoutView.swift; sourceTree = "<group>"; };
 		D33C44302CC4527A005A7062 /* FriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendView.swift; sourceTree = "<group>"; };
+		D3573E102D37066400E5B204 /* FriendsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsVM.swift; sourceTree = "<group>"; };
+		D3573E122D370A5300E5B204 /* NotificationsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsVM.swift; sourceTree = "<group>"; };
+		D3573E142D370BDA00E5B204 /* HangoutVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutVM.swift; sourceTree = "<group>"; };
 		D35AD3BD2CB7014A00CC7B58 /* FriendRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequest.swift; sourceTree = "<group>"; };
 		D36173222C657A240002CDED /* friends.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = friends.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36173252C657A240002CDED /* friendsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = friendsApp.swift; sourceTree = "<group>"; };
@@ -294,6 +300,9 @@
 				D39EF7D52C6981C400040765 /* AuthenticationVM.swift */,
 				D3DA02562CB43FFC00F271E7 /* TypesenseVM.swift */,
 				D39136CA2CBC76B4009C1C2E /* SocialVM.swift */,
+				D3573E102D37066400E5B204 /* FriendsVM.swift */,
+				D3573E122D370A5300E5B204 /* NotificationsVM.swift */,
+				D3573E142D370BDA00E5B204 /* HangoutVM.swift */,
 				D32D700D2D03C9C800AE38B0 /* VertexVM.swift */,
 				D3D6DB532D20A8DF00DA2210 /* PlaceViewModel.swift */,
 			);
@@ -484,7 +493,10 @@
 				D39EF7C12C69819700040765 /* GoogleSignInHelper.swift in Sources */,
 				D36B6C842C8A3B3800FF25CC /* SettingsViewExtras.swift in Sources */,
 				D38653A52D23420D00F071DA /* HangoutInformationEditView.swift in Sources */,
+				D3573E132D370A5300E5B204 /* NotificationsVM.swift in Sources */,
+				D3573E112D37066400E5B204 /* FriendsVM.swift in Sources */,
 				D3F4E03C2D093EC0000B6EE5 /* HangoutManager.swift in Sources */,
+				D3573E152D370BDA00E5B204 /* HangoutVM.swift in Sources */,
 				D3DA02572CB43FFC00F271E7 /* TypesenseVM.swift in Sources */,
 				D39EF7C42C69819700040765 /* AppleSignInHelper.swift in Sources */,
 				D3214BAF2CDD559A00C802BA /* Hangout.swift in Sources */,

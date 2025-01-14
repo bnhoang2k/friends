@@ -112,7 +112,7 @@ struct SearchForFriendsView: View {
                 print("Error: Missing user details")
                 return
             }
-            try await svm.sendFriendRequest(
+            try await svm.fvm.sendFriendRequest(
                 fromUserId: fromUserId,
                 fromUsername: fromUsername,
                 fromUserPP: [fromUserPP],

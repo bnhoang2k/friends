@@ -24,23 +24,31 @@ struct FriendView: View {
     }
     
     @State private var filteredHangoutList: [Hangout] = []
+    @State private var loadingHangouts: Bool = true
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Personality Gradient
-                    PersonalityGradientView(personalityGradient: friendStatistics.personalityGradient)
-                    // Hard Stats
-                    HardStatsView(hardStats: friendStatistics.hardStats)
-                    // Hangouts
-                    RecentHangoutView(hangoutList: $filteredHangoutList,
-                                      searchText: $searchText)
-                    .environmentObject(svm)
+            if !loadingHangouts {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Personality Gradient
+                        PersonalityGradientView(personalityGradient: friendStatistics.personalityGradient)
+                        // Hard Stats
+                        HardStatsView(hardStats: friendStatistics.hardStats)
+                        // Hangouts
+                        RecentHangoutView(hangoutList: $filteredHangoutList,
+                                          searchText: $searchText)
+                        .environmentObject(svm)
+                    }
                 }
+                .scrollIndicators(.hidden)
+                .padding()
+                .transition(.opacity.animation(.easeInOut))
             }
-            .scrollIndicators(.hidden)
-            .padding()
+            else {
+                ProgressView()
+                        .transition(.opacity.animation(.easeInOut))
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -49,7 +57,7 @@ struct FriendView: View {
                         .environmentObject(avm)
                         .environmentObject(svm)
                         .onDisappear {
-                            filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+                            filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                         }
                 } label: {
                     Image(systemName: "plus")
@@ -58,7 +66,7 @@ struct FriendView: View {
 //            ToolbarItem(placement: .topBarTrailing) {
 //                Button {
 //                    Task {
-//                        for i in 0...100 {
+//                        for i in 0...25 {
 //                            try await svm.createHangout(uid: avm.user?.uid ?? "",
 //                                                        hangout: Utilities.shared.createRandomHangout(uid: avm.user?.uid ?? "",
 //                                                                                                      friendId: friend.uid))
@@ -69,9 +77,21 @@ struct FriendView: View {
 //                }
 //            }
         }
-        .onAppear {
-            filteredHangoutList = svm.getFilteredHangoutsByFriend(friendId: friend.uid)
+        .task {
+            do {
+                svm.hvm.listenForHangouts(for: friend.uid, uid: avm.user?.uid ?? "")
+                if loadingHangouts {
+                    try await svm.hvm.fetchHangouts(uid: avm.user?.uid ?? "",
+                                                    friendId: friend.uid)
+                }
+                filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
+                loadingHangouts = false
+            }
+            catch {
+                print("Error: \(error.localizedDescription)")
+            }
         }
+
         .font(.custom(GlobalVariables.shared.APP_FONT,
                       size: GlobalVariables.shared.textBody))
         .tint(.primary)

@@ -49,7 +49,7 @@ extension UserProfileView {
         Button(role: .destructive) {
             Task {
                 do {
-                    svm.stopAllListeners()
+                    svm.stopListeners()
                     try avm.signOut()
                     avm.resetFields()
                     avm.showSignInView = true

@@ -118,7 +118,7 @@ private struct FriendSection: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
                 ForEach(hangout.participantIds.filter{ $0 != avm.user?.uid ?? "" }, id: \.self) { participantId in
-                    if let friend = svm.getFriendFromID(participantId) {
+                    if let friend = svm.fvm.getFriendFromID(participantId) {
                         HStack {
                             ImageView(urlString: friend.photoURL, pictureWidth: 10)
                             Text(friend.fullName ?? "Name ERROR")

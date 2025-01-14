@@ -17,7 +17,7 @@ struct FriendsListView: View {
         NavigationStack {
             VStack {
                 SearchBar(placeholderText: "Search Friends", searchText: $searchText)
-                List(svm.filteredFriends(query: searchText), id: \.uid) { friend in
+                List(svm.fvm.filteredFriends(query: searchText), id: \.uid) { friend in
                     NavigationLink {
                         FriendView(friend: friend)
                             .environmentObject(avm)
@@ -30,6 +30,9 @@ struct FriendsListView: View {
                 .listStyle(.plain)
             }
             .padding()
+        }
+        .onAppear {
+            svm.hvm.stopCurrentHangoutListener()
         }
         .navigationTitle("Friends List")
         .navigationBarTitleDisplayMode(.inline)
