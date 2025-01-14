@@ -147,7 +147,7 @@ extension SocialVM {
         // Start a new listener for the selected friend
         let hangoutsCollection = HangoutManager.shared.userHangoutCollection(uid: uid)
             .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
-            .limit(to: 25)
+            .limit(to: 10)
             .order(by: "creation_date", descending: true)
         
         currentHangoutListener = hangoutsCollection.addSnapshotListener { [weak self] snapshot, error in
@@ -227,7 +227,7 @@ extension SocialVM {
         let notifications = UserManager.shared
             .userNotificationsList(uid: uid)
             .order(by: "timestamp", descending: true)
-            .limit(to: 25)
+            .limit(to: 10)
         let snapshot = try await notifications.getDocuments()
         self.cachedNotifications = snapshot.documents.compactMap({ doc in
             guard let notification = try? doc.data(as: Notification.self) else {
@@ -251,7 +251,7 @@ extension SocialVM {
         
         let query = hangoutList
             .whereField(HangoutReference.CodingKeys.participantIds.rawValue, arrayContains: friendId)
-            .limit(to: 25)
+            .limit(to: 10)
             .order(by: "creation_date", descending: true)
         
         let snapshot = try await query.getDocuments()
