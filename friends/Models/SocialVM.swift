@@ -34,7 +34,6 @@ class SocialVM: ObservableObject {
         try await nvm.fetchNotifications(uid: uid)
         try await fvm.fetchFriendsList(uid: uid)
         try await fvm.fetchPendingFR(uid: uid)
-        print(fvm.cachedFriendsList)
     }
     
     func stopListeners() {
