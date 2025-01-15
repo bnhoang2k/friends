@@ -33,6 +33,7 @@ struct FriendsListView: View {
         }
         .onAppear {
             svm.hvm.stopCurrentHangoutListener()
+            svm.hvm.cachedHangoutsList.removeAll()
         }
         .navigationTitle("Friends List")
         .navigationBarTitleDisplayMode(.inline)
