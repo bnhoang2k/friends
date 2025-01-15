@@ -129,6 +129,8 @@ extension HangoutVM {
         currentHangoutListener?.remove()
         currentHangoutListener = nil
 //        self.selectedFriendId = nil
+        cachedHangoutsList.removeAll()
+        lastDocument = nil
         print("Current hangout listener stopped.")
     }
     
