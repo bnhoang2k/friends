@@ -25,6 +25,5 @@ struct TestFunctions: View {
 #Preview {
     NavigationStack {
         TestFunctions()
-            .environmentObject(AuthenticationVM())
     }
 }

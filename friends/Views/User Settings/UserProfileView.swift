@@ -28,7 +28,6 @@ extension UserProfileView {
     private var userInfo: some View {
         NavigationLink {
             SettingsView()
-                .environmentObject(avm)
         } label: {
             HStack {
                 ImageView(urlString: avm.user?.photoURL, pictureWidth: 50)
@@ -79,8 +78,6 @@ struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             UserProfileView(firstAppear: .constant(false))
-                .environmentObject(AuthenticationVM())
-                .environmentObject(SocialVM())
         }
     }
 }

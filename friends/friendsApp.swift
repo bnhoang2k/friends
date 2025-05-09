@@ -35,9 +35,16 @@ struct friendsApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    @StateObject private var avm: AuthenticationVM = AuthenticationVM()
+    @StateObject private var tvm: TypesenseVM = TypesenseVM()
+    @StateObject private var svm: SocialVM = SocialVM()
+    
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(avm)
+                .environmentObject(tvm)
+                .environmentObject(svm)
         }
     }
 }

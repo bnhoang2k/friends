@@ -21,16 +21,12 @@ struct MainView: View {
         TabView(selection: $selectedTab) {
             // Friends List
             FriendsListView()
-                .environmentObject(svm)
                 .tabItem {Image(systemName: "calendar")}
                 .tag(0)
             NotificationsView()
-                .environmentObject(svm)
                 .tabItem{Image(systemName: "tray")}
                 .tag(1)
             UserProfileView(firstAppear: $firstAppear)
-                .environmentObject(avm)
-                .environmentObject(svm)
                 .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(2)
         }
@@ -62,9 +58,6 @@ struct MainView: View {
         }
         .sheet(isPresented: $showAddFriendView, content: {
             SearchForFriendsView()
-                .environmentObject(avm)
-                .environmentObject(tvm)
-                .environmentObject(svm)
         })
         .tint(.primary)
     }
@@ -74,9 +67,6 @@ struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             MainView()
-                .environmentObject(AuthenticationVM())
-                .environmentObject(TypesenseVM())
-                .environmentObject(SocialVM())
         }
     }
 }

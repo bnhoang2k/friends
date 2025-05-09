@@ -9,9 +9,9 @@ import SwiftUI
 
 struct RootView: View {
     
-    @StateObject private var avm: AuthenticationVM = AuthenticationVM()
-    @StateObject private var tvm: TypesenseVM = TypesenseVM()
-    @StateObject private var svm: SocialVM = SocialVM()
+    @EnvironmentObject private var avm: AuthenticationVM
+    @EnvironmentObject private var tvm: TypesenseVM
+    @EnvironmentObject private var svm: SocialVM
     @State var isLoading: Bool = true
     
     var body: some View {
@@ -44,21 +44,14 @@ struct RootView: View {
                 if avm.showSignInView {
                     NavigationStack {
                         SignInView(showSignInView: $avm.showSignInView)
-                            .environmentObject(avm)
                     }
                 }
                 else if avm.showGetInformationView {
                     GetInformationView()
-                        .environmentObject(avm)
-                        .environmentObject(tvm)
-                        .environmentObject(svm)
                 }
                 else {
                     NavigationStack {
                         MainView()
-                            .environmentObject(avm)
-                            .environmentObject(tvm)
-                            .environmentObject(svm)
                     }
                 }
             }

@@ -37,12 +37,9 @@ struct SettingsView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10, pinnedViews: [.sectionHeaders]) {
                     EditPhotoView(dummyUser: $dummyUser, selectedUIImage: $selectedUIImage, showImageOptions: $showImageOptions)
-                        .environmentObject(avm)
                     EditUserFieldsView(dummyUser: $dummyUser)
-                        .environmentObject(avm)
                     if avm.authProviders.contains(.email) {
                         EditEmailFieldsView(dummyUser: $dummyUser)
-                            .environmentObject(avm)
                     }
                     Section {
                         deleteAccountButton
@@ -177,7 +174,6 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             SettingsView()
-                .environmentObject(AuthenticationVM())
         }
     }
 }
@@ -200,7 +196,6 @@ struct EditEmailFieldsView: View {
             HStack {
                 NavigationLink {
                     EditPasswordView()
-                        .environmentObject(avm)
                 } label: {
                     HStack {
                         Label("Password", systemImage: "lock.rectangle")

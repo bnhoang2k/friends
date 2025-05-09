@@ -162,6 +162,4 @@ struct PlaceCardView: View, Equatable {
         }, set: { newValue in
             hangout = newValue
         }))
-        .environmentObject(AuthenticationVM())
-        .environmentObject(SocialVM())
 }

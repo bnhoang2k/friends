@@ -141,8 +141,5 @@ extension UIApplication {
 #Preview {
     NavigationStack {
         SearchForFriendsView()
-            .environmentObject(TypesenseVM())
-            .environmentObject(AuthenticationVM())
-            .environmentObject(SocialVM())
     }
 }

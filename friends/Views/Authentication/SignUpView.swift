@@ -63,7 +63,6 @@ struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             SignUpView()
-                .environmentObject(AuthenticationVM())
         }
     }
 }

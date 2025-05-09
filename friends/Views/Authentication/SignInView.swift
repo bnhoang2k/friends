@@ -90,7 +90,6 @@ extension SignInView {
     // Sign-up link
     private var emailSignUpLink: some View {
         NavigationLink(destination: SignUpView()
-                        .environmentObject(avm)
                         .navigationTitle("Sign Up")) {
             Text("Don't have an account? Sign up with email")
                 .frame(height: 25)
@@ -140,6 +139,5 @@ extension SignInView {
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
         SignInView(showSignInView: .constant(true))
-            .environmentObject(AuthenticationVM())
     }
 }

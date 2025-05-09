@@ -38,7 +38,6 @@ struct FriendView: View {
                         // Hangouts
                         RecentHangoutView(hangoutList: $filteredHangoutList,
                                           searchText: $searchText)
-                        .environmentObject(svm)
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -54,8 +53,6 @@ struct FriendView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     AddHangoutView(friendID: friend.uid)
-                        .environmentObject(avm)
-                        .environmentObject(svm)
                         .onDisappear {
                             filteredHangoutList = svm.hvm.getFilteredHangoutsByFriend(friendId: friend.uid)
                         }
@@ -217,8 +214,6 @@ struct RecentHangoutView: View {
         NavigationLink {
             HangoutListView(hangoutList: $hangoutList,
                             searchText: $searchText)
-            .environmentObject(avm)
-            .environmentObject(svm)
         } label: {
             HStack {
                 Text("Your most recent hangouts")
@@ -235,8 +230,6 @@ struct RecentHangoutView: View {
                     if index < 5 {
                         NavigationLink {
                             HangoutInformationView(hangout: $hangoutList[index])
-                                .environmentObject(avm)
-                                .environmentObject(svm)
                         } label: {
                             HangoutCardView(hangout: hangoutList[index])
                         }
@@ -251,7 +244,5 @@ struct RecentHangoutView: View {
     let hangoutList = Utilities.shared.generateRandomHangouts(count: 100)
     NavigationStack {
         FriendView(friend: DBUser(uid: "1"))
-            .environmentObject(AuthenticationVM())
-            .environmentObject(SocialVM())
     }
 }

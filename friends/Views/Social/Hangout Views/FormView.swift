@@ -212,7 +212,4 @@ private struct DetailsSection: View {
     }, set: { newValue in
         hangout = newValue
     }))
-    .environmentObject(AuthenticationVM())
-    .environmentObject(SocialVM())
-    .environmentObject(VertexViewModel())
 }

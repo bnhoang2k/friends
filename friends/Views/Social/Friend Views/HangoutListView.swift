@@ -32,8 +32,6 @@ struct HangoutListView: View {
                         ForEach(hangoutList.indices, id: \.self) { index in
                             NavigationLink {
                                 HangoutInformationView(hangout: $hangoutList[index])
-                                    .environmentObject(avm)
-                                    .environmentObject(svm)
                             } label: {
                                 HangoutCardView(hangout: hangoutList[index])
                             }

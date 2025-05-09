@@ -13,7 +13,6 @@ struct NotificationsView: View {
         NavigationStack {
             List(svm.nvm.cachedNotifications, id: \.notificationId) {notification in
                 NotificationRow(notification: notification)
-                    .environmentObject(svm)
             }
             .listStyle(.plain)
         }
@@ -93,6 +92,5 @@ struct NotificationRow: View {
 #Preview {
     NavigationStack {
         NotificationsView()
-            .environmentObject(SocialVM())
     }
 }

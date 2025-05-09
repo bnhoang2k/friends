@@ -23,7 +23,6 @@ struct AddHangoutView: View {
     var body: some View {
         NavigationStack {
             FormView(hangout: $hangout)
-                .environmentObject(vvm)
                 .navigationTitle("Add Hangout")
                 .navigationBarTitleDisplayMode(.inline)
                 .padding(.top)
@@ -43,6 +42,4 @@ struct AddHangoutView: View {
 
 #Preview {
     AddHangoutView()
-        .environmentObject(AuthenticationVM())
-        .environmentObject(SocialVM())
 }

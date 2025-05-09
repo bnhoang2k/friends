@@ -62,8 +62,5 @@ extension GetInformationView {
 struct GetInformationView_Previews: PreviewProvider {
     static var previews: some View {
         GetInformationView()
-            .environmentObject(AuthenticationVM())
-            .environmentObject(TypesenseVM())
-            .environmentObject(SocialVM())
     }
 }

@@ -20,8 +20,6 @@ struct FriendsListView: View {
                 List(svm.fvm.filteredFriends(query: searchText), id: \.uid) { friend in
                     NavigationLink {
                         FriendView(friend: friend)
-                            .environmentObject(avm)
-                            .environmentObject(svm)
                     } label: {
                         UserCard(user: friend)
                     }
@@ -42,7 +40,5 @@ struct FriendsListView: View {
 #Preview {
     NavigationStack {
         FriendsListView()
-            .environmentObject(AuthenticationVM())
-            .environmentObject(SocialVM())
     }
 }
