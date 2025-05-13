@@ -313,7 +313,7 @@ exports.createHangout = functions.https.onCall(async (data, context) => {
     const userHangoutData = {
       hangout_id: hangout_id,
       hangout_path: hangoutRef.path,
-      creation_date: admin.firestore.FieldValue.serverTimestamp(),
+      creation_date: hangoutRef.creation_date,
       title: title || "",
       participant_ids: participant_ids,
     };
