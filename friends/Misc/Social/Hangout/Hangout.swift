@@ -7,6 +7,7 @@
 
 import Foundation
 import MapKit
+import FirebaseFirestore
 
 struct Hangout: Codable {
     var hangoutId: String
@@ -131,49 +132,17 @@ struct Hangout: Codable {
     }
 }
 
-struct HangoutReference: Codable, Hashable {
-    var hangoutId: String
-    var hangoutPath: String
+struct HangoutReference: Identifiable, Codable, Hashable {
+    @DocumentID var id: String?
     var creationDate: Date
     var title: String
     var participantIds: [String]
-
+    
     enum CodingKeys: String, CodingKey {
-        case hangoutId = "hangout_id"
-        case hangoutPath = "hangout_path"
+        case id = "hangout_id"
         case creationDate = "creation_date"
         case title = "title"
         case participantIds = "participant_ids"
-    }
-
-    init(hangoutId: String,
-         hangoutPath: String,
-         creationDate: Date,
-         title: String,
-         participantIds: [String]) {
-        self.hangoutId = hangoutId
-        self.hangoutPath = hangoutPath
-        self.creationDate = creationDate
-        self.title = title
-        self.participantIds = participantIds
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        hangoutId = try container.decode(String.self, forKey: .hangoutId)
-        hangoutPath = try container.decode(String.self, forKey: .hangoutPath)
-        creationDate = try container.decode(Date.self, forKey: .creationDate)
-        title = try container.decode(String.self, forKey: .title)
-        participantIds = try container.decode([String].self, forKey: .participantIds)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(hangoutId, forKey: .hangoutId)
-        try container.encode(hangoutPath, forKey: .hangoutPath)
-        try container.encode(creationDate, forKey: .creationDate)
-        try container.encode(title, forKey: .title)
-        try container.encode(participantIds, forKey: .participantIds)
     }
 }
 

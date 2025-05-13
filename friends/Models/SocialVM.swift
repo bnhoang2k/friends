@@ -15,12 +15,12 @@ class SocialVM: ObservableObject {
     /// Child VMs
     @Published var fvm: FriendsVM
     @Published var nvm: NotificationsVM
-    @Published var hvm: HangoutVM
+    @Published var hvm: HangoutVM2
     
     init() {
         self.fvm = FriendsVM()
         self.nvm = NotificationsVM()
-        self.hvm = HangoutVM()
+        self.hvm = HangoutVM2()
     }
     
     func loadData(uid: String?) async throws {
